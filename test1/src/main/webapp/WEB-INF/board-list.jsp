@@ -7,6 +7,7 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="/js/page-change.js"></script>
     <style>
         table, tr, td, th{
             border : 1px solid black;
@@ -25,6 +26,31 @@
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
+         <table>
+                <tr>
+                    <th>번호</th>
+                    <th>작성자</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>추천수</th>
+                    <th>조회수</th>
+                    <th>삭제</th>
+                   
+                </tr>
+
+                <tr v-for="item in list">
+                    <td>{{item.boardNo}}</td>
+                    <td>{{item.userId}}</td>
+                    <td>
+                    <a href="javascript:;" @click="fnView(item.boardNo)">{{item.title}}</a>
+                    </td>
+                    <td>{{item.contents}}</td>
+                    <td> {{item.fav}}</td>
+                    <td>{{item.cnt}}</td>
+                    
+                    <td><button @click="fnRemove(item.boardNo)">삭제</button></td>
+                </tr>
+         </table>
     </div>
 </body>
 </html>
@@ -34,6 +60,7 @@
         data() {
             return {
                 // 변수 - (key : value)
+                list : []
             };
         },
         methods: {
@@ -42,19 +69,41 @@
                 let self = this;
                 let param = {};
                 $.ajax({
-                    url: "",
+                    url: "board-list.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
-
+                        console.log(data);
+                        self.list = data.list;
                     }
                 });
-            }
+            },
+            fnView : function(boardNo){
+                pageChange("board-view.do", {boardNo : boardNo});
+            },
+
+            fnRemove: function (boardNo) {
+                let self = this;
+                let param = {
+                    boardNo : boardNo
+                };
+                $.ajax({
+                    url: "/board-delete.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                       alert("삭제되었습니다");
+                       self.fnList();
+                    }
+                });
+            },
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+            self.fnList();
         }
     });
 

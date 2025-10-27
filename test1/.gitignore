@@ -33,6 +33,7 @@ build/
 /bin
 ### VS Code ###
 .vscode/
+
 /**/application.properties
 
 /bin
