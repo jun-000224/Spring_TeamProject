@@ -22,9 +22,10 @@ public class BoardService{
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		List<Board> list = boardMapper.BoardList(map);
-		
+		int cnt = boardMapper.selectBoardCnt(map);
 		
 		resultMap.put("list", list);
+		resultMap.put("cnt", cnt);
 		
 		resultMap.put("result", "success");
 		return resultMap;
@@ -34,8 +35,12 @@ public class BoardService{
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		
+		int cnt = boardMapper.updateCnt(map);
+		
+		
 		Board info = boardMapper.selectBoard(map);
 		List<Comment> commentList = boardMapper.selectCommentList(map);
+		
 		resultMap.put("info", info); 
 		resultMap.put("commentList", commentList);
 		resultMap.put("result", "success");
@@ -71,5 +76,39 @@ public class BoardService{
 		resultMap.put("result", "success");
 		return resultMap;
 	}
+	
+	public HashMap<String, Object> addBoardList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			
+			int cnt = boardMapper.addBoard(map);
+			System.out.println(cnt);
+			resultMap.put("result", "success");
+			resultMap.put("msg", "게시글 등록됨");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	
+	}
+	public HashMap<String, Object> RemoveView(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int list = boardMapper.viewRemove(map);
+		
+		
+		resultMap.put("list", list);
+		
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	
+	
+	
 	
 }
