@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.ShareBoardMapper">
+	<select id="sharInfo" parameterType="hashmap" resultType="com.example.test1.model.Share">
+		SELECT CONTENT_ID FROM 
+		RESERVATION R
+		INNER JOIN POI P ON R.RES_NUM = P.RES_NUM
+	</select>
+
+</mapper>
+
+
+
+
