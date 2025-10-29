@@ -38,7 +38,7 @@
         .phone input{
             width: 50px;
         }
-        .nicknameGuide{
+        .guide{
             font-size: 13px;
         }
     </style>
@@ -52,10 +52,12 @@
             <input v-if="!idFlg" type="text" v-model="id" class="userId" @input="id = id.replace(/[^a-z0-9]/g, '')">
             <input v-else type="text" v-model="id" class="userId" disabled>
             <button @click="fnIdCheck" class="checkButton">중복체크</button>
+            <span class="guide"> 영소문자와 숫자만 입력 가능</span>
         </div>
         <div>
             비밀번호 : 
             <input type="password" v-model="pwd" class="userPwd" @input="pwd = pwd.replace(/[^a-zA-Z0-9!@#$%^&*(),.?&quot;:{}|<>]/g, '')">
+            <span class="guide">영대소문자와 숫자, 특수기호만 사용 가능</span>
         </div>
         <div>
             비밀번호 확인 : 
@@ -147,7 +149,7 @@
             닉네임(선택) : 
             <input type="text" v-model="nickname">
             <br>
-            <span class="nicknameGuide">미입력 시, 이름이 닉네임이 됩니다.</span>
+            <span class="guide">미입력 시, 이름이 닉네임이 됩니다.</span>
         </div>
         <button @click="fnJoin">가입</button>
     </div>
