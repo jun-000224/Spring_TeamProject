@@ -23,14 +23,14 @@ public class MemberController {
 	@Value("${kakao_redirect_uri}")
 	private String kakao_redirect_uri;
 	
-	@Value("${naver_client_id}")
-	private String naver_client_id;
-	
-	@Value("${naver_client_secret}")
-	private String naver_client_secret;
-
-	@Value("${naver_redirect_uri}")
-	private String naver_redirect_uri;
+//	@Value("${naver_client_id}")
+//	private String naver_client_id;
+//	
+//	@Value("${naver_client_secret}")
+//	private String naver_client_secret;
+//
+//	@Value("${naver_redirect_uri}")
+//	private String naver_redirect_uri;
 	
 	@Autowired
 	MemberService memberService;
@@ -42,10 +42,10 @@ public class MemberController {
 				+ "&redirect_uri=" + kakao_redirect_uri;
 		model.addAttribute("kakao_location", kakao_location);
 		
-		String state = UUID.randomUUID().toString();
-		String naver_location = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + naver_client_id + "&redirect_uri=" + naver_redirect_uri + "&state=" + state;
-		
-		model.addAttribute("naver_location", naver_location);
+//		String state = UUID.randomUUID().toString();
+//		String naver_location = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + naver_client_id + "&redirect_uri=" + naver_redirect_uri + "&state=" + state;
+//		model.addAttribute("naver_location", naver_location);
+
     return "/member/login";
 	      
 	}
@@ -110,6 +110,15 @@ public class MemberController {
 	public String memberLogin(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = memberService.memberLogin(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/member/logout.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String memberLogout(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = memberService.memberLogout(map);
 		
 		return new Gson().toJson(resultMap);
 	}

@@ -81,7 +81,7 @@ public class MemberService {
 				result = "success";
 			} else {
 				message = "비밀번호가 틀립니다.";
-				result = "success";
+				result = "fail";
 			}
 
 			
@@ -95,6 +95,17 @@ public class MemberService {
 		
 		resultMap.put("msg", message);
 		resultMap.put("result", result);
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> memberLogout(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		String message = session.getAttribute("sessionNickname") + "님 로그아웃 되었습니다.";
+		resultMap.put("msg", message);
+		
+		session.invalidate();//세션정보 전체 삭제
 		
 		return resultMap;
 	}

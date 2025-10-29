@@ -45,12 +45,20 @@ public class KakaoController {
 
 		RestTemplate restTemplate = new RestTemplate();
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		
+//		System.out.println(map);
+		
 		params.add("grant_type", "authorization_code");
 		params.add("client_id", kakao_client_id);
 		params.add("redirect_uri", kakao_redirect_uri);
 		params.add("code", (String)map.get("code"));
 			//map 안에서 code 호출, String형태로
-
+		
+//		String serviceType = (String) map.get("service"); 
+//	    String code = (String) map.get("code");
+//	    System.out.println(serviceType);
+//	    System.out.println(code);
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -63,6 +71,7 @@ public class KakaoController {
 			//String으로 다운 캐스팅
 		System.out.println(resultMap);
 
+		
 		return new Gson().toJson(resultMap);
 	}
 	
