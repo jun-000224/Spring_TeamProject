@@ -34,7 +34,7 @@ header {
 /* 기존 nav ul에 새로운 메뉴 항목을 추가하여 스타일링 */
 nav ul {
     display: flex;
-    gap: 150px; /* 메뉴 항목 사이 간격 */
+    gap: 80px; /* 메뉴 항목 사이 간격 */
 }
 
 nav ul li a {
@@ -174,7 +174,7 @@ nav ul li a:hover {
     nav ul {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 150px;
+        gap: 80px;
     }
     
     /* 검색 바 모바일에서 넓게 표시 */

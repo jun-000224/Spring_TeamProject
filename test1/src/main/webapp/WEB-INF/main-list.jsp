@@ -10,11 +10,13 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a777d1f63779cfdaa66c4a1d36cc578d&libraries=services"></script>
+
         <link rel="stylesheet" href="/css/main-style.css">
         <link rel="stylesheet" href="/css/common-style.css">
         <link rel="stylesheet" href="/css/header-style.css">
-        <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a777d1f63779cfdaa66c4a1d36cc578d&libraries=services"></script>
+        <link rel="stylesheet" href="/css/main-images.css">
         <style>
             .map_wrap,
             .map_wrap * {
@@ -194,25 +196,52 @@
                     </a>
                 </div>
                 <h1 class="logo">
-                    <a href="#">Team Project</a>
+                    <a href="main-list.do" target="_blank">Team Project</a>
                 </h1>
                 <nav>
                     <ul>
                         <li class="main-menu"><a href="#">여행하기</a></li>
                         <li class="main-menu"><a href="#">커뮤니티</a></li>
-                        <li class="main-menu"><a href="#">마이페이지</a></li>
+                        <li class="main-menu"><a href="#">공지사항</a></li>
+                        <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
+                        <!-- 마이페이지 / 관리자 페이지  -->
+                        <li class="main-menu" v-if="status === 'u'">
+                            <a href="/main-myPage.do">마이페이지</a>
+                        </li>
+                        <li class="main-menu" v-else-if="status === 'a'">
+                            <a href="/admin-page.do">관리자 페이지</a>
+                        </li>
+
                     </ul>
                 </nav>
 
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <div class="login-btn">
-                        <button>로그인</button>
+                        <div class="login-btn">
+                            <button @click="goToLogin">로그인/회원가입</button>
+                        </div>
+
                     </div>
                 </div>
             </header>
+            <div class="map-banner-slider">
+                <div class="slider-track" id="sliderTrack">
+                    <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
+                    <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
+                    <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
+                    <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
+                    <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
+                </div>
+            </div>
+
             <div class="hero-section">
                 <div class="map_wrap">
+
+
+
                     <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+
+
                     <ul id="category">
                         <li id="BK9"><span class="category_bg bank"></span>은행</li>
                         <li id="MT1"><span class="category_bg mart"></span>마트</li>
@@ -286,10 +315,27 @@
                         placeOverlay: null,
                         contentNode: null,
                         markers: [],
-                        currCategory: ''
+                        currCategory: '',
+                        id: "",
+                        pwd: "",
+                        status: 'u'
                     };
                 },
                 methods: {
+
+                    goToLogin() {
+                        location.href = "/login.do";
+                    },
+
+                    goToMyPage() {
+                        location.href = "/myPage.do";
+                    },
+
+                    goToService() {
+                        location.href = "/Service.do";
+                    },
+
+                    // ------------------------------- 카카오 지도 --------------------------------                    
                     onCategoryChange(event) {
                         this.currCategory = event.target.value;
                         this.searchPlaces();
@@ -336,9 +382,12 @@
                 },
                 mounted() {
                     let self = this;
+                    // ------------------------------구글 번역 -------------------------------------------                    
                     {
                         new google.translate.TranslateElement({ pageLanguage: 'ko', autoDisplay: false }, 'google_translate_element');
                     }
+
+                    // ------------------------------카카오 지도 ------------------------------------------                    
                     const mapContainer = document.getElementById('map');
                     const mapOption = {
                         center: new kakao.maps.LatLng(37.566826, 126.9786567),
@@ -367,13 +416,58 @@
                             this.searchPlaces();
                         });
                     });
+
+                    const track = document.getElementById('sliderTrack');
+                    const speed = 1;
+                    let position = 0;
+
+                    // 이미지 정보
+                    const images = track.querySelectorAll('img');
+                    const imageWidth = images[0].offsetWidth;
+                    const gap = 5;
+                    const imageCount = images.length;
+
+                    // ✅ 전체 너비 계산: 이미지 너비 + gap 포함
+                    const totalWidth = imageCount * imageWidth + (imageCount - 1) * gap;
+                    track.style.width = totalWidth + 'px';
+
+                    // ✅ 복제 트랙 생성
+                    const clone = track.cloneNode(true);
+                    clone.setAttribute('id', 'sliderClone');
+                    clone.classList.add('slider-track');
+                    track.parentNode.appendChild(clone);
+
+                    // ✅ clone 위치: totalWidth + gap 추가해서 간격 확보
+                    const cloneOffset = totalWidth + gap;
+                    clone.style.left = cloneOffset + 'px';
+                    track.style.position = 'absolute';
+                    clone.style.position = 'absolute';
+
+                    function animateSlider() {
+                        position -= speed;
+                        track.style.left = position + 'px';
+                        clone.style.left = (position + cloneOffset) + 'px';
+
+                        if (position <= -cloneOffset) {
+                            position = 0;
+                        }
+
+                        requestAnimationFrame(animateSlider);
+                    }
+
+                    animateSlider();
+
+
+
+
+
                 }
 
                 // **!!! 카카오맵 초기화 코드 모두 제거 (initMap으로 분리) !!!**
 
                 // Google 번역 초기화 (카카오맵과 무관하므로 여기에 유지)
 
-
+                //------------------------------------------------------------------------------------
 
             });
             app.mount('#app');
