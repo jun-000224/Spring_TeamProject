@@ -9,6 +9,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="/js/page-change.js"></script>
         <style>
             table,
             tr,
@@ -56,8 +57,10 @@
                     </td>
                 </tr>
                 <div>
-                    <button @click="fnRemove()">삭제</button> 
-                    <!-- <button @click="fnUpdate(item.boardNo)">수정</button> -->
+                    <button @click="fnRemove">삭제</button> 
+                </div>
+                <div>
+                     <button @click="fnUpdate">수정</button>
                 </div>
 
 
@@ -174,6 +177,16 @@
                         }
                     });
                 },
+          
+                fnUpdate : function(){
+                    
+                    let self = this;
+                    console.log(self.boardNo);
+                pageChange("board-edit.do", {boardNo : self.boardNo}); 
+            },
+             
+
+                
             }, // methods
             mounted() {
                 // 처음 시작할 때 실행되는 부분

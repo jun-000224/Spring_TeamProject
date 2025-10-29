@@ -14,6 +14,8 @@ public class Board {
 	private String udateTime;
 	private String type;
 	
-	
+	private String fileNo;
+	private String filePath;
+	private String fileName;
 	
 }

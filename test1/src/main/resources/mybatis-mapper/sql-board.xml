@@ -104,8 +104,8 @@
 	
 	<insert id="addBoard" parameterType="hashmap">
 		INSERT INTO TBL_BOARD
-		VALUES(BOARD_SEQ.NEXTVAL ,'RR', #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  <!--마지막 수정사항-->
-	</insert>
+		VALUES(BOARD_SEQ.NEXTVAL ,#{userId}, #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  <!--마지막 수정사항-->
+	</insert><!--수정사항 있음-->
 	
 	<update id="updateCnt" parameterType="hashmap">
 		UPDATE TBL_BOARD
@@ -117,12 +117,16 @@
 		DELETE TBL_BOARD
 		WHERE BOARDNO = #{boardNo}
 	</delete>	
-		<update id="updateView" parameterType="hashmap">
+	
+	<update id="updateView" parameterType="hashmap">
 		UPDATE TBL_BOARD
-		SET 
-    		CNT = CNT + 1
+    	SET 
+    	TITLE = #{title}, CONTENTS = #{contents}
     	WHERE BOARDNO = #{boardNo}
 	</update>
+	
+	
+	
 	
 </mapper>
 

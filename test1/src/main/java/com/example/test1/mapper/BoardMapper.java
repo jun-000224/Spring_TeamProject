@@ -39,4 +39,10 @@ public interface BoardMapper {
 	
 	//view에서 게시글 삭제
 	int viewRemove(HashMap<String , Object> map);
+	
+	//view에서 게시글 수정
+	int updateView(HashMap<String , Object> map);
+	
+	
+	
 }
