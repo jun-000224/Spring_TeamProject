@@ -9,7 +9,7 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=82a2d2e3883834b8a2b2cf1015b17f3e"></script>
 <style>
-    #map { width: 600px; height: 400px; }
+   
     ul{
         padding: 0px;
         margin: 0px;
@@ -17,42 +17,109 @@
     ul li{
         list-style: none;
     }
+    .main-section{
+        display: flex;
+        justify-content: space-between;
+        margin:  0 auto;
+        padding: 10px 10px;
+    }
+    .day-con{
+        width: 25%;
+        padding: 10px 10px;
+        flex-direction: columns;
+        box-shadow: -1px 5px 18px 0px;
+        border-radius: 20px;
+    }
+     #map { 
+        width: 70%;
+        border-radius: 20px;
+     }
+    .day-num{
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .day-item-con{
+        padding: 10px 10px;
+        border: 1px solid black;
+        border-radius: 16px;
+        cursor: pointer;
+    }
+    .day-item-con a{
+        color: black;
+        text-decoration: none;
+    }
+    .detail-con{
+       display: flex; gap: 10px; margin: 20px 0; justify-content: center;
+    }
+    .detail-btn button{
+        padding: 8px 16px; border-radius: 20px; border: none; background: #007bff; color: white; cursor: pointer; transition: 0.2s;
+    }
+     .detail-btn button.active{
+        background: #0056b3;
+     }
+     .detail-item-con{
+        padding: 16px , 0;
+     }
+     .item-con{
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: row;
+     }
+     .box{
+        border-radius: 18px;
+        background-color: lightblue;
+        overflow: hidden;
+     }
+     .box:not(:last-child){
+        margin-right: 24px ;
+     }
+     .item-title{
+        font-size: 24px;
+        font-weight: 600;
+     }
+     
 </style>
 </head>
 <body>
 <div id="app">
-    <div style="display: flex;">
-        <div>
-            <div>
-                <span>1일차</span>
+    <div class="main-section">
+        <div class="day-con">
+            <div class="day-list" v-for="(dayList, dayNum) in positionsByDay" :key="dayNum" style="margin-bottom: 20px;">
+                <div class="day-num">{{ dayNum }}일차</div>
+                <ul >
+                    <li class="day-item-con" v-for="item in dayList"  style="margin-bottom: 8px;" @click="fnMove(item)">
+                            {{ item.title }}
+                        <div style="font-size: 12px; color: gray;">{{ item.addr1 }}</div>
+                    </li>
+                </ul>
             </div>
-            <div>
-                <span>10월28일</span>
-            </div>
-            <div>
-                <span>선택한 카테고리</span>
-            </div>
-            <ul v-for="item in positions">
-                <li> 
-                    <a href="javascript:;" @click="fnMove(item)">
-                        {{item.title}}
-                    </a> 
-                </li>
-            </ul>
         </div>
         <div id="map"></div>
     </div>
     <div>
-        <div>
-            <button>1일차</button>
+        <div class="detail-con">
+            <div class="detail-btn" v-for="(dayList, dayNum) in positionsByDay" :key="dayNum">
+                <button @click="fnClick(dayNum)" :class="{ active: selectDay === dayNum }">{{dayNum}}</button>
+            </div>
         </div>
-        <div>
-            <ul v-for="item in positions">
-                <!-- <li><img :src="info.firstimage" alt="" style="width: 200px;"></li> -->
-                <li>{{item.title}}</li>
-                <!-- <li>{{info.addr1}}</li>
-                <li>{{info.overview}}</li> -->
-            </ul>
+        <div class="detail-item-con" v-for="(dayList, dayNum) in positionsByDay">
+            <div  v-if="selectDay == dayNum">
+                <h2>{{ dayNum }}일차</h2>
+                <div  class="item-con">
+                    <div class="box" v-for="item in dayList">
+                        <img :src="item.firstimage" alt="" style="width: 100%; height: 192px; object-fit: cover;">
+                        <div class="item-title">{{item.title}}</div>
+                        <div>
+                            {{item.addr1}}
+                        </div>
+                        <div>
+                            {{item.overview}}
+                        </div>
+                    </div>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -62,17 +129,17 @@ const app = Vue.createApp({
     data() {
         return {
             positions: [
-                { title: '경포해수욕장', lat: 37.8058292968, lng: 128.9074668585 ,contentid:128758},
-                { title: '안목해변', lat: 37.7726505813, lng: 128.9473504054 ,contentid:128758},
-                { title: '강릉 중앙시장', lat: 37.7540517822, lng: 128.8986609221 ,contentid:128758}
+                
             ],
+            positionsByDay:{},
             container : "",
             options : {
             center: new kakao.maps.LatLng(37.785, 128.92),
             level: 8
             },
             map :"",
-            info:{}
+            info:[],
+            selectDay:"1"
         };
     },
     methods: {
@@ -93,70 +160,105 @@ const app = Vue.createApp({
             let self = this;
             var moveLatLon = new kakao.maps.LatLng(item.lat, item.lng);
             self.map.setCenter(moveLatLon);    
-            let param = {};
-            $.ajax({
-                url: '/share.dox',
-                type: 'GET',
-                // data: { keyword: item.contentid },
-                 data: { param },
-                success: function(data){
-                    console.log(data);
-                    self.info = data[0];
-                    console.log(self.info);
-                    
-                }
-            });
-            
         },
+       fninfo() {
+        let self = this;
+        $.ajax({
+            url: '/share.dox',
+            type: 'GET',
+            success: function(data) {
+                self.info = data;  // dayMap 전체
+                console.log(data);
+                
+            //키값 넣어주기
+            const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
+            for (let i = 0; i < days.length; i++) {
+                const day = days[i];
+                const dayList = data[day];
+                self.positionsByDay[day] = [];
+
+                for (let j = 0; j < dayList.length; j++) {
+                    const item = dayList[j];
+                    self.positionsByDay[day].push({
+                        title: item.title,
+                        lat: parseFloat(item.mapy),
+                        lng: parseFloat(item.mapx),
+                        overview: item.overview,
+                        dayNum: day,
+                        reserv_date: item.reserv_date,
+                        firstimage:item.firstimage,
+                        addr1:item.addr1
+                    });
+                }
+                console.log(dayList);
+                
+            }
+
+            self.addMarkersAndLinesByDay();
+        }
+    });
+},
+fnClick(dayNum){
+    let self = this;
+    self.selectDay = dayNum;
+},
+
+addMarkersAndLinesByDay() {
+    let self = this;
+    const colors = ['red', 'blue', 'green', 'orange', 'purple']; // day별 색상
+
+    Object.keys(self.positionsByDay).forEach((day, idx) => {
+        const positions = self.positionsByDay[day];
+        const color = colors[idx % colors.length];
+
+        // 마커
+        positions.forEach(pos => {
+            const marker = new kakao.maps.Marker({
+                map: self.map,
+                position: new kakao.maps.LatLng(pos.lat, pos.lng),
+                title: pos.title,
+                // markerImage 옵션으로 색상/이미지도 바꿀 수 있음
+            });
+        });
+
+        // 선
+        const linePath = positions.map(p => new kakao.maps.LatLng(p.lat, p.lng));
+        const polyline = new kakao.maps.Polyline({
+            path: linePath,
+            strokeWeight: 3,
+            strokeColor: color, // 일자별 색상
+            strokeOpacity: 1,
+            strokeStyle: 'solid'
+        });
+        polyline.setMap(self.map);
+
+        // 거리 표시 (선 중간)
+        for (let i = 0; i < positions.length - 1; i++) {
+            const p1 = positions[i];
+            const p2 = positions[i + 1];
+
+            const midLat = (p1.lat + p2.lat) / 2;
+            const midLng = (p1.lng + p2.lng) / 2;
+
+            const distance = self.getDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+            const overlay = new kakao.maps.CustomOverlay({
+                map: self.map,
+                position: new kakao.maps.LatLng(midLat, midLng),
+                content: '<div style="padding:2px 5px; background:yellow; border:1px solid black; font-size:12px;">' + distance.toFixed(2) + ' km</div>'
+            });
+        }
+    });
+}
+
         
     },
     mounted() {
         const self = this;
-
         // 지도 생성
         self.container = document.getElementById('map');
         self.map = new kakao.maps.Map(self.container, self.options);
-        // 마커 생성
-        const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
-        for (let i = 0; i < self.positions.length; i++) {
-            const imageSize = new kakao.maps.Size(24, 35);
-            const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-            new kakao.maps.Marker({
-                map: self.map,
-                position: new kakao.maps.LatLng(self.positions[i].lat, self.positions[i].lng),
-                title: self.positions[i].title,
-                image: markerImage
-            });
-        }
-
-        // Polyline 생성
-        const linePath = self.positions.map(p => new kakao.maps.LatLng(p.lat, p.lng));
-        const polyline = new kakao.maps.Polyline({
-            path: linePath,
-            strokeWeight: 3,
-            strokeColor: 'black',
-            strokeOpacity: 1,
-            strokeStyle: 'dashed'
-        });
-        polyline.setMap(self.map);
-
-        // 각 선의 중간에 거리 표시
-        for (let i = 0; i < self.positions.length - 1; i++) {
-            const p1 = self.positions[i];
-            const p2 = self.positions[i + 1];
-
-            // 중간 좌표 계산
-            const midLat = (p1.lat + p2.lat) / 2;
-            const midLng = (p1.lng + p2.lng) / 2;
-            
-            const distance = self.getDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-            const distanceStr = distance.toFixed(2);
-            const overlay = new kakao.maps.CustomOverlay({
-                map: self.map,
-                position: new kakao.maps.LatLng(midLat, midLng),
-                content: '<div style="padding:2px 5px; background:yellow; border:1px solid black; font-size:12px;">' + distanceStr + ' km</div>'
-            });
-        }
+        self.fninfo();
+      
     }
 });
 

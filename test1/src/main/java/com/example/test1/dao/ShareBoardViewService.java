@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -30,68 +31,20 @@ public class ShareBoardViewService {
 	@Autowired
 	ShareBoardMapper ShareBoardMapper;
 	
-	//키워드로 검색하기
-	public List<HashMap<String, Object>> getTourData(String keyword) {
-		// TODO Auto-generated method stub
-		List<HashMap<String, Object>> resultMap = new ArrayList<>();
-
-
-		try {
-           String url = "https://apis.data.go.kr/B551011/KorService2/searchKeyword2"			
-                    + "?ServiceKey=" + apiKey
-                    + "&MobileOS=ETC&MobileApp=AppTest"
-                    + "&keyword=" + keyword;
-
-            RestTemplate restTemplate = new RestTemplate();
-            byte[] bytes = restTemplate.getForObject(url, byte[].class);
-            String xmlResponse = new String(bytes); // 공공데이터가 EUC-KR인 경우
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            InputSource is = new InputSource(new StringReader(xmlResponse));
-
-            Document doc = factory.newDocumentBuilder().parse(is);
-
-            NodeList items = doc.getElementsByTagName("item");
-
-            for (int i = 0; i < items.getLength(); i++) {
-                Element item = (Element) items.item(i);
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("title", getTagValue(item, "title"));
-                map.put("addr1", getTagValue(item, "addr1"));
-                map.put("mapx", getTagValue(item, "mapx"));
-                map.put("mapy", getTagValue(item, "mapy"));
-                map.put("firstimage", getTagValue(item, "firstimage"));
-                map.put("contentid", getTagValue(item, "contentid"));
-                map.put("tel", getTagValue(item, "tel"));
-                map.put("overview",getTagValue(item, "overview"));
-                map.put("contentTypeId",getTagValue(item, "contentTypeId"));
-                resultMap.add(map);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return resultMap;
-    }
-
-    private String getTagValue(Element element, String tagName) {
-        NodeList list = element.getElementsByTagName(tagName);
-        if (list != null && list.getLength() > 0) {
-            return list.item(0).getTextContent();
-        }
-        return "";
-    }
+	
     //디테일 정보
-    public List<HashMap<String, Object>> getInfo(String contentId) {
+    public List<HashMap<String, Object>> getInfo(String contentId, String day , int dayNum)throws Exception {
 		// TODO Auto-generated method stub
 		List<HashMap<String, Object>> resultMap = new ArrayList<>();
 
 		
-		try {
+		
 			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
                     + "?ServiceKey=" + apiKey
                     + "&MobileOS=ETC&MobileApp=AppTest"
                     + "&contentId=" + contentId;
 
+			System.out.println(url);
             RestTemplate restTemplate = new RestTemplate();
             byte[] bytes = restTemplate.getForObject(url, byte[].class);
             String xmlResponse = new String(bytes); // 공공데이터가 EUC-KR인 경우
@@ -115,11 +68,11 @@ public class ShareBoardViewService {
                 map.put("tel", getTag(item, "tel"));
                 map.put("overview",getTag(item, "overview"));
                 map.put("homepage",getTag(item, "homepage"));
+                map.put("day", day);
+                map.put("dayNum", dayNum);
                 resultMap.add(map);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       
         return resultMap;
     }
 
@@ -130,14 +83,59 @@ public class ShareBoardViewService {
         }
         return "";
     }
-    //contentId 리스트
-    public HashMap<String, Object> contentid(HashMap<String, Object> map){
-    	HashMap<String, Object> resultMap = new HashMap<String, Object>();
-    	
-    	List<Share> info =ShareBoardMapper.sharInfo(map);
-    	System.out.println(info);
-    	
-    	return resultMap;
+  //contentId 리스트
+    public Map<Integer, List<HashMap<String, Object>>> fetchAllInfo(HashMap<String, Object> map) {
+        Map<Integer, List<HashMap<String, Object>>> dayMap = new HashMap<>();
+
+        // DB에서 contentId 리스트 가져오기
+        List<Share> shares = ShareBoardMapper.sharInfo(map);
+
+        for (Share share : shares) {
+            String contentId = String.valueOf(share.getContentId());
+            if (contentId == null || contentId.isEmpty()) continue;
+
+            int dayNum = share.getDayNum();
+            String reserveDate = share.getDay();
+
+            List<HashMap<String, Object>> infoList = new ArrayList<>();
+            boolean success = false;
+            int attempts = 0;
+            int maxRetries = 5; // 최대 5번 재시도
+
+            while (!success && attempts < maxRetries) {
+                try {
+                    infoList = getInfo(contentId, reserveDate, dayNum);
+                    success = true; // 성공하면 반복 종료
+                } catch (Exception e) {
+                    attempts++;
+                    System.out.println("API 호출 실패 contentId: " + contentId + ", 재시도 " + attempts + ", 에러: " + e.getMessage());
+                    try {
+                        Thread.sleep(1000); // 1초 대기 후 재시도
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+
+            // 최대 재시도 후에도 실패하면 경고 출력하고 빈 리스트 처리
+            if (!success) {
+                System.out.println("최종 실패 contentId: " + contentId + ", 다음 contentId로 넘어갑니다.");
+                infoList = new ArrayList<>();
+            }
+
+            // dayNum별로 안전하게 map에 추가
+            for (HashMap<String, Object> infoMap : infoList) {
+                if (infoMap.get("dayNum") != null) {
+                    dayNum = Integer.parseInt(String.valueOf(infoMap.get("dayNum")));
+                }
+                dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
+            }
+        }
+
+        return dayMap;
     }
+
+
+
 	
 }

@@ -4,9 +4,15 @@
 
 <mapper namespace="com.example.test1.mapper.ShareBoardMapper">
 	<select id="sharInfo" parameterType="hashmap" resultType="com.example.test1.model.Share">
-		SELECT CONTENT_ID FROM 
-		RESERVATION R
-		INNER JOIN POI P ON R.RES_NUM = P.RES_NUM
+		SELECT 
+	    t.*,
+	    (SELECT COUNT(DISTINCT TRUNC(t2.RESERV_DATE))
+	     FROM POI t2
+	     WHERE TRUNC(t2.RESERV_DATE) &lt;= TRUNC(t.RESERV_DATE)
+	    ) AS day_num ,TO_CHAR(RESERV_DATE,'YYYY-MM-DD') AS day
+		FROM POI t
+		ORDER BY 
+	    t.RESERV_DATE
 	</select>
 
 </mapper>
