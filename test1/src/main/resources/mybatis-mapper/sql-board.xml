@@ -4,8 +4,79 @@
 
 <mapper namespace="com.example.test1.mapper.BoardMapper">
 	<select id="BoardList" parameterType="hashmap" resultType="com.example.test1.model.Board">
-		SELECT *
-		FROM TBL_BOARD
+		SELECT 
+		    B.*, 
+		    DECODE(TO_CHAR(CDATETIME, 'YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(CDATETIME,'HH24:MI:SS'),TO_CHAR(CDATETIME, 'YYYY-MM-DD')) AS CDATE, 
+		    NVL(CCNT, 0) AS COMMENTCNT
+		FROM TBL_BOARD B
+		LEFT JOIN (
+		    SELECT BOARDNO, COUNT(*) AS CCNT
+		    FROM TBL_COMMENT
+		    GROUP BY BOARDNO
+		) T ON T.BOARDNO = B.BOARDNO
+		WHERE 1=1
+		
+		<if test="type != '' and type != null">
+			AND TYPE = #{type}
+		</if>
+		<if test="searchOption == 'all'">
+		AND (TITLE LIKE '%' || #{keyword} || '%' OR
+			USERID LIKE '%' || #{keyword} || '%'
+			)
+		 
+		</if>
+		
+		<if test="searchOption == 'id'">
+		AND USERID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'title'">
+		AND TITLE LIKE '%' || #{keyword} || '%' 
+		</if>
+		
+		
+		<if test="order == 'time'">
+			ORDER BY B.CDATETIME DESC
+		</if>
+		<if test="order == 'num'">
+			ORDER BY B.BOARDNO ASC
+		</if>
+		<if test="order == 'title'">
+			ORDER BY TITLE ASC
+		</if>
+		<if test="order == 'cnt'">
+			ORDER BY CNT DESC
+		</if>
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	
+	<select id="selectBoardCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) 
+		FROM TBL_BOARD B
+		
+		WHERE 1=1
+		
+		
+		<if test="type != '' and type != null">
+			AND TYPE = #{type}
+		</if>
+		<if test="searchOption == 'all'">
+		AND (TITLE LIKE '%' || #{keyword} || '%' OR
+			USERID LIKE '%' || #{keyword} || '%'
+			)
+		 
+		</if>
+		
+		<if test="searchOption == 'id'">
+		AND USERID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'title'">
+		AND TITLE LIKE '%' || #{keyword} || '%' 
+		</if>
+		
+		
+		
+		
 	</select>
 	
 	<select id="selectBoard" parameterType="hashmap" resultType="com.example.test1.model.Board">
@@ -24,16 +95,34 @@
 	<insert id="insertComment" parameterType="hashmap">
 		INSERT INTO TBL_COMMENT
 		VALUES(COMMENT_SEQ.NEXTVAL ,#{boardNo}, 'user01', NULL , #{contents}, 'F', SYSDATE, SYSDATE, NULL)
-	</insert>
+	</insert>   <!--수정사항 있음-->
 	
 	<delete id="removeList" parameterType="hashmap">
 		DELETE TBL_BOARD
 		WHERE BOARDNO = #{boardNo}
-	</delete>
+	</delete>	
 	
+	<insert id="addBoard" parameterType="hashmap">
+		INSERT INTO TBL_BOARD
+		VALUES(BOARD_SEQ.NEXTVAL ,'RR', #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  <!--마지막 수정사항-->
+	</insert>
 	
-	
-	
+	<update id="updateCnt" parameterType="hashmap">
+		UPDATE TBL_BOARD
+		SET 
+    		CNT = CNT + 1
+    	WHERE BOARDNO = #{boardNo}
+	</update>
+	<delete id="viewRemove" parameterType="hashmap">
+		DELETE TBL_BOARD
+		WHERE BOARDNO = #{boardNo}
+	</delete>	
+		<update id="updateView" parameterType="hashmap">
+		UPDATE TBL_BOARD
+		SET 
+    		CNT = CNT + 1
+    	WHERE BOARDNO = #{boardNo}
+	</update>
 	
 </mapper>
 

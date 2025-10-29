@@ -27,12 +27,17 @@ public class BoardController {
         return "/board-list";
     }
 	@RequestMapping("/board-view.do") 
+	
     public String view(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		System.out.println(map);
 		request.setAttribute("boardNo", map.get("boardNo"));
         return "/board-view";
     }
-	
+	@RequestMapping("/board-add.do") 
+    public String add(Model model) throws Exception{ 
+
+        return "/board-add";
+    }
 	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
@@ -70,6 +75,21 @@ public class BoardController {
 		
 		return new Gson().toJson(resultMap);
 	}
-	
+	@RequestMapping(value = "/board-add.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String addBoardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.addBoardList(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	@RequestMapping(value = "/view-delete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String viewRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.RemoveView(map);
+		
+		return new Gson().toJson(resultMap);
+	}
 	
 }
