@@ -2,6 +2,8 @@ package com.example.test1.controller;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,5 +44,33 @@ public class mainController {
     public String Service(Model model) throws Exception{ 
 		
         return "main-Service";
+    }
+	
+//  --------------- 공지사항	
+	@RequestMapping("/main-Notice.do") 
+    public String Notice(Model model) throws Exception{ 
+		
+        return "main-Notice";
     }	
+	
+//  --------------- 커뮤니티	
+	@RequestMapping("/main-Community.do") 
+    public String Community(Model model) throws Exception{ 
+		
+        return "main-Community";
+    }		
+	
+//  --------------- 여행하기	
+	@RequestMapping("/main-Traveling.do") 
+    public String Traveling(Model model) throws Exception{ 
+		
+        return "main-Traveling";
+    }	
+	
+    @RequestMapping("/logout.do")
+    public String logout(HttpSession session) {
+        session.removeAttribute("sessionNickname"); // 닉네임만 제거
+        return "redirect:/main-list.do"; // 메인 페이지로 이동
+    }
+
 }
