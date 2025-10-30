@@ -220,9 +220,36 @@
         },
         methods: {
           // (지역 API 자리만 유지)
-          async loadSido() { this.sidoList = []; },
-          async loadSigungu() { this.sigunguList = []; },
-          onChangeSido() { this.selectedSigungu = ''; this.sigunguList = []; },
+          async loadSido() { 
+            const self = this;
+            self.loadingSido = true;
+            self.sidoList = [];
+            try {
+              const data = await $.get(ctx + '/api/areas/sido');
+              self.sidoList = Array.isArray(data) ? data : [];
+            } catch (e) {
+              console.error('시/도 조회 실패', e);
+              alert('시/도 목록을 불러오지 못했습니다.');
+            } finally {
+              self.loadingSido = false;
+            }
+          },
+          async loadSigungu() { 
+            const self = this;
+            self.loadingSigungu = true;
+            self.sigunguList = [];
+            try {
+              if (!self.selectedSido) return;
+              const data = await $.get(ctx + '/api/areas/sigungu', { areaCode: self.selectedSido });
+              self.sigunguList = Array.isArray(data) ? data : [];
+            } catch (e) {
+              console.error('시/군/구 조회 실패', e);
+              alert('시/군/구 목록을 불러오지 못했습니다.');
+            } finally {
+              self.loadingSigungu = false;
+            }
+          },
+          onChangeSido() { this.selectedSigungu = ''; this.sigunguList = []; this.loadSigungu(); },
 
           toggleTheme(code) {
             const i = this.selectedThemes.indexOf(code);
@@ -235,8 +262,8 @@
           fnCreate() {
             const param = {
               themes: this.selectedThemes,
-              areaCode: null,
-              sigunguCode: null,
+              areaCode: this.selectedSido || null,
+              sigunguCode: this.selectedSigungu || null,
               headCount: this.headCount,
               budget: this.budget,
               budgetWeights: {
@@ -267,7 +294,7 @@
             console.log('전송 파라미터(테스트):', param);
           },
 
-          // ▼ 모달 열기/닫기
+          // 모달 열기/닫기
           openBoardModal() {
             this.showBoardModal = true;
             document.documentElement.style.overflow = 'hidden';
