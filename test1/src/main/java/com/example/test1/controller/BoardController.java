@@ -44,7 +44,7 @@ public class BoardController {
     }
 	
 	
-@RequestMapping("/board-edit.do") 
+	@RequestMapping("/board-edit.do") 
 	
     public String upView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		System.out.println(map);
@@ -114,6 +114,70 @@ public class BoardController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping("/fileUpload.dox")
+	public String result(@RequestParam("file1") MultipartFile multi, @RequestParam("boardNo") int boardNo, HttpServletRequest request,HttpServletResponse response, Model model)
+	{
+		
+		String url = null;
+		String path="c:\\img";
+		try {
+
+			//String uploadpath = request.getServletContext().getRealPath(path);
+			String uploadpath = path;
+			String originFilename = multi.getOriginalFilename();
+			String extName = originFilename.substring(originFilename.lastIndexOf("."),originFilename.length());
+			long size = multi.getSize();
+			String saveFileName = genSaveFileName(extName);
+			
+//			System.out.println("uploadpath : " + uploadpath);
+			System.out.println("originFilename : " + originFilename);
+			System.out.println("extensionName : " + extName);
+			System.out.println("size : " + size);
+			System.out.println("saveFileName : " + saveFileName);
+			String path2 = System.getProperty("user.dir");
+			System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
+			if(!multi.isEmpty())
+			{
+				File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
+				multi.transferTo(file);
+				
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("fileName", saveFileName);
+				map.put("path", "/img/" + saveFileName);
+				map.put("boardNo", boardNo);
+				map.put("orgName", originFilename);
+				
+				
+				// insert 쿼리 실행
+				boardService.addBoardImg(map);
+				
+				model.addAttribute("fileName", multi.getOriginalFilename());
+				model.addAttribute("uploadPath", file.getAbsolutePath());
+				
+				return "redirect:list.do";
+			}
+		}catch(Exception e) {
+			System.out.println(e);
+		}
+		return "redirect:list.do";
+	}
+	    
+	// 현재 시간을 기준으로 파일 이름 생성
+	private String genSaveFileName(String extName) {
+		String fileName = "";
+		
+		Calendar calendar = Calendar.getInstance();
+		fileName += calendar.get(Calendar.YEAR);
+		fileName += calendar.get(Calendar.MONTH);
+		fileName += calendar.get(Calendar.DATE);
+		fileName += calendar.get(Calendar.HOUR);
+		fileName += calendar.get(Calendar.MINUTE);
+		fileName += calendar.get(Calendar.SECOND);
+		fileName += calendar.get(Calendar.MILLISECOND);
+		fileName += extName;
+		
+		return fileName;
+	}
 
 	
 	
