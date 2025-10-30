@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Trip Clone Site</title>
+        <title>Team Project</title>
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -186,9 +186,6 @@
 
     <body>
         <div id="app">
-
-
-
             <header>
                 <div class="logo">
                     <a href="http://localhost:8081/main-list.do">
@@ -200,15 +197,15 @@
                 </h1>
                 <nav>
                     <ul>
-                        <li class="main-menu"><a href="#">여행하기</a></li>
-                        <li class="main-menu"><a href="#">커뮤니티</a></li>
-                        <li class="main-menu"><a href="#">공지사항</a></li>
+                        <li class="main-menu"><a href="/main-Traveling.do">여행하기</a></li>
+                        <li class="main-menu"><a href="/main-Community.do">커뮤니티</a></li>
+                        <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
                         <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
                         <!-- 마이페이지 / 관리자 페이지  -->
-                        <li class="main-menu" v-if="status === 'u'">
+                        <li class="main-menu" v-if="status === 'U'">
                             <a href="/main-myPage.do">마이페이지</a>
                         </li>
-                        <li class="main-menu" v-else-if="status === 'a'">
+                        <li class="main-menu" v-else-if="status === 'A'">
                             <a href="/admin-page.do">관리자 페이지</a>
                         </li>
 
@@ -216,96 +213,153 @@
                 </nav>
 
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="login-btn">
-                        <div class="login-btn">
-                            <button @click="goToLogin">로그인/회원가입</button>
-                        </div>
+                    <!-- 로그인 전 -->
+                    <div class="login-btn" v-if="!isLoggedIn">
+                        <button @click="goToLogin">로그인/회원가입</button>
+                    </div>
 
+                    <!-- 로그인 후 -->
+                    <div class="user-info" v-else style="position: relative;">
+                        <span @click="toggleLogoutMenu" class="nickname">{{ nickname }}님 환영합니다!</span>
+
+                        <ul v-if="showLogoutMenu" class="logout-dropdown">
+                            <li @click="goToMyPage">회원탈퇴</li>
+                            <li @click="goToSettings">내 포인트 : </li>
+                            <li @click="logout">로그아웃</li>
+                        </ul>
                     </div>
                 </div>
+
+
+
+
+
+
             </header>
-            <div class="map-banner-slider">
-                <div class="slider-track" id="sliderTrack">
-                    <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
-                    <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
-                    <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
-                    <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
-                    <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
-                </div>
-            </div>
 
-            <div class="hero-section">
-                <div class="map_wrap">
-
-
-
-                    <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
-
-
-                    <ul id="category">
-                        <li id="BK9"><span class="category_bg bank"></span>은행</li>
-                        <li id="MT1"><span class="category_bg mart"></span>마트</li>
-                        <li id="PM9"><span class="category_bg pharmacy"></span>약국</li>
-                        <li id="AD5"><span class="category_bg oil"></span>주유소</li>
-                        <li id="CE7"><span class="category_bg cafe"></span>카페</li>
-                        <li id="CS2"><span class="category_bg store"></span>편의점</li>
-                        <li id="AD5"><span class="category_bg home"></span>숙소</li>
-                    </ul>
-                </div>
-            </div>
-            <main>
-                <div id="google_translate_element">
-                </div>
-            </main>
-            <footer>
-                <div class="footer-content">
-                    <div class="footer-links" style="display: flex">
-                        <div class="footer-section">
-                            <h4>회사 소개</h4>
-                            <ul>
-                                <li><a href="#">회사 연혁</a></li>
-                                <li><a href="#">인재 채용</a></li>
-                                <li><a href="#">투자자 정보</a></li>
-                                <li><a href="#">제휴 및 협력</a></li>
-                            </ul>
-                        </div>
-                        <div class="footer-section">
-                            <h4>지원</h4>
-                            <ul>
-                                <li><a href="#">고객센터</a></li>
-                                <li><a href="#">자주 묻는 질문</a></li>
-                                <li><a href="#">개인정보 처리방침</a></li>
-                                <li><a href="#">이용 약관</a></li>
-                            </ul>
-                        </div>
-                        <div class="footer-section">
-                            <h4>여행 상품</h4>
-                            <ul>
-                                <li><a href="#">호텔</a></li>
-                                <li><a href="#">항공권</a></li>
-                                <li><a href="#">렌터카</a></li>
-                                <li><a href="#">투어 & 티켓</a></li>
-                            </ul>
-                        </div>
-                        <div class="footer-section">
-                            <h4>문의 및 제휴</h4>
-                            <ul>
-                                <li><a href="#">파트너십 문의</a></li>
-                                <li><a href="#">광고 문의</a></li>
-                                <li><a href="#">이메일: team@project.com</a></li>
-                                <li><a href="#">대표전화: 02-1234-5678</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="footer-bottom">
-                        <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
-                        </p>
+            <!-- 가운데 정렬을 위한 래퍼 추가 -->
+            <div class="content-wrapper">
+                <!-- 배너 슬라이더 -->
+                <div class="map-banner-slider">
+                    <div class="slider-track" id="sliderTrack">
+                        <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
+                        <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
+                        <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
+                        <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
+                        <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
                     </div>
                 </div>
-            </footer>
+
+                <div class="hero-section">
+                    <div class="map_wrap">
+
+                        <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+                        <!-- 로드뷰 버튼 (오른쪽 상단) -->
+                        <button id="roadviewBtn" style="
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            z-index: 10;
+                            padding: 8px 12px;
+                            background-color: #0078FF;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            display: none;">로드뷰 보기</button>
+
+                        <div id="roadview" style="width:100%;height:400px;display:none;"></div>
+
+                        <ul id="category">
+                            <li id="BK9"><span class="category_bg bank"></span>은행</li>
+                            <li id="MT1"><span class="category_bg mart"></span>마트</li>
+                            <li id="PM9"><span class="category_bg pharmacy"></span>약국</li>
+                            <li id="AD5"><span class="category_bg oil"></span>주유소</li>
+                            <li id="CE7"><span class="category_bg cafe"></span>카페</li>
+                            <li id="CS2"><span class="category_bg store"></span>편의점</li>
+                            <li id="AD5"><span class="category_bg home"></span>숙소</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 지도 아래에 POI 순위 테이블 추가 -->
+                <div class="poi-card-section">
+                    <h2>📍 관심지점 예약 순위</h2>
+                    <div class="poi-card-container">
+                        <%-- 나중에 DB에서 받아온 리스트로 반복 처리 예정 --%>
+                            <div class="poi-card">
+                                <div class="poi-rank">1위</div>
+                                <div class="poi-name">서울역점</div>
+                                <div class="poi-address">서울 중구 한강대로 405</div>
+                                <div class="poi-reservation">예약 수: 128건</div>
+                            </div>
+
+                            <div class="poi-card">
+                                <div class="poi-rank">2위</div>
+                                <div class="poi-name">강남점</div>
+                                <div class="poi-address">서울 강남구 테헤란로 152</div>
+                                <div class="poi-reservation">예약 수: 97건</div>
+                            </div>
+                            <%-- ... --%>
+                    </div>
+                </div>
+                <br>
+                <main>
+                    <div class="table-wrapper">
+                        <table class="centered-table">
+                            <div id="google_translate_element">
+                            </div>
+                        </table>
+                    </div>
+                </main>
+                <footer>
+                    <div class="footer-content">
+                        <div class="footer-links" style="display: flex">
+                            <div class="footer-section">
+                                <h4>회사 소개</h4>
+                                <ul>
+                                    <li><a href="#">회사 연혁</a></li>
+                                    <li><a href="#">인재 채용</a></li>
+                                    <li><a href="#">투자자 정보</a></li>
+                                    <li><a href="#">제휴 및 협력</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-section">
+                                <h4>지원</h4>
+                                <ul>
+                                    <li><a href="#">고객센터</a></li>
+                                    <li><a href="#">자주 묻는 질문</a></li>
+                                    <li><a href="#">개인정보 처리방침</a></li>
+                                    <li><a href="#">이용 약관</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-section">
+                                <h4>여행 상품</h4>
+                                <ul>
+                                    <li><a href="#">호텔</a></li>
+                                    <li><a href="#">항공권</a></li>
+                                    <li><a href="#">렌터카</a></li>
+                                    <li><a href="#">투어 & 티켓</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-section">
+                                <h4>문의 및 제휴</h4>
+                                <ul>
+                                    <li><a href="#">파트너십 문의</a></li>
+                                    <li><a href="#">광고 문의</a></li>
+                                    <li><a href="#">이메일: team@project.com</a></li>
+                                    <li><a href="#">대표전화: 02-1234-5678</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="footer-bottom">
+                            <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
+                            </p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
         </div>
-
         <script>
             const app = Vue.createApp({
                 data() {
@@ -316,17 +370,25 @@
                         contentNode: null,
                         markers: [],
                         currCategory: '',
-                        id: "",
-                        pwd: "",
-                        status: 'u'
+                        id: "${sessionId}",
+                        status: "${sessionStatus}",
+                        nickname: "${sessionNickname}",
+                        name: "${sessionName}",
+                        showLogoutMenu: false,
                     };
                 },
+                computed: {
+                    isLoggedIn() {
+                        return this.nickname !== "";
+                    }
+                },
                 methods: {
-
-                    goToLogin() {
-                        location.href = "/login.do";
+                    toggleLogoutMenu() {
+                        this.showLogoutMenu = !this.showLogoutMenu;
                     },
-
+                    goToLogin() {
+                        location.href = "/member/login.do";
+                    },
                     goToMyPage() {
                         location.href = "/myPage.do";
                     },
@@ -334,144 +396,297 @@
                     goToService() {
                         location.href = "/Service.do";
                     },
+                    logout() {
 
-                    // ------------------------------- 카카오 지도 --------------------------------                    
-                    onCategoryChange(event) {
-                        this.currCategory = event.target.value;
-                        this.searchPlaces();
-                    },
-                    searchPlaces() {
-                        if (!this.currCategory) return;
-
-                        this.placeOverlay.setMap(null);
-                        this.removeMarker();
-
-                        this.ps.categorySearch(this.currCategory, this.placesSearchCB, { useMapBounds: true });
-                    },
-                    placesSearchCB(data, status, pagination) {
-                        if (status !== kakao.maps.services.Status.OK) return;
-
-                        this.removeMarker();
-
-                        for (let i = 0; i < data.length; i++) {
-                            this.displayMarker(data[i]);
-                        }
-                    },
-                    displayMarker(place) {
-                        const marker = new kakao.maps.Marker({
-                            map: this.map,
-                            position: new kakao.maps.LatLng(place.y, place.x)
-                        });
-
-                        this.markers.push(marker);
-
-                        kakao.maps.event.addListener(marker, 'click', () => {
-                            const content = `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`;
-                            this.contentNode.innerHTML = content;
-                            this.placeOverlay.setPosition(new kakao.maps.LatLng(place.y, place.x));
-                            this.placeOverlay.setMap(this.map);
-                        });
+                        // Vue 상태 초기화
+                        this.nickname = "";
+                        this.showLogoutMenu = false;
+                        location.href = "/logout.do"; // 서버에서 닉네임 제거 후 리디렉션
                     },
                     removeMarker() {
                         for (let i = 0; i < this.markers.length; i++) {
                             this.markers[i].setMap(null);
                         }
                         this.markers = [];
-                    }
+                    },
+                    goToMyPage() {
+                        location.href = "/main-myPage.do";
+                    },
+                    goToSettings() {
+                        location.href = "/settings.do";
+                    },
+                    LogoutMenu() {
+                        this.showLogoutMenu = !this.showLogoutMenu;
+                    },
 
+                    // ------------------------------- 카카오 지도 --------------------------------                    
+                    // ✅ 지도 초기화 함수로 분리
+                    initMap() {
+                        kakao.maps.load(() => {
+                            const mapContainer = document.getElementById('map');
+                            const roadviewContainer = document.getElementById('roadview');
+                            const roadviewBtn = document.getElementById('roadviewBtn');
+
+                            if (!mapContainer) return;
+
+                            const mapOption = {
+                                center: new kakao.maps.LatLng(37.566826, 126.9786567),
+                                level: 5
+                            };
+
+                            this.map = new kakao.maps.Map(mapContainer, mapOption);
+                            this.ps = new kakao.maps.services.Places(this.map);
+                            this.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
+                            this.contentNode = document.createElement('div');
+
+                            const roadview = new kakao.maps.Roadview(roadviewContainer);
+                            const roadviewClient = new kakao.maps.RoadviewClient();
+                            let lastClickedLatLng = null;
+
+                            kakao.maps.event.addListener(this.map, 'click', (mouseEvent) => {
+                                const clickedLatLng = mouseEvent.latLng;
+                                lastClickedLatLng = clickedLatLng;
+                                this.map.panTo(clickedLatLng);
+                                this.removeMarker();
+
+                                const marker = new kakao.maps.Marker({
+                                    position: clickedLatLng,
+                                    map: this.map
+                                });
+
+                                this.markers.push(marker);
+                                roadviewBtn.style.display = 'block';
+                            });
+
+                            roadviewBtn.addEventListener('click', () => {
+                                if (!lastClickedLatLng) return;
+
+                                roadviewClient.getNearestPanoId(lastClickedLatLng, 50, function (panoId) {
+                                    if (panoId) {
+                                        mapContainer.style.display = 'none';
+                                        roadviewContainer.style.display = 'block';
+                                        roadviewBtn.style.display = 'none';
+
+                                        roadview.setPanoId(panoId, lastClickedLatLng);
+
+                                        kakao.maps.event.addListenerOnce(roadview, 'init', function () {
+                                            const overlayContent = document.createElement('div');
+                                            const customOverlay = new kakao.maps.CustomOverlay({
+                                                content: overlayContent,
+                                                position: lastClickedLatLng,
+                                                xAnchor: 0.5,
+                                                yAnchor: 0.5
+                                            });
+
+                                            customOverlay.setMap(roadview);
+
+                                            const projection = roadview.getProjection();
+                                            const viewpoint = projection.viewpointFromCoords(
+                                                customOverlay.getPosition(),
+                                                customOverlay.getAltitude()
+                                            );
+                                            roadview.setViewpoint(viewpoint);
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    }
                 },
                 mounted() {
+                    this.$nextTick(() => {
+                        this.initMap();
+                        waitForImagesThenStartSlider();
+
+                  
+                    });
                     let self = this;
+
+                    if (this.nickname && this.nickname !== "${sessionNickname}") {
+                        this.isLoggedIn = true;
+                    }
                     // ------------------------------구글 번역 -------------------------------------------                    
                     {
                         new google.translate.TranslateElement({ pageLanguage: 'ko', autoDisplay: false }, 'google_translate_element');
                     }
 
-                    // ------------------------------카카오 지도 ------------------------------------------                    
-                    const mapContainer = document.getElementById('map');
-                    const mapOption = {
-                        center: new kakao.maps.LatLng(37.566826, 126.9786567),
-                        level: 5
-                    };
+                    const track = document.getElementById('sliderTrack');
+                    const images = track.querySelectorAll('img');
+                    let loadedCount = 0;
 
-                    this.map = new kakao.maps.Map(mapContainer, mapOption);
-                    this.ps = new kakao.maps.services.Places(this.map);
-
-                    this.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
-                    this.contentNode = document.createElement('div');
-                    this.contentNode.className = 'placeinfo_wrap';
-                    this.placeOverlay.setContent(this.contentNode);
-
-                    kakao.maps.event.addListener(this.map, 'idle', this.searchPlaces);
-
-                    // ✅ 이 줄이 빠졌을 경우 오류 발생
-                    const categoryItems = document.querySelectorAll('#category li');
-
-                    categoryItems.forEach(item => {
-                        item.addEventListener('click', () => {
-                            categoryItems.forEach(el => el.classList.remove('on'));
-                            item.classList.add('on');
-
-                            this.currCategory = item.id;
-                            this.searchPlaces();
-                        });
+                    images.forEach(img => {
+                        img.onload = () => {
+                            loadedCount++;
+                            if (loadedCount === images.length) {
+                                startSlider();
+                            }
+                        };
                     });
 
-                    const track = document.getElementById('sliderTrack');
-                    const speed = 1;
-                    let position = 0;
 
-                    // 이미지 정보
-                    const images = track.querySelectorAll('img');
-                    const imageWidth = images[0].offsetWidth;
-                    const gap = 5;
-                    const imageCount = images.length;
 
-                    // ✅ 전체 너비 계산: 이미지 너비 + gap 포함
-                    const totalWidth = imageCount * imageWidth + (imageCount - 1) * gap;
-                    track.style.width = totalWidth + 'px';
+                    //------------------------------------- 카카오 지도 -------------------------------------------
 
-                    // ✅ 복제 트랙 생성
-                    const clone = track.cloneNode(true);
-                    clone.setAttribute('id', 'sliderClone');
-                    clone.classList.add('slider-track');
-                    track.parentNode.appendChild(clone);
 
-                    // ✅ clone 위치: totalWidth + gap 추가해서 간격 확보
-                    const cloneOffset = totalWidth + gap;
-                    clone.style.left = cloneOffset + 'px';
-                    track.style.position = 'absolute';
-                    clone.style.position = 'absolute';
 
-                    function animateSlider() {
-                        position -= speed;
-                        track.style.left = position + 'px';
-                        clone.style.left = (position + cloneOffset) + 'px';
 
-                        if (position <= -cloneOffset) {
-                            position = 0;
-                        }
+                    this.$nextTick(() => {
+                        kakao.maps.load(() => {
+                            const mapContainer = document.getElementById('map');
+                            const roadviewContainer = document.getElementById('roadview');
+                            const roadviewBtn = document.getElementById('roadviewBtn');
 
-                        requestAnimationFrame(animateSlider);
+                            if (!mapContainer) return;
+
+                            const mapOption = {
+                                center: new kakao.maps.LatLng(37.566826, 126.9786567),
+                                level: 5
+                            };
+
+                            this.map = new kakao.maps.Map(mapContainer, mapOption);
+                            this.ps = new kakao.maps.services.Places(this.map);
+                            this.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
+                            this.contentNode = document.createElement('div');
+
+                            const roadview = new kakao.maps.Roadview(roadviewContainer);
+                            const roadviewClient = new kakao.maps.RoadviewClient();
+                            let lastClickedLatLng = null;
+
+                            kakao.maps.event.addListener(this.map, 'click', (mouseEvent) => {
+                                const clickedLatLng = mouseEvent.latLng;
+                                lastClickedLatLng = clickedLatLng;
+                                this.map.panTo(clickedLatLng);
+                                this.removeMarker();
+
+                                const marker = new kakao.maps.Marker({
+                                    position: clickedLatLng,
+                                    map: this.map
+                                });
+
+                                this.markers.push(marker);
+                                roadviewBtn.style.display = 'block';
+                            });
+
+                            roadviewBtn.addEventListener('click', () => {
+                                if (!lastClickedLatLng) return;
+
+                                roadviewClient.getNearestPanoId(lastClickedLatLng, 50, function (panoId) {
+                                    if (panoId) {
+                                        mapContainer.style.display = 'none';
+                                        roadviewContainer.style.display = 'block';
+                                        roadviewBtn.style.display = 'none';
+
+                                        roadview.setPanoId(panoId, lastClickedLatLng);
+
+                                        kakao.maps.event.addListenerOnce(roadview, 'init', function () {
+                                            const overlayContent = document.createElement('div');
+                                            const customOverlay = new kakao.maps.CustomOverlay({
+                                                content: overlayContent,
+                                                position: lastClickedLatLng,
+                                                xAnchor: 0.5,
+                                                yAnchor: 0.5
+                                            });
+
+                                            customOverlay.setMap(roadview);
+
+                                            const projection = roadview.getProjection();
+                                            const viewpoint = projection.viewpointFromCoords(
+                                                customOverlay.getPosition(),
+                                                customOverlay.getAltitude()
+                                            );
+                                            roadview.setViewpoint(viewpoint);
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    });
+                }
+            });
+
+            app.mount('#app');
+
+            // ✅ 슬라이더 애니메이션 함수
+            function startSlider() {
+                const track = document.getElementById('sliderTrack');
+                if (!track) return;
+
+                const images = track.querySelectorAll('img');
+                if (images.length === 0) return;
+
+                const imageWidth = images[0].offsetWidth;
+                const gap = 5;
+                const imageCount = images.length;
+                const totalWidth = imageCount * imageWidth + (imageCount - 1) * gap;
+
+                track.style.width = totalWidth + 'px';
+
+                const oldClone = document.getElementById('sliderClone');
+                if (oldClone) oldClone.remove();
+
+                const clone = track.cloneNode(true);
+                clone.setAttribute('id', 'sliderClone');
+                clone.classList.add('slider-track');
+                track.parentNode.appendChild(clone);
+
+                const cloneOffset = totalWidth + gap;
+                clone.style.left = cloneOffset + 'px';
+                track.style.position = 'absolute';
+                clone.style.position = 'absolute';
+
+                let position = 0;
+                const speed = 1;
+
+                function animateSlider() {
+                    position -= speed;
+                    track.style.left = position + 'px';
+                    clone.style.left = (position + cloneOffset) + 'px';
+
+                    if (position <= -cloneOffset) {
+                        position = 0;
                     }
 
-                    animateSlider();
-
-
-
-
-
+                    requestAnimationFrame(animateSlider);
                 }
 
-                // **!!! 카카오맵 초기화 코드 모두 제거 (initMap으로 분리) !!!**
+                animateSlider();
+            }
 
-                // Google 번역 초기화 (카카오맵과 무관하므로 여기에 유지)
+            // ✅ 이미지 로딩 후 슬라이더 실행
+            function waitForImagesThenStartSlider() {
+                const track = document.getElementById('sliderTrack');
+                if (!track) return;
 
-                //------------------------------------------------------------------------------------
+                const images = track.querySelectorAll('img');
+                let loadedCount = 0;
 
+                images.forEach(img => {
+                    if (img.complete) {
+                        loadedCount++;
+                    } else {
+                        img.onload = () => {
+                            loadedCount++;
+                            if (loadedCount === images.length) {
+                                startSlider();
+                            }
+                        };
+                    }
+                });
+
+                if (loadedCount === images.length) {
+                    startSlider();
+                }
+            }
+
+            // ✅ 페이지 복귀 시 지도와 슬라이더 재실행
+            window.addEventListener('pageshow', () => {
+                if (app && app._instance && app._instance.proxy.initMap) {
+                    app._instance.proxy.initMap();
+                }
+                waitForImagesThenStartSlider();
             });
-            app.mount('#app');
-            // Vue 인스턴스를 전역 변수에 할당
+
+
         </script>
     </body>
 

@@ -142,11 +142,40 @@ ul {
 /* 5. Main Content */
 /* ================================== */
 main {
-    padding: 30px 60px;
-    max-width: 1400px;
-    margin: 0 auto;
+  max-width: 1200px;       /* 최대 너비 제한 */
+  margin: 0 auto;          /* 가운데 정렬 */
+  padding: 0 30px;         /* 양쪽 여백 */
+  box-sizing: border-box; /* 패딩 포함 너비 계산 */
 }
 
+.table-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.centered-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+  box-sizing: border-box;
+}
+
+/* 내부 요소는 너비 100%로 유지 */
+.map-banner-slider,
+.hero-section,
+.map_wrap {
+  width: 100%;
+}
 
 
 
@@ -267,10 +296,12 @@ body {
 
 /* ⭐️ #map 스타일을 여기서 명확히 정의하여 HTML 인라인 스타일보다 관리 용이하게 합니다 ⭐️ */
 #map {
-    width: 800px; /* 지도의 명확한 너비 */
-    height: 450px; /* 지도의 명확한 높이 */
-    border: 1px solid #ccc; /* 지도가 명확히 구분되도록 테두리 추가 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+  width: 100%;
+  height: 450px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  object-fit: cover;
 }
 
 /* Select 박스의 중앙 정렬을 위한 마진을 유지하되, 보기 좋게 조정 */
@@ -292,3 +323,107 @@ body {
     max-width: 1000px;
     z-index: 100;
 }
+
+
+
+.poi-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.poi-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 24px;
+  width: 250px;
+  height: 180px; /* ✅ 높이 살짝 늘림 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.poi-card:hover {
+  transform: translateY(-5px);
+}
+
+.poi-rank {
+  font-size: 20px;
+  font-weight: bold;
+  color: #0078FF;
+  margin-bottom: 12px;
+}
+
+.poi-name {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.poi-address {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.poi-reservation {
+  font-size: 14px;
+  color: #333;
+}
+
+.nickname {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nickname:hover {
+  color: #555;
+  transform: scale(1.03);
+}
+
+.logout-dropdown {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 8px 12px;
+  list-style: none;
+  margin: 0;
+  z-index: 100;
+  animation: fadeIn 0.2s ease-in-out;
+  min-width: 120px;
+}
+
+.logout-dropdown li {
+  font-size: 14px;
+  color: #0078FF;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.logout-dropdown li:hover {
+  color: #0056b3;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+
+
