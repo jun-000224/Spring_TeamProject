@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.MypageMapper">
+	<select id="mypageInfo" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
+		SELECT U.*, TO_CHAR(BIRTH,'YYYY-MM-DD') BDATE, TO_CHAR(CDATETIME,'YYYY-MM-DD') CDATE, TO_CHAR(UDATETIME,'YYYY-MM-DD') UDATE
+		FROM USERS U
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<update id="mypageEdit" parameterType="hashmap">
+		UPDATE USERS
+		SET
+			NAME = #{name},
+			NICKNAME = #{nickname},
+			PHONE = #{phone},
+			ADDR = #{addr},
+			EMAIL = #{email},
+			UDATETIME = SYSDATE
+		WHERE USER_ID = #{userId}
+	</update>
+	
+	
+	
+</mapper>
+
+
+
+
