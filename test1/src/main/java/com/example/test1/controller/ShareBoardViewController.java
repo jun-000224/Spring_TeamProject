@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -50,12 +51,8 @@ public class ShareBoardViewController {
 //    }
     
 	@ResponseBody
-	public String info(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		resultMap = ShareBoardViewService.contentid(map);
-				
-		return new Gson().toJson(resultMap);
+	public Map<Integer, List<HashMap<String, Object>>> getAllInfo(@RequestParam Map<String,Object> params) {
+	    return ShareBoardViewService.fetchAllInfo(new HashMap<>(params));
 	}
 
    
