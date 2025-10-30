@@ -22,9 +22,10 @@ public class BoardService{
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		List<Board> list = boardMapper.BoardList(map);
-		
+		int cnt = boardMapper.selectBoardCnt(map);
 		
 		resultMap.put("list", list);
+		resultMap.put("cnt", cnt);
 		
 		resultMap.put("result", "success");
 		return resultMap;
@@ -33,14 +34,31 @@ public class BoardService{
 	public HashMap<String, Object> getBoard(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		Board info = boardMapper.selectBoard(map);
-		List<Comment> commentList = boardMapper.selectCommentList(map);
-		resultMap.put("info", info); 
-		resultMap.put("commentList", commentList);
-		resultMap.put("result", "success");
-		return resultMap;
+		try {
+			
+			
+			int cnt = boardMapper.updateCnt(map);
+			Board info = boardMapper.selectBoard(map);
+			List<Comment> commentList = boardMapper.selectCommentList(map);
+			
+			List<Board> fileList = boardMapper.selectFileList(map);
+			resultMap.put("fileList", fileList);
+			
+			
+			resultMap.put("info", info); 
+			resultMap.put("commentList", commentList);
+			resultMap.put("result", "success");
+		}catch(Exception e) {
+			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+		}
+	return resultMap;
 	}
+	
+	
+	
+	
+	
 	
 	public HashMap<String, Object> addComment(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -71,5 +89,57 @@ public class BoardService{
 		resultMap.put("result", "success");
 		return resultMap;
 	}
+	
+	public HashMap<String, Object> addBoardList(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			
+			int cnt = boardMapper.addBoard(map);
+			System.out.println(cnt);
+			resultMap.put("result", "success");
+			resultMap.put("msg", "게시글 등록됨");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	
+	}
+	public HashMap<String, Object> RemoveView(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int list = boardMapper.viewRemove(map);
+		
+		
+		resultMap.put("list", list);
+		
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+
+	
+	public HashMap<String, Object> viewUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			
+			int cnt = boardMapper.updateView(map);
+			
+			resultMap.put("result", "success");
+			resultMap.put("msg", "수정완료");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	
+	}
+	
+	
 	
 }

@@ -12,4 +12,10 @@ public class Board {
 	private String cnt;
 	private String cdateTime;
 	private String udateTime;
+	private String type;
+	
+	private String fileNo;
+	private String filePath;
+	private String fileName;
+	
 }

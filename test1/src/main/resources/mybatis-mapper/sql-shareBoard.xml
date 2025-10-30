@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.ShareBoardMapper">
+	<select id="sharInfo" parameterType="hashmap" resultType="com.example.test1.model.Share">
+		SELECT 
+	    t.*,
+	    (SELECT COUNT(DISTINCT TRUNC(t2.RESERV_DATE))
+	     FROM POI t2
+	     WHERE TRUNC(t2.RESERV_DATE) &lt;= TRUNC(t.RESERV_DATE)
+	    ) AS day_num ,TO_CHAR(RESERV_DATE,'YYYY-MM-DD') AS day
+		FROM POI t
+		ORDER BY 
+	    t.RESERV_DATE
+	</select>
+
+</mapper>
+
+
+
+

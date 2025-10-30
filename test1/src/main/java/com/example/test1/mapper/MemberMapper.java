@@ -8,7 +8,21 @@ import com.example.test1.model.Member;
 
 @Mapper
 public interface MemberMapper {
+	//아이디 중복 확인
 	Member memberIdCheck(HashMap<String, Object> map);
 	
+	//회원 가입
 	int memberAdd(HashMap<String, Object> map);
+	
+	//로그인
+	Member memberLogin(HashMap<String, Object> map);
+	
+	//id 찾기
+	Member memberIdFind(HashMap<String, Object> map);
+	
+	//비밀번호 재설정 전에 회원 확인
+	Member memberPwdCheck(HashMap<String, Object> map);
+	
+	//비밀번호 변경
+	int memberPwdChange(HashMap<String, Object> map);
 }

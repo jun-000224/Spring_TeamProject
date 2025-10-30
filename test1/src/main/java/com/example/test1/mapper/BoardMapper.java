@@ -27,4 +27,22 @@ public interface BoardMapper {
 	
 	//댓글 삭제
 	int removeList(HashMap<String , Object> map);
+	
+	//게시글 등록
+	int addBoard(HashMap<String , Object> map);
+	
+	//게시글 전체개수
+	int selectBoardCnt(HashMap<String , Object> map);
+	
+	//게시글 조회수 증가
+	int updateCnt(HashMap<String , Object> map);
+	
+	//view에서 게시글 삭제
+	int viewRemove(HashMap<String , Object> map);
+	
+	//view에서 게시글 수정
+	int updateView(HashMap<String , Object> map);
+	
+	
+	
 }

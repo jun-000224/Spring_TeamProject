@@ -11,8 +11,33 @@
 	
 	<insert id="memberAdd" parameterType="hashmap">
 		INSERT INTO USERS
-		VALUES(#{userId}, #{name}, #{pwd}, #{nickname}, #{phone}, #{birth}, #{addr}, 'U', #{email}, 'B', #{gender}, SYSDATE, SYSDATE)
+		VALUES(#{userId}, #{name}, #{hashPwd}, #{nickname}, #{phone}, #{birth}, #{addr}, 'U', #{email}, 'B', #{gender}, SYSDATE, SYSDATE)
 	</insert>
+	
+	<select id="memberLogin" parameterType="hashmap" resultType="com.example.test1.model.Member">
+		SELECT *
+		FROM USERS
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<select id="memberIdFind" parameterType="hashmap" resultType="com.example.test1.model.Member">
+		SELECT *
+		FROM USERS
+		WHERE NAME = #{name} AND PHONE = #{phone}
+	</select>
+	
+	<select id="memberPwdCheck" parameterType="hashmap" resultType="com.example.test1.model.Member">
+		SELECT *
+		FROM USERS
+		WHERE NAME = #{name} AND PHONE = #{phone} AND USER_ID = #{userId}
+	</select>
+	
+	<update id="memberPwdChange" parameterType="hashmap">
+		UPDATE USERS
+		SET 
+			PASSWORD = #{hashPwd}
+		WHERE USER_ID = #{userId}
+	</update>
 </mapper>
 
 

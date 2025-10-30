@@ -1,0 +1,211 @@
+/* ================================== */
+/* 1. Global & Basic Reset Styles */
+/* ================================== */
+/* (여기에 기본 body/a/ul reset 스타일이 포함된다고 가정합니다.) */
+
+/* ================================== */
+/* 2. Header Layout (Trip.com Style) */
+/* ================================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 60px; /* 패딩 증가 */
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08); /* 그림자를 더 명확하게 */
+    position: 12px 30px;
+    z-index: 1000;
+}
+
+.logo a {
+    /* 로고를 <a>로 감쌌을 때 클릭 영역을 확보 */
+    display: block;
+	margin-left: -300px;
+}
+
+.logo img {
+    height: 36px; /* 로고 크기 설정 */
+    content: url('1.png'); /* Trip.com 로고 플레이스홀더 */
+}
+
+/* ================================== */
+/* 3. Navigation Menu (메인 버튼 스타일) */
+/* ================================== */
+/* 기존 nav ul에 새로운 메뉴 항목을 추가하여 스타일링 */
+nav ul {
+    display: flex;
+    gap: 80px; /* 메뉴 항목 사이 간격 */
+}
+
+nav ul li a {
+    font-weight: 600;
+    padding: 10px 0;
+    display: block;
+    color: #4A4A4A;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+
+nav ul li a:hover {
+    color: #0078FF; /* 호버 시 파란색 강조 */
+}
+
+ /* ⭐️ 새롭게 추가된 메뉴 항목 스타일 ⭐️ */
+.main-menu a {
+    font-weight: 700 !important; /* nav ul li a보다 강하게 적용 */
+    color: #333 !important; 
+    transition: color 0.2s;
+	z-index: 1;
+}
+.main-menu a:hover {
+    color: #FF5E3A !important; /* 강조색으로 호버 */
+}
+
+/* ================================== */
+/* 4. Search Bar & Action Buttons (추가된 부분) */
+/* ================================== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: #f7f7f7;
+    width: 250px; /* 검색 바 너비 제한 */
+    transition: box-shadow 0.2s;
+}
+
+.search-bar:focus-within {
+    border-color: #0078FF;
+    box-shadow: 0 0 5px rgba(0, 120, 255, 0.2);
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 14px;
+    flex-grow: 1;
+    padding: 0 5px;
+}
+
+.search-bar button {
+    background: none;
+    border: none;
+    color: #4A4A4A;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 마이페이지(관리자 페이지) 버튼 강조 스타일 */
+.action-menu {
+    /* 기존 스타일 유지 */
+}
+.action-menu a {
+    font-weight: 700;
+    color: #FF5E3A; /* 주황색 강조 */
+    border: 1px solid #FF5E3A;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    text-decoration: none; /* a 태그 밑줄 제거 */
+}
+.action-menu a:hover {
+    background-color: #FFF0ED; /* 연한 배경색으로 호버 */
+}
+
+/* 로그인 버튼 스타일 */
+.login-btn button {
+    background-color: #0078FF; /* 파란색 배경 */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.login-btn button:hover {
+    background-color: #005bb5;
+}
+
+
+
+
+/* ================================== */
+/* 6. Responsive Design */
+/* ================================== */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 20px;
+    }
+	
+	nav ul li a {
+	    font-weight: 600;
+	    padding: 10px 0;
+	    display: block;
+	    color: #4A4A4A;
+	    font-size: 15px;
+	    transition: color 0.2s;
+	    
+	    /* 1. 밑줄 효과를 위한 준비 */
+	    position: relative; /* ::after 요소의 기준점 */
+	    overflow: hidden; /* 밑줄이 나타날 때 부드러운 시작을 위해 */
+	}
+	
+	nav ul li a:hover {
+	    color: #0078FF; /* Trip.com 주요 파란색 (원하는 색상으로 유지) */
+	}
+
+    /* 모바일에서 메뉴와 검색 바가 전체 너비를 차지하도록 조정 */
+    nav, .search-bar, .action-menu, .login-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* 메뉴 항목 정렬 */
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 80px;
+    }
+    
+    /* 검색 바 모바일에서 넓게 표시 */
+    .search-bar {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    /* 마이페이지와 로그인 버튼을 옆으로 배치 */
+    header > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+ }
+ /* ⭐️ 메인 메뉴 항목에 대한 밑줄 효과 추가 ⭐️ */
+ .main-menu a::after {
+     content: ''; /* 가상 요소 필수 속성 */
+     position: absolute;
+     bottom: 0; /* 링크 텍스트 바로 아래에 배치 */
+     left: 0;
+     width: 100%;
+     height: 3px; /* 밑줄 두께 */
+     background-color: #FF5E3A; /* 밑줄 색상 (Trip.com처럼 흰색으로 설정) */
+     
+     /* 초기 상태: 오른쪽으로 밀어내 숨김 */
+     transform: translateX(-100%); 
+     transition: transform 0.3s ease-out; /* 부드럽게 나타나는 애니메이션 */
+ }
+
+ .main-menu a:hover::after {
+     /* 호버 시: 원래 위치(0)로 이동하여 밑줄 표시 */
+     transform: translateX(0);
+ }
+
