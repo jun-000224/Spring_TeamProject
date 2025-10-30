@@ -72,23 +72,39 @@ public class MemberService {
 //			System.out.println(loginFlg);
 			
 			if(loginFlg) {
-				session.setAttribute("sessionId", member.getUserId());
-				session.setAttribute("sessionName", member.getName());
-				session.setAttribute("sessionNickname", member.getNickname());
-				session.setAttribute("sessionStatus", member.getStatus());
+				if(member.getCnt() >= 5) {
+					message = "로그인 불가(비밀번호를 5회 이상 잘못 입력하셨습니다.)";
+					result = "fail";
+				} else {
+					int cntReset = memberMapper.loginCntReset(map);
+					
+					message = "로그인되었습니다.";
+					result = "success";
+					
+					session.setAttribute("sessionId", member.getUserId());
+					session.setAttribute("sessionName", member.getName());
+					session.setAttribute("sessionNickname", member.getNickname());
+					session.setAttribute("sessionStatus", member.getStatus());
+				}
 				
-				message = "로그인되었습니다.";
-				result = "success";
 			} else {
-				message = "비밀번호가 틀립니다.";
-				result = "fail";
+				Member idCheck = memberMapper.memberIdCheck(map);
+				int cntUp = memberMapper.loginCntUp(map);
+				
+				if(idCheck.getCnt()>=5) {
+					message = "비밀번호를 5회 이상 잘못 입력하셨습니다.";
+					result = "fail";
+				} else {
+					if(idCheck.getCnt()==4) {
+						message = "비밀번호를 5회 틀리셨습니다. \n로그인이 제한됩니다. \n관리자에게 문의해주세요.";
+						result = "fail";
+					} else {
+						message = "비밀번호가 틀립니다.\n" + (4-member.getCnt()) + "회 남으셨습니다.";
+						result = "fail";
+					}
+				}
 			}
-
-			
 		} else {
-			Member idCheck = memberMapper.memberIdCheck(map);
-			
-			
 			message = "아이디가 존재하지 않습니다.";
 			result = "fail";
 		}

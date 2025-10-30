@@ -103,7 +103,7 @@
                 <div>
                     <div style="margin-left: 15px;">
                         아이디 :
-                        <input type="text" v-model="id" @input="id = id.replace(/[^a-z0-9]/g, '')">
+                        <input autofocus type="text" v-model="id" @input="id = id.replace(/[^a-z0-9]/g, '')">
                     </div>
                     <div>
                         비밀번호 :
@@ -249,7 +249,10 @@
 
             fnJoin : function () {
                 location.href="/member/join.do";
-            },
+            }
+            
+            /*
+            ,
 
             fnLogout : function () {
                 let self = this;
@@ -267,6 +270,7 @@
                     }
                 });
             },
+            */
 
             /*main 연결 시, fnKakao를 main으로 옮길 것----------------------
             fnKakao : function () { 

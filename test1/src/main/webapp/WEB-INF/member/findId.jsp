@@ -60,7 +60,7 @@
         .btnField button{
             width: 150px;
             height: 50px;
-            font-size: 22px;
+            font-size: 20px;
             border-radius: 10px;
             border-width: 1px;
             background-color: #0078FF;

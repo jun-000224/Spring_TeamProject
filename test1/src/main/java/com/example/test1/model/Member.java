@@ -15,4 +15,5 @@ public class Member {
 	private String email;
 	private String subgrade;
 	private String gender;
+	private int cnt;
 }

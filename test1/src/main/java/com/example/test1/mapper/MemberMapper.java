@@ -25,4 +25,10 @@ public interface MemberMapper {
 	
 	//비밀번호 변경
 	int memberPwdChange(HashMap<String, Object> map);
+	
+	//로그인 실패 카운트
+	int loginCntUp(HashMap<String, Object> map);
+	
+	//로그인 시도 횟수 초기화
+	int loginCntReset(HashMap<String, Object> map);
 }
