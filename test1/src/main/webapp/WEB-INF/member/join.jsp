@@ -7,6 +7,10 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="/css/main-style.css">
+    <link rel="stylesheet" href="/css/common-style.css">
+    <link rel="stylesheet" href="/css/header-style.css">
+    <link rel="stylesheet" href="/css/main-images.css">
     <style>
         table, tr, td, th{
             border : 1px solid black;
@@ -23,135 +27,296 @@
         .checkButton{
             margin-left: 10px;
         }
-        .userId{
-            width: 100px;
-        }
-        .userPwd{
-            width: 140px;
-        }
-        .birth{
-            width: 40px;
-        }
         .addr{
             width: 250px;
+        }
+        .inputWidth{
+            width: 150px;
         }
         .phone input{
             width: 50px;
         }
         .guide{
-            font-size: 13px;
+            padding-left: 5px;
+            font-size: 12px;
+            color: blue;
+        }
+        .guideMust{
+            color: red;
+        }
+        .field{
+            margin: 100px auto;
+            width: 500px;
+            height: 1000px;
+        }
+        .joinField{
+            border-style: solid;
+            border-radius: 10px;
+            border-width: 1px;
+            padding-left: 10%;
+            background-color: white;
+            margin: 50px auto;
+            text-align: left;
+            box-shadow: 0px 0px 5px gray;
+        }
+        .joinBlock{
+            margin-top: 20px;
+        }
+        .btnField button{
+            width: 150px;
+            height: 50px;
+            font-size: 22px;
+            border-radius: 10px;
+            border-width: 1px;
+        }
+        .btnField button:hover{
+            cursor: pointer;
+        }
+        .joinBtn{
+            float: right;
+            background-color: #0078FF;
+            color: white;
+            border-color: #0078FF;
+        }
+        .joinBtn:hover{
+            background-color: rgb(6, 81, 131);
+        }
+        .cancleBtn{
+            float: left;
+        }
+        .cancleBtn:hover{
+            background-color: rgb(213, 213, 213);
         }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        회원가입
-        <div>
-            id : 
-            <input v-if="!idFlg" type="text" v-model="id" class="userId" @input="id = id.replace(/[^a-z0-9]/g, '')">
-            <input v-else type="text" v-model="id" class="userId" disabled>
-            <button @click="fnIdCheck" class="checkButton">중복체크</button>
-            <span class="guide"> 영소문자와 숫자만 입력 가능</span>
-        </div>
-        <div>
-            비밀번호 : 
-            <input type="password" v-model="pwd" class="userPwd" @input="pwd = pwd.replace(/[^a-zA-Z0-9!@#$%^&*(),.?&quot;:{}|<>]/g, '')">
-            <span class="guide">영대소문자와 숫자, 특수기호만 사용 가능</span>
-        </div>
-        <div>
-            비밀번호 확인 : 
-            <input type="password" v-model="pwd2" class="userPwd" @input="pwd = pwd.replace(/[^a-zA-Z0-9!@#$%^&*(),.?&quot;:{}|<>]/g, '')">
-            <button @click="fnPwdCheck" class="checkButton">확인</button>
-        </div>
-        <div>
-            이름 :
-            <input type="text" v-model="name" class="name"
-            @input="onNameInput" 
-            @compositionstart="isComposing = true" 
-            @compositionend="onCompositionEnd">
-            <!-- input 입력중 onNameInput 호출, 글자 필터링 하지만, 한글 조합중이면 실행 x -->
-            <!-- 한글 조합 시, @compositionstart 호출, 조합중 상태를 플래그로 표시  -->
-            <!-- 조합 종료 시, @compositionend 호출, 최종글자 필터링 -->
-            
-        </div>
-        <div>
-            성별 : 
-            <input type="radio" name="gender" value="M" v-model="gender"> 남자
-            <input type="radio" name="gender" value="F" v-model="gender"> 여자
-        </div>
-        <div>
-            생년월일 : 
-            <select v-model="year">
-                <option 
-                    v-for="y in Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i)" 
-                    :key="y" 
-                    :value="y"
-                >
-                    {{ y }}
-                </option>
-            </select>
-            .
-            <select v-model="month">
-                <option :value="String(num).padStart(2, '0')" v-for="num in 12">{{ String(num).padStart(2, '0') }}</option>
-            </select>
-            .
-            <select v-model="day">
-                <option v-if="month%2 == 1" :value="String(num).padStart(2, '0')" v-for="num in 31">{{ String(num).padStart(2, '0') }}</option>
-                <option v-else-if="month==2" :value="String(num).padStart(2, '0')" v-for="num in 29">{{ String(num).padStart(2, '0') }}</option>
-                <option v-else :value="String(num).padStart(2, '0')" v-for="num in 30">{{ String(num).padStart(2, '0') }}</option>
-            </select>
-        </div> 
-        <div>
-            이메일 : 
-            <input type="text" v-model="emailFront" @input="emailFront = emailFront.replace(/[^a-z0-9]/g, '')"> @ 
-            <select v-model="emailBack">
-                <option value="abc">선택해주세요.</option>
-                <option value="naver.com">naver.com</option>
-                <option value="gmail.com">gmail.com</option>
-                <option value="daum.net">daum.net</option>
-                <option value="yahoo.com">yahoo.com</option>
-            </select>
-        </div>
-        <div>
-            주소 : 
-            <input type="text" v-model="addr" class="addr" disabled>
-            <button class="checkButton" @click="fnAddr">검색</button>
-        </div>
-        <div>
-            전화번호 : 
-            <span class="phone">
-                <select v-model="phone1">
-                    <option value="010">010</option>
-                    <option value="011">011</option>
-                    <option value="012">012</option>
-                    <option value="016">016</option>
-                    <option value="017">017</option>
-                    <option value="018">018</option>
-                    <option value="019">019</option>
-                </select> -
-                <input type="text" v-model="phone2" @input="phone2 = phone2.replace(/[^0-9]/g, '').slice(0, 4)"> -
-                <input type="text" v-model="phone3" @input="phone3 = phone3.replace(/[^0-9]/g, '').slice(0, 4)">
-            </span>
-            
-            <div v-if="!certifiFlg">
-                문자인증 : <input type="text" v-model="inputNum" :placeholder="timer"> 
-                    <!-- 속성에 :를 붙이면 변수가 동적으로 변함 -->
-                <template v-if="!smsFlg">
-                    <button @click="fnSms">인증번호 전송</button>
-                </template>
-                <template v-else>
-                    <button @click="fnSmsAuth">인증</button>
-                </template>
+        
+        <header>
+            <div class="logo">
+                <a href="http://localhost:8081/main-list.do">
+                    <!-- <img src="이미지.png" alt="Team Project"> -->
+                </a>
+            </div>
+            <h1 class="logo">
+                <a href="main-list.do" target="_blank">Team Project</a>
+            </h1>
+            <nav>
+                <ul>
+                    <li class="main-menu"><a href="#">여행하기</a></li>
+                    <li class="main-menu"><a href="#">커뮤니티</a></li>
+                    <li class="main-menu"><a href="#">공지사항</a></li>
+                    <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
+                    <!-- 마이페이지 / 관리자 페이지  -->
+                    <li class="main-menu" v-if="status === 'u'">
+                        <a href="/main-myPage.do">마이페이지</a>
+                    </li>
+                    <li class="main-menu" v-else-if="status === 'a'">
+                        <a href="/admin-page.do">관리자 페이지</a>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="login-btn">
+                    <div class="login-btn">
+                        <button @click="goToLogin">로그인/회원가입</button>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+
+        <div class="field">
+            <div class="joinField">
+                <br>
+                <div class="joinBlock">
+                    이름 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="text" v-model="name" class="inputWidth"
+                    @input="onNameInput"
+                    @compositionstart="isComposing = true"
+                    @compositionend="onCompositionEnd">
+                    <!-- input 입력중 onNameInput 호출, 글자 필터링 하지만, 한글 조합중이면 실행 x -->
+                    <!-- 한글 조합 시, @compositionstart 호출, 조합중 상태를 플래그로 표시  -->
+                    <!-- 조합 종료 시, @compositionend 호출, 최종글자 필터링 -->
+                </div>
+                <div class="joinBlock">
+                    생년월일 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <select v-model="year">
+                        <option
+                            v-for="y in Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i)"
+                            :key="y"
+                            :value="y"
+                        >
+                            {{ y }}
+                        </option>
+                    </select>
+                    .
+                    <select v-model="month">
+                        <option :value="String(num).padStart(2, '0')" v-for="num in 12">{{ String(num).padStart(2, '0') }}</option>
+                    </select>
+                    .
+                    <select v-model="day">
+                        <option v-if="month%2 == 1" :value="String(num).padStart(2, '0')" v-for="num in 31">{{ String(num).padStart(2, '0') }}</option>
+                        <option v-else-if="month==2" :value="String(num).padStart(2, '0')" v-for="num in 29">{{ String(num).padStart(2, '0') }}</option>
+                        <option v-else :value="String(num).padStart(2, '0')" v-for="num in 30">{{ String(num).padStart(2, '0') }}</option>
+                    </select>
+                </div>
+                <div class="joinBlock">
+                    ID
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input v-if="!idFlg" type="text" v-model="id" class="inputWidth" @input="id = id.replace(/[^a-z0-9]/g, '')">
+                    <input v-else type="text" v-model="id" class="userId" disabled>
+                    <button @click="fnIdCheck" class="checkButton">중복체크</button>
+                    <div class="guide"> 영소문자와 숫자만 입력 가능</div>
+                </div>
+                <div class="joinBlock">
+                    비밀번호 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="password" v-model="pwd" class="inputWidth" @input="pwd = pwd.replace(/[^a-zA-Z0-9!@#$%^&*(),.?&quot;:{}|<>]/g, '')">
+                    <div class="guide">영대소문자와 숫자, 특수기호만 사용 가능</div>
+                </div>
+                <div class="joinBlock">
+                    비밀번호 확인 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="password" v-model="pwd2" class="inputWidth" @input="pwd = pwd.replace(/[^a-zA-Z0-9!@#$%^&*(),.?&quot;:{}|<>]/g, '')">
+                    <button @click="fnPwdCheck" class="checkButton">확인</button>
+                </div>
+                <div class="joinBlock">
+                    성별 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="radio" name="gender" value="M" v-model="gender"> 남자
+                    <input type="radio" name="gender" value="F" v-model="gender"> 여자
+                </div>
+                
+                <div class="joinBlock">
+                    이메일 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="text" class="inputWidth" v-model="emailFront" @input="emailFront = emailFront.replace(/[^a-z0-9]/g, '')"> @
+                    <select v-model="emailBack">
+                        <option value="abc">선택해주세요.</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="yahoo.com">yahoo.com</option>
+                    </select>
+                </div>
+                <div class="joinBlock">
+                    주소 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="text" v-model="addr" class="addr" disabled>
+                    <button class="checkButton" @click="fnAddr">검색</button>
+                </div>
+                <div class="joinBlock">
+                    전화번호 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <span class="phone">
+                        <select v-model="phone1">
+                            <option value="010">010</option>
+                            <option value="011">011</option>
+                            <option value="012">012</option>
+                            <option value="016">016</option>
+                            <option value="017">017</option>
+                            <option value="018">018</option>
+                            <option value="019">019</option>
+                        </select> -
+                        <input type="text" v-model="phone2" @input="phone2 = phone2.replace(/[^0-9]/g, '').slice(0, 4)"> -
+                        <input type="text" v-model="phone3" @input="phone3 = phone3.replace(/[^0-9]/g, '').slice(0, 4)">
+                    </span>
+                
+                    <div class="joinBlock" v-if="!certifiFlg">
+                        문자인증 
+                        <span class="guideMust">(필수)</span>
+                        <br>
+                        <input type="text" class="inputWidth" v-model="inputNum" :placeholder="timer">
+                            <!-- 속성에 :를 붙이면 변수가 동적으로 변함 -->
+                        <template v-if="!smsFlg">
+                            <button @click="fnSms" class="checkButton">인증번호 전송</button>
+                        </template>
+                        <template v-else>
+                            <button @click="fnSmsAuth" class="checkButton">인증</button>
+                        </template>
+                    </div>
+                </div>
+                <div class="joinBlock">
+                    닉네임
+                    
+                    <br>
+                    <input type="text" class="inputWidth" v-model="nickname">
+                    <br>
+                    <div class="guide">미입력 시, 이름이 닉네임이 됩니다.</div>
+                </div>
+                <div>
+                     <br>
+                     <br>
+                </div>
+            </div>
+            <div class="btnField">
+                <button class="joinBtn" @click="fnJoin">가입하기</button>
+                <button class="cancleBtn" @click="fnCancel">취소하기</button>
             </div>
         </div>
-        <div>
-            닉네임(선택) : 
-            <input type="text" v-model="nickname">
-            <br>
-            <span class="guide">미입력 시, 이름이 닉네임이 됩니다.</span>
-        </div>
-        <button @click="fnJoin">가입</button>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links" style="display: flex">
+                    <div class="footer-section">
+                        <h4>회사 소개</h4>
+                        <ul>
+                            <li><a href="#">회사 연혁</a></li>
+                            <li><a href="#">인재 채용</a></li>
+                            <li><a href="#">투자자 정보</a></li>
+                            <li><a href="#">제휴 및 협력</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>지원</h4>
+                        <ul>
+                            <li><a href="#">고객센터</a></li>
+                            <li><a href="#">자주 묻는 질문</a></li>
+                            <li><a href="#">개인정보 처리방침</a></li>
+                            <li><a href="#">이용 약관</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>여행 상품</h4>
+                        <ul>
+                            <li><a href="#">호텔</a></li>
+                            <li><a href="#">항공권</a></li>
+                            <li><a href="#">렌터카</a></li>
+                            <li><a href="#">투어 & 티켓</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>문의 및 제휴</h4>
+                        <ul>
+                            <li><a href="#">파트너십 문의</a></li>
+                            <li><a href="#">광고 문의</a></li>
+                            <li><a href="#">이메일: team@project.com</a></li>
+                            <li><a href="#">대표전화: 02-1234-5678</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
+                    </p>
+                </div>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
@@ -385,13 +550,18 @@
                     data: param,
                     success: function (data) {
                         if(data.result=='success'){
-                            alert("저장되었습니다.");
+                            alert("가입되었습니다.");
+                            location.href="/member/login.do";
                         } else{
                             alert("오류가 발생했습니다.");
                             return;
                         }
                     }
                 });
+            },
+
+            fnCancel : function () {
+                location.href="/member/login.do";
             }
 
         }, // methods
