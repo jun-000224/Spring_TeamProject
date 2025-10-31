@@ -41,6 +41,13 @@ public class MypageController {
 	      
 	}
 	
+	@RequestMapping("/myInfo/release.do") 
+    public String infoRelease(Model model) throws Exception{
+
+    return "/mypage/memberRelease";
+	      
+	}
+	
 	@RequestMapping(value = "/mypage/myInfo.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String mymyinfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -55,6 +62,24 @@ public class MypageController {
 	public String myedit(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = mypageService.mypageEdit(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/mypage/delete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String myremove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = mypageService.mypageRemove(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/mypage/temp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String mypageTemp(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = mypageService.mypageTemp(map);
 		
 		return new Gson().toJson(resultMap);
 	}

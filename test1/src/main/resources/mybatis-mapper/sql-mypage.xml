@@ -21,7 +21,17 @@
 		WHERE USER_ID = #{userId}
 	</update>
 	
+	<delete id="mypageRelease" parameterType="hashmap">
+		DELETE
+		FROM USERS
+		WHERE USER_ID = #{userId}
+	</delete>
 	
+	<select id="mypageConfirm" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
+		SELECT *
+		FROM USERS 
+		WHERE USER_ID = #{userId} AND PHONE = #{phone}
+	</select>
 	
 </mapper>
 

@@ -12,4 +12,8 @@ public interface MypageMapper {
 	Mypage mypageInfo(HashMap<String, Object> map);
 	//사용자 정보 수정
 	int mypageEdit(HashMap<String, Object> map);
+	//회원 탈퇴
+	int mypageRelease(HashMap<String, Object> map);
+	//탈퇴 전 확인(임시)(sms인증 복구 시 지울 예정)
+	Mypage mypageConfirm(HashMap<String, Object> map);
 }
