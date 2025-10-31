@@ -10,8 +10,8 @@
 	</select>
 	
 	<insert id="memberAdd" parameterType="hashmap">
-		INSERT INTO USERS
-		VALUES(#{userId}, #{name}, #{hashPwd}, #{nickname}, #{phone}, #{birth}, #{addr}, 'U', #{email}, 'B', #{gender}, SYSDATE, SYSDATE)
+		INSERT INTO USERS(USER_ID, NAME, PASSWORD, NICKNAME, PHONE, BIRTH, ADDR, STATUS, EMAIL, GENDER)
+		VALUES(#{userId}, #{name}, #{hashPwd}, #{nickname}, #{phone}, #{birth}, #{addr}, 'U', #{email}, #{gender})
 	</insert>
 	
 	<select id="memberLogin" parameterType="hashmap" resultType="com.example.test1.model.Member">
@@ -54,6 +54,8 @@
 			CNT = 0
 		WHERE USER_ID = #{userId}
 	</update>
+	
+	
 </mapper>
 
 
