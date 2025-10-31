@@ -13,6 +13,8 @@ public class Board {
 	private String cdateTime;
 	private String udateTime;
 	private String type;
+	private int commentCnt;
+	private int commentNo;
 	
 	
 	

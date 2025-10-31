@@ -40,11 +40,7 @@ public class BoardService{
 			int cnt = boardMapper.updateCnt(map);
 			Board info = boardMapper.selectBoard(map);
 			List<Comment> commentList = boardMapper.selectCommentList(map);
-			
-//			List<Board> fileList = boardMapper.selectFileList(map);
-//			resultMap.put("fileList", fileList);
-			
-			
+
 			resultMap.put("info", info); 
 			resultMap.put("commentList", commentList);
 			resultMap.put("result", "success");
@@ -83,14 +79,23 @@ public class BoardService{
 	public HashMap<String, Object> removeList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		int list = boardMapper.removeList(map);
 		
 		
-		resultMap.put("list", list);
-		
-		resultMap.put("result", "success");
+try {
+			int list = boardMapper.removeList(map);
+			resultMap.put("list", list);
+			resultMap.put("result", "success");
+			resultMap.put("msg", "댓글이 삭제됨");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
 		return resultMap;
+	
 	}
+		
+		
 	
 	public HashMap<String, Object> addBoardList(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
@@ -147,5 +152,41 @@ public class BoardService{
 		
 	}
 	
+	public HashMap<String, Object> commentRemove(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+try {
+			int num = boardMapper.viewComRemove(map);
+			
+			resultMap.put("result", "success");
+			resultMap.put("msg", "삭제완료");
+			System.out.println(map);
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	}
+	
+	
+	public HashMap<String, Object> commentUpdate(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			
+			int comment = boardMapper.updateComment(map);
+			
+			resultMap.put("result", "success");
+			resultMap.put("msg", "수정완료");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	
+	}
 	
 }

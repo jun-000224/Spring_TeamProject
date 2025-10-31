@@ -181,14 +181,29 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            alert("등록되었습니다.");
+                            // if(self.title == ""){
+                            //     alert("제목을 적어주세요");
+                            // }else{
+                                
+                            //     alert("저장하시겠습니까?");   
+                            //     alert("등록되었습니다.");
+                            // console.log(data.boardNo);
+                            // location.href = "board-list.do";
+                            // }
+                           
+                           if(confirm("저장하시겠습니까?")){
+                            if(self.title == ""){
+                                alert("제목을 적어주세요");
+                            }else{
+                                 alert("등록되었습니다.");
                             console.log(data.boardNo);
-                            var form = new FormData();
-                            form.append("file1", $("#file1")[0].files[0]);
-                            form.append("boardNo", data.boardNo);
-                            self.upload(form);
                             location.href = "board-list.do";
+                           }
+
+
+
                         }
+                    }
                     });
                 },
                 // 파일 업로드

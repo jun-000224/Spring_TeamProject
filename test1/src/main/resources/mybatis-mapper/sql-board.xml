@@ -94,7 +94,7 @@
 	</select>
 	<insert id="insertComment" parameterType="hashmap">
 		INSERT INTO TBL_COMMENT
-		VALUES(COMMENT_SEQ.NEXTVAL ,#{boardNo}, 'user01', NULL , #{contents}, 'F', SYSDATE, SYSDATE, NULL)
+		VALUES(COMMENT_SEQ.NEXTVAL ,#{boardNo}, #{sessionId}, NULL , #{contents}, 'F', SYSDATE, SYSDATE, NULL)
 	</insert>   <!--수정사항 있음-->
 	
 	<delete id="removeList" parameterType="hashmap">
@@ -136,6 +136,17 @@
 		WHERE BOARDNO = #{boardNo}
 	</select>
 	
+	<delete id="viewComRemove" parameterType="hashmap">
+	DELETE TBL_COMMENT
+	WHERE COMMENTNO = #{commentNo}
+	</delete>
+	
+	<update id="updateComment" parameterType="hashmap">
+	UPDATE TBL_COMMENT
+	SET
+    CONTENTS = #{contents}
+	WHERE COMMENTNO = #{commentNo}
+	</update>
 </mapper>
 
 
