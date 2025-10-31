@@ -281,6 +281,8 @@
                         name: "${sessionName}",
                         showLogoutMenu: false,
                         point: "${sessionPoint}",
+
+                        code:""
                     };
                 },
                 computed: {
@@ -297,6 +299,23 @@
                     }
                 },
                 methods: {
+
+                    fnKakao : function () { 
+                        let self = this;
+                        let param = {
+                            code : self.code
+                        };
+                        $.ajax({
+                            url: "/kakao.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: param,
+                            success: function (data) {
+                                console.log(data);
+                                // self.sessionName = data.properties.nickname;
+                            }
+                        });
+                    },
 
                     toggleLogoutMenu() {
                         this.showLogoutMenu = !this.showLogoutMenu;
@@ -464,6 +483,12 @@
 
                     });
                     let self = this;
+
+                    const queryParams = new URLSearchParams(window.location.search);
+                    self.code = queryParams.get('code') || '';
+                    if(self.code != null){
+                        self.fnKakao();
+                    }
 
                     if (this.nickname && this.nickname !== "${sessionNickname}") {
                         this.isLoggedIn = true;
