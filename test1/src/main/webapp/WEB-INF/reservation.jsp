@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="/css/main-images.css">
 
   <style>
+    /* .tabs, .tab-btn 스타일이 필요하면 여기에 추가하세요. */
   </style>
 </head>
 
@@ -128,6 +129,7 @@
           </div>
         </section>
       </div>
+
       <section class="panel" style="margin-top:10px">
         <h3>예산 배분</h3>
         <div class="desc">
@@ -167,6 +169,7 @@
           </div>
         </div>
       </section>
+
       <section class="panel" style="margin-top:10px">
         <h3>추천 코스 (지도)</h3>
         <div class="tabs">
@@ -183,12 +186,14 @@
         <div id="map-recommend" class="map-recommend-area"></div>
         <div id="debugOut" style="display: none;"></div>
       </section>
+
       <button class="fab" @click="openBoardModal" aria-label="커뮤니티 열기" title="커뮤니티">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" aria-hidden="true">
           <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
         </svg>
       </button>
+
       <div class="modal-backdrop" :class="{ show: showBoardModal }" @click="closeBoardModal"></div>
       <div class="modal-card" :class="{ show: showBoardModal }">
         <div class="card">
@@ -201,6 +206,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -211,7 +217,7 @@
     const app = Vue.createApp({
       data() {
         return {
-          // 테마
+          // (테마, 지역, 예산, 날짜, 모달 ...)
           themeOptions: [
             { code: 'FAMILY', label: '가족' }, { code: 'FRIEND', label: '친구' },
             { code: 'COUPLE', label: '연인' }, { code: 'LUXURY', label: '호화스러운' },
@@ -220,35 +226,31 @@
             { code: 'QUIET', label: '조용한' }
           ],
           selectedThemes: [],
-          // 지역
           sidoList: [],
           sigunguList: [],
           selectedSido: '',
           selectedSigungu: '',
           loadingSido: false,
           loadingSigungu: false,
-          // 예산, 인원
           budget: null,
           headCount: null,
-          // 날짜 (Mixin)
           startDate: null,
           endDate: null,
           selectionState: 'start',
-          // 모달
           showBoardModal: false,
           boardUrl: ctx + '/board-view.do',
 
           // --- 지도/추천 관련 데이터 ---
-          mapInstance: null,      // map: 카카오맵 인스턴스 저장용
-          geocoder: null,       // geocoder: 주소-좌표 변환기
-          markers: [],          // 지도에 찍힌 마커들 (나중에 지우려고 들고있음)
-          fullPoiList: [],      // API에서 받아온 추천 장소 원본 리스트
-          activeTab: 12         // 지금 보고있는 탭 (12: 관광지, 32: 숙소, 39: 식당)
+          mapInstance: null,      
+          geocoder: null,       
+          markers: [],          
+          fullPoiList: [],      
+          activeTab: 12,        
+          infowindow: null // ⭐ 인포윈도우 객체 (하나만 생성해서 재사용)
         }
       },
 
       computed: {
-        // (isFormValid, displayRegion은 그대로)
         isFormValid() {
           return this.selectedThemes.length > 0 && this.headCount > 0 && this.budget >= 0;
         },
@@ -258,14 +260,11 @@
           const g = this.sigunguList.find(x => x.code === this.selectedSigungu)?.name || '';
           return s + (g ? ' ' + g : ' (전체)');
         },
-
-        /** 지금 선택된 탭(관광지, 숙소, 식당)에 맞는 목록만 거르기 */
         filteredPoiList() {
           return this.fullPoiList.filter(poi => poi.typeId === this.activeTab);
         }
       },
 
-      /** 'filteredPoiList'가 바뀔 때마다 'drawMarkers' 자동 호출 */
       watch: {
         filteredPoiList(newList, oldList) {
           this.drawMarkers();
@@ -273,7 +272,7 @@
       },
 
       methods: {
-        // (기존 메소드들은 생략)
+        // (loadSido, loadSigungu, ... fnCreate는 수정사항 없음)
         async loadSido() {
           const self = this;
           self.loadingSido = true;
@@ -299,7 +298,7 @@
           this.selectedSigungu = '';
           this.sigunguList = [];
           this.loadSigungu();
-          this.fullPoiList = []; // 시/도 바꾸면 기존 추천 목록은 날리기
+          this.fullPoiList = []; 
         },
         toggleTheme(code) {
           const i = this.selectedThemes.indexOf(code);
@@ -309,19 +308,12 @@
         labelOf(code) { return this.themeOptions.find(t => t.code === code)?.label || code; },
         openBoardModal() { this.showBoardModal = true; /* ... */ },
         closeBoardModal() { this.showBoardModal = false; /* ... */ },
-
-
-        /** 탭 누르면 activeTab 값 변경 */
         setActiveTab(typeId) {
           this.activeTab = typeId;
         },
-
-        /** 탭 옆에 (숫자) 표시용 카운트 */
         countForTab(typeId) {
           return this.fullPoiList.filter(p => p.typeId === typeId).length;
         },
-
-        /** "코스 생성하기" 버튼 눌렀을 때 */
         async fnCreate() {
           const el = document.getElementById('debugOut');
           const param = {
@@ -337,8 +329,6 @@
               food: this.weights[2], act: this.weights[3]
             }
           };
-
-          // API로 보낼 파라미터들 확인
           const lines = [
             ['themes', (param.themes && param.themes.length) ? param.themes.join(', ') : '(없음)'],
             ['areaCode', String(param.areaCode)], ['sigunguCode', String(param.sigunguCode)],
@@ -346,12 +336,10 @@
           ];
           const paramText = lines.map(p => p[0] + ' : ' + p[1]).join('\n');
 
-          // 로딩 중... (일단 디버그용으로만)
           if (el) el.textContent = '===== 전송 파라미터 =====\n' + paramText + '\n\n===== POI 조회 중... =====';
           console.log('전송 파라미터:', param);
-
-          this.fullPoiList = []; // API 새로 부르기 전에 기존 목록 비우기
-          this.clearMarkers();   // 지도에 있던 마커들도 싹 지우기
+          this.fullPoiList = []; 
+          this.clearMarkers();   
 
           try {
             const response = await $.ajax({
@@ -360,21 +348,14 @@
               contentType: 'application/json',
               data: JSON.stringify(param)
             });
-
-            // [핵심] API 응답 결과를 fullPoiList에 넣기 (이러면 watch가 알아서 마커 그림)
             this.fullPoiList = response;
-
             console.log('백엔드 응답 (POI 목록):', response);
             if (el) el.textContent = paramText + '\n\nPOI 로드 완료. (총 ' + response.length + '개)';
-
-            // 추천 장소 목록이 있으면
             if (response.length > 0) {
-              this.panToFirstPoi(response); // 1순위 장소로 지도 이동
+              this.panToFirstPoi(response); 
             } else {
-              // 결과가 없으면 그냥 선택한 지역으로 지도 이동
               this.panToSelectedRegion();
             }
-
           } catch (e) {
             console.error('코스 생성 실패', e);
             if (el) el.textContent = paramText + '\n\nAPI 호출 실패: ' + (e.responseJSON?.message || e.responseText || e.statusText);
@@ -383,7 +364,7 @@
 
         // --- 지도 관련 함수들 ---
 
-        /** 맨 처음에 지도 세팅 */
+        /** 맨 처음에 지도 세팅 (⭐ 인포윈도우 생성 추가) */
         initMap() {
           if (!window.kakao || !window.kakao.maps) {
             console.error("카카오맵 SDK가 로드되지 않았습니다. API 키를 확인하세요.");
@@ -399,32 +380,64 @@
           }
 
           const mapOption = {
-            center: new kakao.maps.LatLng(36.2, 127.6), // (지도의 중심 - 그냥 한반도 중앙쯤)
+            center: new kakao.maps.LatLng(36.2, 127.6), 
             level: 12
           };
 
           this.mapInstance = new kakao.maps.Map(mapContainer, mapOption);
           this.geocoder = new kakao.maps.services.Geocoder();
+
+          // ⭐ [신규] 인포윈도우 객체 생성
+          this.infowindow = new kakao.maps.InfoWindow({
+              content: '', 
+              removable: true // 닫기 버튼(X) 추가
+          });
         },
 
-        /** 지도에 표시된 마커들 지우기 */
+        /** 지도에 표시된 마커들 지우기 (⭐ 인포윈도우 닫기 추가) */
         clearMarkers() {
+          // ⭐ [신규] 열려있는 인포윈도우 닫기
+          if (this.infowindow) {
+            this.infowindow.close();
+          }
+
           for (let marker of this.markers) {
             marker.setMap(null);
           }
           this.markers = [];
         },
 
+        
+        // ==========================================
+        // ⭐ [수정] drawMarkers (디버깅 코드 포함)
+        // ==========================================
         /** 필터링된 목록(filteredPoiList)으로 마커 새로 그리기 */
         drawMarkers() {
-          if (!this.mapInstance) return;
+          if (!this.mapInstance) {
+            console.error("지도 인스턴스가 없습니다. initMap()을 확인하세요.");
+            return;
+          }
 
-          this.clearMarkers(); // 일단 기존 마커 싹 지우고 시작
+          this.clearMarkers(); // 인포윈도우 닫기 포함
+
+          if (!this.filteredPoiList || this.filteredPoiList.length === 0) {
+            console.log("drawMarkers: 마커를 그릴 데이터가 없습니다. (filteredPoiList가 비어있음)");
+            return;
+          }
 
           for (const poi of this.filteredPoiList) {
-            // 점수(score)에 따라서 마커 크기를 좀 다르게 해보자
-            const scale = 0.7 + (poi.score * 0.6); // 점수(0~1)를 스케일(0.7~1.3)로 변환
-            const imgSize = Math.round(32 * scale); // 기본 32px 기준으로 크기 계산
+
+            const score = (typeof poi.score === 'number') ? poi.score : 0;
+            const mapy_num = parseFloat(poi.mapy);
+            const mapx_num = parseFloat(poi.mapx);
+
+            if (isNaN(mapy_num) || isNaN(mapx_num)) {
+              console.warn("좌표값이 (숫자로 변환 불가능한) POI가 있어 건너뜁니다:", poi);
+              continue; 
+            }
+            
+            const scale = 0.7 + (score * 0.6); 
+            const imgSize = Math.round(32 * scale); 
 
             const markerImage = new kakao.maps.MarkerImage(
               'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
@@ -432,34 +445,88 @@
               { offset: new kakao.maps.Point(imgSize / 2, imgSize / 2) }
             );
 
-            // 마커 찍기
             const marker = new kakao.maps.Marker({
               map: this.mapInstance,
-              position: new kakao.maps.LatLng(poi.mapy, poi.mapx),
-              title: poi.title + ` (점수: ${poi.score})`,
+              position: new kakao.maps.LatLng(mapy_num, mapx_num),
+              title: poi.title + ` (점수: ${score.toFixed(2)})`,
               image: markerImage
             });
+
+            // [⭐ 수정] 마커 클릭 이벤트 로직 (디버깅용)
+            kakao.maps.event.addListener(marker, 'click', () => {
+              const title = poi.title || "이름 없음";
+              const imageUrl = poi.firstimage2 || poi.firstimage; 
+              let content = '';
+
+              // [⭐ 디버깅] URL 문자열을 빨간색으로 표시
+              const debugUrlText = imageUrl ? `[URL: ${imageUrl}]` : "[URL: (null or empty)]";
+
+              if (imageUrl) {
+                // 이미지가 있는 경우: 이미지 + 제목 + 디버그 URL
+                content = `
+                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                      <img src="${imageUrl}" 
+                           width="180" height="120" 
+                           style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px; max-width: 100%;">
+                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                          ${title}
+                      </div>
+                      <div style="font-size: 10px; color: #f00; word-break: break-all; margin-top: 5px; text-align: left;">
+                          ${debugUrlText}
+                      </div>
+                  </div>
+                `;
+              } else {
+                // 이미지가 없는 경우: "이미지 없음" + 제목
+                content = `
+                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                      <div style="width: 180px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px;">
+                          (이미지 없음)
+                      </div>
+                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                          ${title}
+                      </div>
+                      <div style="font-size: 10px; color: #f00; word-break: break-all; margin-top: 5px; text-align: left;">
+                          ${debugUrlText}
+                      </div>
+                  </div>
+                `;
+              }
+
+              // 2. 인포윈도우 내용 설정
+              this.infowindow.setContent(content);
+              
+              // 3. 인포윈도우 열기
+              this.infowindow.open(this.mapInstance, marker);
+            });
+            // [⭐ 수정] 이벤트 추가 끝
 
             this.markers.push(marker); // 나중에 한방에 지우려고 배열에 담아두기
           }
         },
-
+        
         /** API 결과 오면 첫번째 장소로 지도 이동시키기 */
         panToFirstPoi(poiList) {
           if (!this.mapInstance || !poiList || poiList.length === 0) return;
+          const firstPoi = poiList[0]; 
+          
+          const firstMapy = parseFloat(firstPoi.mapy);
+          const firstMapx = parseFloat(firstPoi.mapx);
 
-          const firstPoi = poiList[0]; // 1순위 장소 (제일 점수 높은 곳)
-          const coords = new kakao.maps.LatLng(firstPoi.mapy, firstPoi.mapx);
+          if (isNaN(firstMapy) || isNaN(firstMapx)) {
+            console.warn("첫번째 POI 좌표값이 잘못되어 지도를 이동할 수 없습니다.", firstPoi);
+            return;
+          }
 
+          const coords = new kakao.maps.LatLng(firstMapy, firstMapx);
           this.mapInstance.panTo(coords);
-          this.mapInstance.setLevel(7); // 줌 레벨은 7 정도로
+          this.mapInstance.setLevel(7); 
         },
 
         /** 추천 장소가 없을 때, 사용자가 고른 지역으로 지도 이동 */
         panToSelectedRegion() {
           if (!this.geocoder || !this.mapInstance || !this.selectedSido) return;
-
-          const address = this.displayRegion; // 예: "서울특별시 강남구"
+          const address = this.displayRegion; 
 
           this.geocoder.addressSearch(address, (result, status) => {
             if (status === kakao.maps.services.Status.OK) {
@@ -473,12 +540,11 @@
       },
       async mounted() {
         await this.loadSido();
-        this.initMap(); // 페이지 열릴 때 딱 한 번 실행
-        // (파이 차트/캔버스 관련 기능은 다른 JS 파일에서 가져옴)
+        this.initMap(); // 페이지 열릴 때 딱 한 번 실행 (이때 인포윈도우도 생성됨)
       }
     });
 
-    // (달력 관련 기능도 다른 JS 파일에서 가져옴)
+    // 믹스인 주입
     app.mixin(window.ReservationPieMixin);
     app.mixin(window.ReservationCalendarMixin);
 

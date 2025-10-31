@@ -18,6 +18,13 @@ public class PoiRecommendation {
 
     private double score; // [핵심] 테마 기반 가중 평균 점수
 
+    // ==========================================
+    // ⭐ [수정] 이미지 필드 2개 추가
+    // ==========================================
+    private String firstimage;  // 대표 이미지 (원본)
+    private String firstimage2; // 대표 이미지 (썸네일)
+
+
     // TourPoiEnvelope.PoiItem과 Attr 객체를 조합하기 위한 생성자
     public PoiRecommendation(TourPoiEnvelope.PoiItem poi, Attr attr) {
         this.contentId = poi.getContentid();
@@ -26,5 +33,11 @@ public class PoiRecommendation {
         this.mapx = poi.getMapx();
         this.mapy = poi.getMapy();
         this.score = 0; // 점수는 서비스에서 별도 계산 후 세팅
+        
+        // ==========================================
+        // ⭐ [수정] 생성자에서 이미지 URL 복사
+        // ==========================================
+        this.firstimage = poi.getFirstimage();
+        this.firstimage2 = poi.getFirstimage2();
     }
 }

@@ -60,5 +60,11 @@ public class TourPoiEnvelope {
         private String addr1;
         private String mapx; // 경도
         private String mapy; // 위도
+		
+        // ==========================================
+        // ⭐ [수정] 이미지 필드 2개 추가
+        // ==========================================
+        private String firstimage;  // 대표 이미지 (원본)
+        private String firstimage2; // 대표 이미지 (썸네일)
     }
 }
