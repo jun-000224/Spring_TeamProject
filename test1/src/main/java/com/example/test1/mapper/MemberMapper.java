@@ -31,4 +31,6 @@ public interface MemberMapper {
 	
 	//로그인 시도 횟수 초기화
 	int loginCntReset(HashMap<String, Object> map);
+	
+	
 }
