@@ -280,7 +280,8 @@ body {
                 rating:0,
                 reviewText:"",
                 selectedDay:1,
-                contentId:""
+                contentId:"",
+                title:""
             };
         },
         methods: {
@@ -383,6 +384,9 @@ body {
                       let form = new FormData();
                       form.append( "file1",  $("#file1")[0].files[0] );
                       form.append( "contentId",  data.contentId); // 임시 pk
+                      form.append( "userId",  self.userId);
+                      form.append( "title",  self.selectedItem.title)
+                      
                       self.upload(form);  
 
                       self.fninfo();                  

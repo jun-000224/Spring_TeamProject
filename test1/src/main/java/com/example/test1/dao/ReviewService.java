@@ -41,9 +41,14 @@ public class ReviewService{
 	public HashMap<String, Object> updateRating(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		System.out.println(map);
 		int cnt = ReviewMapper.rating(map);
 		resultMap.put("contentId", map.get("contentId"));
+		
+		if( map.get("boardNo") != null) {
+			resultMap.put("boardNo", map.get("boardNo"));
+		}else {
+			resultMap.put("boardNo", null);
+		}
 
 		return resultMap;
 	}
@@ -77,4 +82,8 @@ public class ReviewService{
 		return resultMap;
 	}
 	
+	public int selectMaxSortNo(int contentId) {
+	    return ReviewMapper.selectMaxSortNo(contentId);
+	}
+
 }

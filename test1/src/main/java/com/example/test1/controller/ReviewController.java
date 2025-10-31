@@ -85,48 +85,66 @@ public class ReviewController {
 	}
 	
 	@RequestMapping("/review-fileUpload.dox")
-	public String file(@RequestParam("file1") MultipartFile multi, @RequestParam("contentId") int contentId, HttpServletRequest request,HttpServletResponse response, Model model)
-	{
-		String url = null;
-		String path="c:\\img";
-		try {
+	public String file(
+	        @RequestParam("file1") MultipartFile multi,
+	        @RequestParam("contentId") int contentId,
+	        @RequestParam("userId") String userId,
+	        @RequestParam(value="boardNo", required=false) Integer boardNo,
+	        @RequestParam("title") String title,
+	        HttpServletRequest request,
+	        Model model) {
 
-			//String uploadpath = request.getServletContext().getRealPath(path);
-			String uploadpath = path;
-			String originFilename = multi.getOriginalFilename();
-			String extName = originFilename.substring(originFilename.lastIndexOf("."),originFilename.length());
-			long size = multi.getSize();
-			String saveFileName = SaveFileName(extName);
-			
-			System.out.println("uploadpath : " + uploadpath);
-			System.out.println("originFilename : " + originFilename);
-			System.out.println("extensionName : " + extName);
-			System.out.println("size : " + size);
-			System.out.println("saveFileName : " + saveFileName);
-			String path2 = System.getProperty("user.dir");
-			System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
-			if(!multi.isEmpty())
-			{
-				File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
-				multi.transferTo(file);
-				
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("filename", saveFileName);
-				map.put("path", "../img/" + saveFileName);
-				map.put("contentId", contentId);
-				
-				// insert 쿼리 실행
-			   
-				ReviewService.insertImg(map);
-				model.addAttribute("filename", multi.getOriginalFilename());
-				model.addAttribute("uploadPath", file.getAbsolutePath());
-				
-				return "redirect:list.do";
-			}
-		}catch(Exception e) {
-			System.out.println(e);
-		}
-		return "redirect:list.do";
+	    String path = "c:\\img";
+
+	    try {
+	        String originFilename = multi.getOriginalFilename();
+	        String extName = originFilename.substring(originFilename.lastIndexOf("."));
+	        String saveFileName = SaveFileName(extName);
+
+	        System.out.println("uploadpath : " + path);
+	        System.out.println("userId : " + userId);
+	        System.out.println("boardNo : " + boardNo);
+	        System.out.println("title : " + title);
+	        System.out.println("saveFileName : " + saveFileName);
+
+	        String path2 = System.getProperty("user.dir");
+	        System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
+
+	        if (!multi.isEmpty()) {
+	            // 파일 저장
+	            File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
+	            multi.transferTo(file);
+
+	            // boardNo가 null이면 0으로 처리
+	            int boardNoValue = (boardNo != null) ? boardNo : 0;
+
+	            // 현재 boardNo 기준 max sortNo 조회
+	            int maxSortNo = ReviewService.selectMaxSortNo(contentId);
+	            int  newSortNo= maxSortNo + 1;
+	          
+	            HashMap<String, Object> map = new HashMap<>();
+	            map.put("filename", saveFileName);
+	            map.put("path", "../img/" + saveFileName);
+	            map.put("contentId", contentId);
+	            map.put("userId", userId);
+	            map.put("boardNo", boardNoValue);
+	            map.put("title", title);
+	            map.put("sortNo", newSortNo);
+
+	            System.out.println("Insert Map: " + map);
+	            ReviewService.insertImg(map);
+
+	            model.addAttribute("filename", originFilename);
+	            model.addAttribute("uploadPath", file.getAbsolutePath());
+
+	            return "redirect:list.do";
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println(e);
+	    }
+
+	    return "redirect:list.do";
 	}
 	    
 	// 현재 시간을 기준으로 파일 이름 생성
