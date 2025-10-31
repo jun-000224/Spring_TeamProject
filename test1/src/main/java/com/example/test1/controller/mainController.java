@@ -33,17 +33,13 @@ public class mainController {
     }
 	
 //  --------------- 마이페이지	
-	@RequestMapping("/main-myPage.do") 
-    public String myPage(Model model) throws Exception{ 
-		
-        return "main-myPage";
-    }
+
 	
-//  --------------- 고객센터	
-	@RequestMapping("/main-Service.do") 
-    public String Service(Model model) throws Exception{ 
+//  --------------- 후기 게시판	
+	@RequestMapping("/review-list.do") 
+    public String review(Model model) throws Exception{ 
 		
-        return "main-Service";
+        return "review-list";
     }
 	
 //  --------------- 공지사항	
@@ -61,10 +57,10 @@ public class mainController {
     }		
 	
 //  --------------- 여행하기	
-	@RequestMapping("/main-Traveling.do") 
-    public String Traveling(Model model) throws Exception{ 
+	@RequestMapping("/reservation.do") 
+    public String reservation(Model model) throws Exception{ 
 		
-        return "main-Traveling";
+        return "reservation";
     }	
 	
     @RequestMapping("/logout.do")
@@ -72,5 +68,8 @@ public class mainController {
         session.removeAttribute("sessionNickname"); // 닉네임만 제거
         return "redirect:/main-list.do"; // 메인 페이지로 이동
     }
+    
+    
+    
 
 }

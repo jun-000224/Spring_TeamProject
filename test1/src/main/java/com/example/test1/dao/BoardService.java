@@ -41,8 +41,8 @@ public class BoardService{
 			Board info = boardMapper.selectBoard(map);
 			List<Comment> commentList = boardMapper.selectCommentList(map);
 			
-			List<Board> fileList = boardMapper.selectFileList(map);
-			resultMap.put("fileList", fileList);
+//			List<Board> fileList = boardMapper.selectFileList(map);
+//			resultMap.put("fileList", fileList);
 			
 			
 			resultMap.put("info", info); 
