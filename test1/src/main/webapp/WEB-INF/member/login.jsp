@@ -117,7 +117,7 @@
                 pwd : "",
 
                 //main 연결 시, main으로 옮길 것
-                code : "", 
+                // code : "", 
 
                 kakaolocation: "${kakao_location}"
 
