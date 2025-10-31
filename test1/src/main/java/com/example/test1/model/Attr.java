@@ -1,17 +1,17 @@
 package com.example.test1.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor; // [ ⭐ 1. 기본 생성자용 @NoArgsConstructor ]
+import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Random; 
+import java.util.Random;
 
 @Data
 @Entity
 @Table(name = "ATTR")
-@NoArgsConstructor // [ ⭐ 1. (public Attr() 생성) - 이게 없으면 오류 ]
+@NoArgsConstructor
 public class Attr {
 
     @Id
@@ -21,36 +21,38 @@ public class Attr {
     @Column(name = "TYPE_ID")
     private Integer typeId;
 
-    @Column(name = "REL_COUPLE")    private double relCouple;
-    @Column(name = "REL_FAMILY")    private double relFamily;
-    @Column(name = "REL_FRIEND")    private double relFriend;
-    @Column(name = "REL_ALONE")     private double relAlone;
-    @Column(name = "SIZE_SMALL")    private double sizeSmall;
-    @Column(name = "SIZE_LARGE")    private double sizeLarge;
-    @Column(name = "MOOD_UNIQUE")   private double moodUnique;
-    @Column(name = "MOOD_HEALING")  private double moodHealing;
+    @Column(name = "FAMILY")    private double family;
+    @Column(name = "LUXURY")    private double luxury;
     
-    /**
-	씨드 기반 생성자
-    RecommendationService가 호출하는 생성자입니다.
-    */
+    // [ ⭐ 1. (핵심) ] 'UNIQUE'는 Oracle 예약어라 컬럼명으로 사용 불가
+    // 'MOOD_UNIQUE'로 변경합니다. (DB 테이블 컬럼도 MOOD_UNIQUE여야 함)
+    @Column(name = "MOOD_UNIQUE") private double unique;
+
+    @Column(name = "ADVENTURE") private double adventure;
+    @Column(name = "BUDGET")    private double budget;
+    @Column(name = "FRIEND")    private double friend;
+    @Column(name = "COUPLE")    private double couple;
+    @Column(name = "HEALING")   private double healing;
+    @Column(name = "QUIET")     private double quiet;
+
+    
     public Attr(Long contentId, Integer typeId) {
         this.contentId = contentId;
         this.typeId = typeId;
         
         Random rand = new Random(contentId); 
 
-        this.relCouple = randomScore(rand);
-        this.relFamily = randomScore(rand);
-        this.relFriend = randomScore(rand);
-        this.relAlone = randomScore(rand);
-        this.sizeSmall = randomScore(rand);
-        this.sizeLarge = randomScore(rand);
-        this.moodUnique = randomScore(rand);
-        this.moodHealing = randomScore(rand);
+        this.family = randomScore(rand);
+        this.luxury = randomScore(rand);
+        this.unique = randomScore(rand); // [ ⭐ 2. ] 필드명 일치 (unique)
+        this.adventure = randomScore(rand);
+        this.budget = randomScore(rand);
+        this.friend = randomScore(rand);
+        this.couple = randomScore(rand);
+        this.healing = randomScore(rand);
+        this.quiet = randomScore(rand);
     }
     
-    //헬퍼 메소드
     private double randomScore(Random rand) {
         return Math.round(rand.nextDouble() * 100) / 100.0;
     }

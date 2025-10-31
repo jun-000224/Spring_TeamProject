@@ -5,21 +5,33 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * TourAPI /areaBasedList1 (지역기반 관광정보) 응답 구조
- * response → (header), (body → items → item[PoiItem...])
+ * TourAPI /areaBasedList2 (지역기반 관광정보) 응답 구조
+ * (TourAreaEnvelope 참조를 제거하고 완전히 독립적인 클래스로 수정)
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TourPoiEnvelope {
+
+    //최상위 'response' 필드
     private Resp response;
 
+    //'response' 내부에 'header'와 'body'가 있는 구조
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Resp {
-        private TourAreaEnvelope.Header header; // TourAreaEnvelope의 Header 재사용
+        private Header header; // (TourAreaEnvelope 참조 대신 내부 Header 사용)
         private Body body;
     }
 
+    //'header'를 독립적으로 정의
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Header {
+        private String resultCode;
+        private String resultMsg;
+    }
+
+    //'body' 정의
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Body {
@@ -29,6 +41,7 @@ public class TourPoiEnvelope {
         private int totalCount;
     }
 
+    //'items' (item 배열 래퍼) 정의
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Items {
@@ -41,10 +54,11 @@ public class TourPoiEnvelope {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PoiItem {
-        private Long contentid;     // [핵심] 콘텐츠 ID
-        private Integer contenttypeid; // [핵심] 콘텐츠 타입 ID (12, 32, 39 등)
+        private Long contentid;
+        private Integer contenttypeid;
         private String title;
         private String addr1;
-        // (필요한 다른 필드가 있다면 여기에 추가)
+        private String mapx; // 경도
+        private String mapy; // 위도
     }
 }

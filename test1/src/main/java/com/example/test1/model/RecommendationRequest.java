@@ -12,4 +12,6 @@ public class RecommendationRequest {
 	private Integer headCount;
 	private Integer budget;
 	private BudgetWeights budgetWeights;
+	private String startDate;
+	private String endDate;
 }
