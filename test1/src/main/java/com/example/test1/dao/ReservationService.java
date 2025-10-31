@@ -17,6 +17,4 @@ public class ReservationService {
 	@Autowired
 	ReservationMapper reservationMapper;
 	
-
-
 }

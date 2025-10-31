@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-/** TourAPI 지역 코드 항목 DTO */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Area {

@@ -25,11 +25,12 @@ public class ReviewController {
 	@Autowired
 	ReviewService ReviewService;
 	
-	@RequestMapping("/review-list.do") 
-    public String reviewList(Model model) throws Exception{ 
-
-        return "/review";
-    }
+//	@RequestMapping("/review-list.do") 
+//    public String reviewList(Model model) throws Exception{ 
+//
+//        return "/review";
+//    }
+	
 	@RequestMapping("/review-add.do") 
     public String boardList(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		request.setAttribute("resNum", map.get("resNum"));
