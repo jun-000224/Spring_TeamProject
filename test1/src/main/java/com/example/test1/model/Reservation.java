@@ -12,4 +12,5 @@ public class Reservation {
 	private String descript;
 	private String rdatetime;
 	
+	
 }

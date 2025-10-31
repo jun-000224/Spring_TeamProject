@@ -3,7 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.test1.mapper.ReviewMapper">
-	<select id="ResList" parameterType="hashmap" resultType="com.example.test1.model.Reservation">
+	<select id="myResList" parameterType="hashmap" resultType="com.example.test1.model.Review">
 		SELECT * FROM RESERVATION 
 		WHERE USER_ID = #{userId}		
 	</select>
@@ -11,6 +11,22 @@
 		UPDATE POI SET RATING = #{rating} ,CONTENT = #{content}
 		WHERE CONTENT_ID = #{contentId}
 	</update>
+	
+	<select id="reviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
+		SELECT * FROM TBL_REVIEW R1
+		INNER JOIN RESERVATION R2 ON R1.RES_NUM = R2.RES_NUM		
+	</select>
+	
+	<insert id="resInsert" parameterType="hashmap">
+		INSERT INTO TBL_REVIEW
+		VALUES(REVIEW_SEQ.NEXTVAL,#{userId},'0','0',SYSDATE,#{resNum})
+	</insert>
+	
+	<insert id="fileUpload" parameterType="hashmap">
+		INSERT INTO MEDIA
+		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId}, '0', #{userId}, #{boardNo})
+	</insert>
+	
 	
 </mapper>
 

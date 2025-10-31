@@ -20,6 +20,17 @@ public class MypageController {
 	@Autowired
 	MypageService mypageService;
 	
+	
+	
+	@RequestMapping("/myReservation.do") 
+    public String myReservation(Model model) throws Exception{
+
+    return "/myReservation";
+	      
+	}
+	
+		
+	
 	@RequestMapping("/myInfo.do") 
     public String myInfo(Model model) throws Exception{
 

@@ -15,6 +15,22 @@ body {
   margin: 0;
   padding: 20px;
 }
+.create-btn {
+  background-color: #1565c0;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.create-btn:hover {
+  background-color: #0d47a1;
+  transform: translateY(-2px);
+}
 
 .day-num {
   font-size: 20px;
@@ -178,7 +194,10 @@ body {
 </head>
 <body>
 <div id="app">
-  <h2 style="text-align:center; margin-bottom:8px;">📅 여행 일정</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+    <h2 style="margin:0;">📅 여행 일정</h2>
+    <button class="create-btn" @click="fnWrite">게시글 등록하기</button>
+  </div>
   <p style="text-align:center; color:#555; margin-bottom:25px;">
     방문한 장소에 대한 소중한 후기를 남겨주세요
   </p>
@@ -205,6 +224,11 @@ body {
           <div class="item-title">{{ item.title }}</div>
           <div class="item-addr">📍 {{ item.addr1 }}</div>
           <div class="item-overview">{{ item.overview }}</div>
+          <div class="star-rating">
+            <span v-for="i in 5" :key="i" class="material-icons">
+              {{ getStarIcon(i, item.rating) }}
+            </span>
+          </div>
         </div>
         <button class="review-btn">후기 작성하기</button>
       </div>
@@ -221,13 +245,14 @@ body {
       <div class="star-rating">
         <span v-for="i in 5" :key="i" class="material-icons"
           @click="setRating(i)">
-          {{ getStarIcon(i) }}
+          {{ getStarIcon(i, rating) }}
         </span>
       </div>
       <p>선택된 평점: {{ rating }}점</p>
 
       <h4>후기를 작성해주세요</h4>
       <textarea v-model="reviewText" maxlength="500" placeholder="방문 경험을 공유해주세요..."></textarea>
+      <input type="file" id="file1" name="file1">
       <div style="font-size:12px; color:gray;">{{ reviewText.length }}/500자</div>
 
       <div class="modal-footer">
@@ -246,9 +271,8 @@ body {
         data() {
             return {
                 // 변수 - (key : value)
-                sessionId:"${sessionId}",
+                userId:"${sessionId}",
                 resNum:"${resNum}",
-                list:{},
                 info:[],
                 positionsByDay:{},
                 modalFlg:false,
@@ -276,29 +300,47 @@ body {
             //키값 넣어주기
             const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
             for (let i = 0; i < days.length; i++) {
-                const day = days[i];
-                const dayList = data[day];
-                self.positionsByDay[day] = [];
-
-                for (let j = 0; j < dayList.length; j++) {
-                    const item = dayList[j];
-                    self.positionsByDay[day].push({
-                        title: item.title,
-                        lat: parseFloat(item.mapy),
-                        lng: parseFloat(item.mapx),
-                        overview: item.overview,
-                        dayNum: day,
-                        reserv_date: item.reserv_date,
-                        firstimage:item.firstimage,
-                        addr1:item.addr1,
-                        contentId:item.contentid,
-                        day:item.day
+              const day = days[i];
+              const dayList = data[day];
+              self.positionsByDay[day] = [];
+                
+              for (let j = 0; j < dayList.length; j++) {
+                  const item = dayList[j];
+                  self.positionsByDay[day].push({
+                      title: item.title,
+                      lat: parseFloat(item.mapy),
+                      lng: parseFloat(item.mapx),
+                      overview: item.overview,
+                      dayNum: day,
+                      reserv_date: item.reserv_date,
+                      firstimage:item.firstimage,
+                      addr1:item.addr1,
+                      contentId:item.contentid,
+                      day:item.day,
+                      rating:item.rating,
                     });
-                }
-                self.selectedDay = days[0];
+                    console.log(item.rating);
+                    
+                  }
+                  self.selectedDay = days[0];
+                  
               }
               console.log(data);
             },
+          });
+          
+        },
+        upload : function(form){
+          var self = this;
+          $.ajax({
+            url : "/review-fileUpload.dox"
+            , type : "POST"
+            , processData : false
+            , contentType : false
+            , data : form
+            , success:function(response) { 
+              
+            }	           
           });
         },
         openModal(item){
@@ -306,25 +348,20 @@ body {
           self.selectedItem = item;
           self.modalFlg = true;
           self.contentId = item.contentId;
-          console.log(self.contentId);
-          console.log(item);
-          
-          
+          self.rating = item.rating;          
         },
         closeModal(){
           let self=this;
           self.modalFlg = false;
-          self.rating = 0;
           self.reviewText = "";
         },
         setRating(i){
           let self=this;
           self.rating = i;
         },
-        getStarIcon(i){
-          let self=this;
-          if (self.rating >= i) return "star";
-          else if (self.rating >= i - 0.5) return "star_half";
+         getStarIcon(index, itemRating) {
+          if (itemRating >= index) return "star";
+          else if (itemRating >= index - 0.5) return "star_half";
           else return "star_border";
         },
         submitReview(){
@@ -340,11 +377,49 @@ body {
                     type: "POST",
                     data: param,
                     success: function (data) {
-                      alert("후기작성완료되었습니다.")                        
+                      alert("후기작성완료되었습니다.");
+                      console.log(data);
+                      
+                      let form = new FormData();
+                      form.append( "file1",  $("#file1")[0].files[0] );
+                      form.append( "contentId",  data.contentId); // 임시 pk
+                      self.upload(form);  
+
+                      self.fninfo();                  
+                      if (self.selectedItem) {
+                         self.selectedItem.rating = self.rating;
+                      }
+
+
+
+                      self.closeModal();
                     }
                 });
-          self.closeModal();
+          
         },
+        fnWrite(){
+          let self = this;
+                let param = {
+                  resNum:self.resNum,
+                  userId:self.userId
+                };
+                console.log(self.resNum, self.userId);
+                
+                if(!confirm("등록하시겟습니까?")){
+                  return;
+                }
+                $.ajax({
+                    url: "/review-add.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                      alert(data.msg);
+                      location.href="review-list.do"
+                      
+                    }
+                });
+        }
 
 
 
