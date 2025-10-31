@@ -12,5 +12,6 @@ public class Share {
 	private String firstimage;
 	private String addr1;
 	private String homepage;
-	
+	private Double rating;
+	private String content;
 }

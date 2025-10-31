@@ -186,76 +186,27 @@
 
     <body>
         <div id="app">
-            <header>
-                <div class="logo">
-                    <a href="http://localhost:8081/main-list.do">
-                        <!-- <img src="이미지.png" alt="Team Project"> -->
-                    </a>
-                </div>
-                <h1 class="logo">
-                    <a href="main-list.do" target="_blank">Team Project</a>
-                </h1>
-                <nav>
-                    <ul>
-                        <li class="main-menu"><a href="/main-Traveling.do">여행하기</a></li>
-                        <li class="main-menu"><a href="/main-Community.do">커뮤니티</a></li>
-                        <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
-                        <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
-                        <!-- 마이페이지 / 관리자 페이지  -->
-                        <li class="main-menu" v-if="status === 'U'">
-                            <a href="/main-myPage.do">마이페이지</a>
-                        </li>
-                        <li class="main-menu" v-else-if="status === 'A'">
-                            <a href="/admin-page.do">관리자 페이지</a>
-                        </li>
+            <%@ include file="components/header.jsp" %>
 
-                    </ul>
-                </nav>
-
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <!-- 로그인 전 -->
-                    <div class="login-btn" v-if="!isLoggedIn">
-                        <button @click="goToLogin">로그인/회원가입</button>
+                <!-- 가운데 정렬을 위한 래퍼 추가 -->
+                <div class="content-wrapper">
+                    <!-- 배너 슬라이더 -->
+                    <div class="map-banner-slider">
+                        <div class="slider-track" id="sliderTrack">
+                            <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
+                            <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
+                            <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
+                            <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
+                            <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
+                        </div>
                     </div>
 
-                    <!-- 로그인 후 -->
-                    <div class="user-info" v-else style="position: relative;">
-                        <span @click="toggleLogoutMenu" class="nickname">{{ nickname }}님 환영합니다!</span>
+                    <div class="hero-section">
+                        <div class="map_wrap">
 
-                        <ul v-if="showLogoutMenu" class="logout-dropdown">
-                            <li @click="goToMyPage">회원탈퇴</li>
-                            <li @click="goToSettings">내 포인트 : </li>
-                            <li @click="logout">로그아웃</li>
-                        </ul>
-                    </div>
-                </div>
-
-
-
-
-
-
-            </header>
-
-            <!-- 가운데 정렬을 위한 래퍼 추가 -->
-            <div class="content-wrapper">
-                <!-- 배너 슬라이더 -->
-                <div class="map-banner-slider">
-                    <div class="slider-track" id="sliderTrack">
-                        <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
-                        <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
-                        <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
-                        <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
-                        <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
-                    </div>
-                </div>
-
-                <div class="hero-section">
-                    <div class="map_wrap">
-
-                        <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
-                        <!-- 로드뷰 버튼 (오른쪽 상단) -->
-                        <button id="roadviewBtn" style="
+                            <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+                            <!-- 로드뷰 버튼 (오른쪽 상단) -->
+                            <button id="roadviewBtn" style="
                             position: absolute;
                             top: 10px;
                             right: 10px;
@@ -268,97 +219,51 @@
                             cursor: pointer;
                             display: none;">로드뷰 보기</button>
 
-                        <div id="roadview" style="width:100%;height:400px;display:none;"></div>
+                            <div id="roadview" style="width:100%;height:400px;display:none;"></div>
 
-                        <ul id="category">
-                            <li id="BK9"><span class="category_bg bank"></span>은행</li>
-                            <li id="MT1"><span class="category_bg mart"></span>마트</li>
-                            <li id="PM9"><span class="category_bg pharmacy"></span>약국</li>
-                            <li id="AD5"><span class="category_bg oil"></span>주유소</li>
-                            <li id="CE7"><span class="category_bg cafe"></span>카페</li>
-                            <li id="CS2"><span class="category_bg store"></span>편의점</li>
-                            <li id="AD5"><span class="category_bg home"></span>숙소</li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- 지도 아래에 POI 순위 테이블 추가 -->
-                <div class="poi-card-section">
-                    <h2>📍 관심지점 예약 순위</h2>
-                    <div class="poi-card-container">
-                        <%-- 나중에 DB에서 받아온 리스트로 반복 처리 예정 --%>
-                            <div class="poi-card">
-                                <div class="poi-rank">1위</div>
-                                <div class="poi-name">서울역점</div>
-                                <div class="poi-address">서울 중구 한강대로 405</div>
-                                <div class="poi-reservation">예약 수: 128건</div>
-                            </div>
-
-                            <div class="poi-card">
-                                <div class="poi-rank">2위</div>
-                                <div class="poi-name">강남점</div>
-                                <div class="poi-address">서울 강남구 테헤란로 152</div>
-                                <div class="poi-reservation">예약 수: 97건</div>
-                            </div>
-                            <%-- ... --%>
-                    </div>
-                </div>
-                <br>
-                <main>
-                    <div class="table-wrapper">
-                        <table class="centered-table">
-                            <div id="google_translate_element">
-                            </div>
-                        </table>
-                    </div>
-                </main>
-                <footer>
-                    <div class="footer-content">
-                        <div class="footer-links" style="display: flex">
-                            <div class="footer-section">
-                                <h4>회사 소개</h4>
-                                <ul>
-                                    <li><a href="#">회사 연혁</a></li>
-                                    <li><a href="#">인재 채용</a></li>
-                                    <li><a href="#">투자자 정보</a></li>
-                                    <li><a href="#">제휴 및 협력</a></li>
-                                </ul>
-                            </div>
-                            <div class="footer-section">
-                                <h4>지원</h4>
-                                <ul>
-                                    <li><a href="#">고객센터</a></li>
-                                    <li><a href="#">자주 묻는 질문</a></li>
-                                    <li><a href="#">개인정보 처리방침</a></li>
-                                    <li><a href="#">이용 약관</a></li>
-                                </ul>
-                            </div>
-                            <div class="footer-section">
-                                <h4>여행 상품</h4>
-                                <ul>
-                                    <li><a href="#">호텔</a></li>
-                                    <li><a href="#">항공권</a></li>
-                                    <li><a href="#">렌터카</a></li>
-                                    <li><a href="#">투어 & 티켓</a></li>
-                                </ul>
-                            </div>
-                            <div class="footer-section">
-                                <h4>문의 및 제휴</h4>
-                                <ul>
-                                    <li><a href="#">파트너십 문의</a></li>
-                                    <li><a href="#">광고 문의</a></li>
-                                    <li><a href="#">이메일: team@project.com</a></li>
-                                    <li><a href="#">대표전화: 02-1234-5678</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="footer-bottom">
-                            <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
-                            </p>
+                            <ul id="category">
+                                <li id="BK9"><span class="category_bg bank"></span>은행</li>
+                                <li id="MT1"><span class="category_bg mart"></span>마트</li>
+                                <li id="PM9"><span class="category_bg pharmacy"></span>약국</li>
+                                <li id="AD5"><span class="category_bg oil"></span>주유소</li>
+                                <li id="CE7"><span class="category_bg cafe"></span>카페</li>
+                                <li id="CS2"><span class="category_bg store"></span>편의점</li>
+                                <li id="AD5"><span class="category_bg home"></span>숙소</li>
+                            </ul>
                         </div>
                     </div>
-                </footer>
-            </div>
+                    <!-- 지도 아래에 POI 순위 테이블 추가 -->
+                    <div class="poi-card-section">
+                        <h2>📍 관심지점 예약 순위</h2>
+                        <div class="poi-card-container">
+                            <%-- 나중에 DB에서 받아온 리스트로 반복 처리 예정 --%>
+                                <div class="poi-card">
+                                    <div class="poi-rank">1위</div>
+                                    <div class="poi-name">서울역점</div>
+                                    <div class="poi-address">서울 중구 한강대로 405</div>
+                                    <div class="poi-reservation">예약 수: 128건</div>
+                                </div>
+
+                                <div class="poi-card">
+                                    <div class="poi-rank">2위</div>
+                                    <div class="poi-name">강남점</div>
+                                    <div class="poi-address">서울 강남구 테헤란로 152</div>
+                                    <div class="poi-reservation">예약 수: 97건</div>
+                                </div>
+                                <%-- ... --%>
+                        </div>
+                    </div>
+                    <br>
+                    <main>
+                        <div class="table-wrapper">
+                            <table class="centered-table">
+                                <div id="google_translate_element">
+                                </div>
+                            </table>
+                        </div>
+                    </main>
+                    <%@ include file="components/footer.jsp" %>
+                </div>
         </div>
         <script>
             const app = Vue.createApp({
@@ -375,14 +280,43 @@
                         nickname: "${sessionNickname}",
                         name: "${sessionName}",
                         showLogoutMenu: false,
+                        point: "${sessionPoint}",
+
+                        code:""
                     };
                 },
                 computed: {
                     isLoggedIn() {
                         return this.nickname !== "";
+                    },
+                    gradeLabel() {
+                        switch (this.status) {
+                            case 'A': return '👑 ';
+                            case 'S': return '✨ ';
+                            case 'U': return '🙂 ';
+                            default: return '❓ 미지정';
+                        }
                     }
                 },
                 methods: {
+
+                    fnKakao : function () { 
+                        let self = this;
+                        let param = {
+                            code : self.code
+                        };
+                        $.ajax({
+                            url: "/kakao.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: param,
+                            success: function (data) {
+                                console.log(data);
+                                // self.sessionName = data.properties.nickname;
+                            }
+                        });
+                    },
+
                     toggleLogoutMenu() {
                         this.showLogoutMenu = !this.showLogoutMenu;
                     },
@@ -397,11 +331,20 @@
                         location.href = "/Service.do";
                     },
                     logout() {
-
-                        // Vue 상태 초기화
-                        this.nickname = "";
-                        this.showLogoutMenu = false;
-                        location.href = "/logout.do"; // 서버에서 닉네임 제거 후 리디렉션
+                        let self = this;
+                        let param = {
+                        };
+                        $.ajax({
+                            url: "/member/logout.dox",
+                            dataType: "json",
+                            type: "POST",
+                            data: param,
+                            success: function (data) {
+                                alert(data.msg);
+                                self.searchPlaces(); // ✅ 마커 재검색
+                                location.href = "/main-list.do";
+                            }
+                        });
                     },
                     removeMarker() {
                         for (let i = 0; i < this.markers.length; i++) {
@@ -417,6 +360,43 @@
                     },
                     LogoutMenu() {
                         this.showLogoutMenu = !this.showLogoutMenu;
+                    },
+
+                    onCategoryChange(event) {
+                        this.currCategory = event.target.value;
+                        this.searchPlaces();
+                    },
+                    searchPlaces() {
+                        if (!this.currCategory) return;
+
+                        this.placeOverlay.setMap(null);
+                        this.removeMarker();
+
+                        this.ps.categorySearch(this.currCategory, this.placesSearchCB, { useMapBounds: true });
+                    },
+                    placesSearchCB(data, status, pagination) {
+                        if (status !== kakao.maps.services.Status.OK) return;
+
+                        this.removeMarker();
+
+                        for (let i = 0; i < data.length; i++) {
+                            this.displayMarker(data[i]);
+                        }
+                    },
+                    displayMarker(place) {
+                        const marker = new kakao.maps.Marker({
+                            map: this.map,
+                            position: new kakao.maps.LatLng(place.y, place.x)
+                        });
+
+                        this.markers.push(marker);
+
+                        kakao.maps.event.addListener(marker, 'click', () => {
+                            const content = `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`;
+                            this.contentNode.innerHTML = content;
+                            this.placeOverlay.setPosition(new kakao.maps.LatLng(place.y, place.x));
+                            this.placeOverlay.setMap(this.map);
+                        });
                     },
 
                     // ------------------------------- 카카오 지도 --------------------------------                    
@@ -494,13 +474,21 @@
                     }
                 },
                 mounted() {
+
+
                     this.$nextTick(() => {
                         this.initMap();
                         waitForImagesThenStartSlider();
 
-                  
+
                     });
                     let self = this;
+
+                    const queryParams = new URLSearchParams(window.location.search);
+                    self.code = queryParams.get('code') || '';
+                    if(self.code != null){
+                        self.fnKakao();
+                    }
 
                     if (this.nickname && this.nickname !== "${sessionNickname}") {
                         this.isLoggedIn = true;
@@ -522,12 +510,38 @@
                             }
                         };
                     });
+                    //--------------------------------장소마커------------------------------------
+                    const mapContainer = document.getElementById('map');
+                    const mapOption = {
+                        center: new kakao.maps.LatLng(37.566826, 126.9786567),
+                        level: 5
+                    };
 
+                    this.map = new kakao.maps.Map(mapContainer, mapOption);
+                    this.ps = new kakao.maps.services.Places(this.map);
+
+                    this.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
+                    this.contentNode = document.createElement('div');
+                    this.contentNode.className = 'placeinfo_wrap';
+                    this.placeOverlay.setContent(this.contentNode);
+
+                    kakao.maps.event.addListener(this.map, 'idle', this.searchPlaces);
+
+                    // ✅ 이 줄이 빠졌을 경우 오류 발생
+                    const categoryItems = document.querySelectorAll('#category li');
+
+                    categoryItems.forEach(item => {
+                        item.addEventListener('click', () => {
+                            categoryItems.forEach(el => el.classList.remove('on'));
+                            item.classList.add('on');
+
+                            this.currCategory = item.id;
+                            this.searchPlaces();
+                        });
+                    });
 
 
                     //------------------------------------- 카카오 지도 -------------------------------------------
-
-
 
 
                     this.$nextTick(() => {
@@ -605,7 +619,7 @@
             });
 
             app.mount('#app');
-
+            //--------------------------배너  슬라이더 ------------------------------
             // ✅ 슬라이더 애니메이션 함수
             function startSlider() {
                 const track = document.getElementById('sliderTrack');

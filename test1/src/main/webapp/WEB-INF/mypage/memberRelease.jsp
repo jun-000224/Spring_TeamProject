@@ -7,10 +7,6 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <link rel="stylesheet" href="/css/main-style.css">
-    <link rel="stylesheet" href="/css/common-style.css">
-    <link rel="stylesheet" href="/css/header-style.css">
-    <link rel="stylesheet" href="/css/main-images.css">
     <style>
         table, tr, td, th{
             border : 1px solid black;
@@ -24,73 +20,41 @@
         tr:nth-child(even){
             background-color: azure;
         }
-
         .field{
-            margin: 100px auto;
-            width: 100%;
-            height: 600px;
+            text-align: center;
         }
-        .findField{
-            margin: 10px auto;
-            width: 450px;
-            border-style: solid;
-            border-radius: 10px;
-            border-width: 1px;
-            padding-left: 50px;
-            background-color: white;
-            text-align: left;
-            box-shadow: 0px 0px 5px gray;
-            
-        }
-        .findBlock{
-            margin-top: 20px;
-        }
-        .findBlock button{
-            margin-left: 10px;
-        }
-        .inputWidth{
-            width: 150px;
+        .field .yesBtn,.noBtn{
+            width: 100px;
+            margin: 30px;
         }
         .phone input{
             width: 50px;
         }
-        .btnField{
-            text-align: center;
-        }
-        .btnField button{
+        .inputWidth{
             width: 150px;
-            height: 50px;
-            font-size: 20px;
-            border-radius: 10px;
-            border-width: 1px;
-            background-color: #0078FF;
-            color: white;
-            border-color: #0078FF;
         }
-        .btnField button:hover{
-            background-color: rgb(6, 81, 131);
-            cursor: pointer;
+        .joinBlock{
+            width: 200px;
+            height: 300px;
+            text-align: left;
+            margin-left: 150px;
+        }
+        .checkButton{
+            margin-top : 10px;
         }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <%@ include file="../components/header.jsp" %>
-
         <div class="field">
-            <div class="findField">
-                <br>
-                <div class="findBlock">
-                    이름
-                    <br>
-                    <input type="text" v-model="name"
-                    @input="onNameInput"
-                    @compositionstart="isComposing = true"
-                    @compositionend="onCompositionEnd"
-                    class="inputWidth">
-                </div>
-                <div class="findBlock">
+            <h2>정말 탈퇴하시겠습니까?</h2>
+            <div v-if="!confirmFlg" class="ynBtn">
+                <button class="yesBtn" @click="fnConfirm">예</button>
+                <button class="noBtn" @click="fnCancel">아니오</button>
+            </div>
+            <div v-else>
+                <div class="joinBlock">
                     전화번호 
                     <br>
                     <span class="phone">
@@ -106,43 +70,25 @@
                         <input type="text" v-model="phone2" @input="phone2 = phone2.replace(/[^0-9]/g, '').slice(0, 4)"> -
                         <input type="text" v-model="phone3" @input="phone3 = phone3.replace(/[^0-9]/g, '').slice(0, 4)">
                     </span>
-                </div>
-                <div class="findBlock">
+                
                     <div v-if="!certifiFlg">
                         문자인증 
                         <br>
-                        <input class="inputWidth" type="text" v-model="inputNum" :placeholder="timer">
+                        <input type="text" class="inputWidth" v-model="inputNum" :placeholder="timer">
                             <!-- 속성에 :를 붙이면 변수가 동적으로 변함 -->
                         <template v-if="!smsFlg">
-                            <button @click="fnSms">인증번호 전송</button>
+                            <button @click="fnSms" class="checkButton">인증번호 전송</button>
                         </template>
                         <template v-else>
-                            <button @click="fnSmsAuth">인증</button>
+                            <button @click="fnSmsAuth" class="checkButton">인증</button>
                         </template>
                     </div>
                 </div>
-                <div class="findBlock">
-                    <div v-if="findFlg">
-                        아이디 : {{userData.userId}}
-                    </div>
-                    <!-- 문자인증 가능해지면 주석처리 -->
-                    
-                </div>
-                <br>
-                <br>
+                <button v-if="!tempFlg" @click="fnTemp">확인</button>
+                <button v-else @click="fnRelease">탈퇴</button>
             </div>
-            <div class="btnField">
-                <div v-if="!findFlg" class="findBlock">
-                    <button @click="fnIdFind">아이디 확인</button>
-                </div>
-        
-                <div v-if="findFlg" class="findBlock">
-                    <button class="findBtn" @click="fnGoLogin">로그인하러가기</button>
-                </div>
-            </div>
-        </div>
 
-        <%@ include file="../components/footer.jsp" %> 
+        </div>
          
     </div>
 </body>
@@ -153,7 +99,9 @@
         data() {
             return {
                 // 변수 - (key : value)
-                name : "",
+                userId : "",
+                confirmFlg : false,
+
                 phone1 : "010",
                 phone2 : "",
                 phone3 : "",
@@ -166,64 +114,58 @@
                 inputNum : "", // 인증 입력 번호
                 certifiStr : "", // 문자 인증 번호
 
-                userData : {},
+                tempFlg : false
 
-                findFlg : false
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
-            onNameInput(e) {
-                if (this.isComposing) return; //조합중이면 필터링 x
-                this.name = e.target.value.replace(/[^가-힣a-zA-Z]/g, ''); //한글,영문만 허용
-            }, //isComposing 이 
-            onCompositionEnd(e) {
-                this.isComposing = false;
-                this.name = e.target.value.replace(/[^가-힣a-zA-Z]/g, '');
+            fnConfirm: function () {
+                let self=this;
+                self.confirmFlg = true;
             },
 
-            fnIdFind: function () {
+            fnRelease: function () {
                 let self = this;
-
-                if(self.name.length==0){
-                    alert("이름을 입력해주세요.");
-                    return;
-                }
-
-                if(self.phone2.length !=4 || self.phone3.length != 4){
-                    alert("전화번호를 입력해주세요.");
-                    return;
-                }
-
-                //문자인증 열리면 주석 해제
-                // if(!self.certifiFlg){
-                //     alert("인증을 완료해주세요.");
-                //     return;
-                // }
-
                 let param = {
-                    name : self.name,
-                    phone : self.phone1 + "-" + self.phone2 + "-" + self.phone3
+                    userId : self.userId
                 };
-                console.log(param);
+                // alert(self.userId);
                 $.ajax({
-                    url: "/member/findId.dox",
+                    url: "/mypage/delete.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
                         if(data.result=="success"){
-                            console.log(data);
-                            self.userData = data.info;
-                            self.certifiFlg = true; //문자인증 열리면 주석처리
-                            self.findFlg = true;
+                            alert(data.msg);
+
+                            if (window.opener && !window.opener.closed) {
+                                window.opener.location.href = "/main-list.do";
+                            }
+                
+                            window.close();
 
                         } else {
-                            console.log(data);
                             alert(data.msg);
+                            return;
                         }
                     }
                 });
+            },
+
+            fnCancel : function () {
+                window.close();
+            },
+
+            fnReceiveMessage(event) {
+                //부모창에서 보낸 정보가 event의 형태로 받아짐
+                let self=this;
+                // console.log(event);
+                if (event.origin !== window.location.origin) return; // 보안 체크
+                    //같은 도메인이 아니면 실행 X
+                self.userId = event.data.userId;
+                console.log("받은 세션:", self.userId);
             },
 
             fnSms : function () {
@@ -257,6 +199,7 @@
                     if(self.count == 0) {
                         clearInterval(interval);
                         alert("시간이 만료되었습니다.");
+                        window.close();
                     } else {
                         let min = parseInt(self.count / 60);
                         let sec = self.count % 60;
@@ -276,20 +219,41 @@
                 if(self.certifiStr == self.inputNum){
                     alert("문자인증이 완료되었습니다.");
                     self.certifiFlg = true;
-                    self.fnIdFind();
                 } else {
                     alert("문자인증에 실패했습니다.");
                 }
             },
 
-            fnGoLogin : function () {
+            fnTemp : function () {
                 let self = this;
-                location.href="/member/login.do";
+                // self.smsFlg=true;
+                // self.fnTimer();
+                let param = {
+                    userId : self.userId,
+                    phone : self.phone1 + '-' + self.phone2 + '-' + self.phone3
+                };
+                // alert(self.userId);
+                $.ajax({
+                    url: "/mypage/temp.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        if(data.result=="success"){
+                            alert(data.msg);
+                            self.tempFlg=true;
+                        } else {
+                            alert(data.msg);
+                            return;
+                        }
+                    }
+                });
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+            window.addEventListener("message", self.fnReceiveMessage);
         }
     });
 
