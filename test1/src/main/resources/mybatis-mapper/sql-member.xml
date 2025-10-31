@@ -38,6 +38,22 @@
 			PASSWORD = #{hashPwd}
 		WHERE USER_ID = #{userId}
 	</update>
+	
+	<update id="loginCntUp" parameterType="hashmap">
+	<!--로그인 실패 시-->
+		UPDATE USERS
+		SET 
+			CNT = CNT+1
+		WHERE USER_ID = #{userId}
+	</update>
+	
+	<update id="loginCntReset" parameterType="hashmap">
+	<!--로그인 성공 시-->
+		UPDATE USERS
+		SET 
+			CNT = 0
+		WHERE USER_ID = #{userId}
+	</update>
 </mapper>
 
 

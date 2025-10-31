@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/css/common-style.css">
     <link rel="stylesheet" href="/css/header-style.css">
     <link rel="stylesheet" href="/css/main-images.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         table, tr, td, th{
             border : 1px solid black;
@@ -24,38 +26,92 @@
         tr:nth-child(even){
             background-color: azure;
         }
-        .body{
-            
-            margin: 200px auto;
-            width: 800px;
-            height: 300px;
-            
-
+        .checkButton{
+            margin-left: 10px;
         }
-        .loginField{
-            background-color: white;
-
-            margin: 10px auto;
-            padding-top: 50px;
-            width: 350px;
-            height: 260px;
+        .addr{
+            width: 250px;
+        }
+        .inputWidth{
+            width: 150px;
+        }
+        .phone input{
+            width: 50px;
+        }
+        .guide{
+            padding-left: 5px;
+            font-size: 12px;
+            color: blue;
+        }
+        .guideMust{
+            color: red;
+        }
+        .field{
+            margin: 20px auto;
+            width: 500px;
+            height: 1000px;
+            padding-bottom: 100px;
+        }
+        .infoField{
             border-style: solid;
+            border-radius: 10px;
             border-width: 1px;
-            border-radius: 15px;
+            /* padding-left: 10%; */
+            background-color: white;
+            margin: 30px auto;
+            text-align: left;
             box-shadow: 0px 0px 5px gray;
-
-            
-            text-align: center;
-
-            box-sizing: 600px;
-            
+            overflow: hidden;
         }
-        .btnStyle{
-            margin-top: 10px;
+        .infoField div{
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        .infoBanner{
+            background-color: #0078FF;
+            padding-left: 10%;
+            color: white;
+            font-weight: bold;
+            /* height: 40px; */
+        }
+        .infoBanner2{
+            padding-left: 10%;
+            /* height: 36px; */
+        }
+        .editBtn{
+            float: right;
             margin-right: 10px;
         }
-        .kakaoBtn{
+        .joinBlock{
             margin-top: 20px;
+        }
+        .btnField button{
+            width: 100px;
+            height: 40px;
+            font-size: 22px;
+            border-radius: 10px;
+            border-width: 1px;
+            font-weight: bold;
+        }
+        .btnField button:hover{
+            cursor: pointer;
+        }
+        .editBtn{
+            float: right;
+            background-color: #0078FF;
+            color: white;
+            border-color: #0078FF;
+        }
+        .editBtn:hover{
+            background-color: rgb(6, 81, 131);
+        }
+        .releaseBtn{
+            float: left;
+            background-color: rgb(216, 21, 21);
+            color: white;
+        }
+        .releaseBtn:hover{
+            background-color: rgb(92, 1, 1);
         }
     </style>
 </head>
@@ -98,42 +154,67 @@
             </div>
         </header>
         
-        <div class="body">
-            <div class="loginField">
-                <div>
-                    <div style="margin-left: 15px;">
-                        아이디 :
-                        <input autofocus type="text" v-model="id" @input="id = id.replace(/[^a-z0-9]/g, '')">
-                    </div>
-                    <div>
-                        비밀번호 :
-                        <input type="password" v-model="pwd" @keyup.enter="fnLogin">
-                    </div>
+        <div class="field">
+            <div class="infoField">
+                <div class="infoBanner">
+                    내 정보
                 </div>
-                <div>
-                    <div>
-                        <button @click="fnJoin" class="btnStyle">회원가입</button>
-                        <button @click="fnLogin" class="btnStyle">로그인</button>
-                    </div>
-                
-                    
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-user"></i>
+                    {{info.name}}
                 </div>
-                <div class="kakaoBtn">
-                    <a :href="kakaolocation" onclick="fnKakao">
-                        <img src="/img/kakao.png" alt="">
-                    </a>
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-phone"></i>
+                    {{info.phone}}
                 </div>
-                <div>
-                    <button @click="fnFind" class="btnStyle">아이디/비밀번호 찾기</button>
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-envelope"></i>
+                    {{info.email}}
                 </div>
-                <!-- <div>
-                    <a :href="naverlocation">
-                        <img src="/img/naver_login.png" alt="">
-                    </a>
-                </div> -->
-                <!-- <div>
-                    <button @click="fnLogout">로그아웃</button>
-                </div> -->
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-pen-clip"></i>
+                    {{info.userId}}
+                </div>
+                <div class="infoBanner2">
+                    <i class="fa-regular fa-face-smile"></i>
+                    {{info.nickname}}
+                </div>
+                <div class="infoBanner2">
+                    <span v-if="info.status === 'U'">
+                        <i class="fa-solid fa-circle-user"></i>
+                        일반 사용자
+                    </span>
+
+                    <span v-else-if="info.status === 'S'">
+                        <i class="fa-solid fa-star"></i>
+                        구독자
+                    </span>
+
+                    <span v-else-if="info.status === 'A'">
+                        <i class="fa-solid fa-user-secret"></i>
+                        관리자
+                    </span>
+                </div>
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-gift"></i>
+                    {{info.bdate}}
+                </div>
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-house"></i>
+                    {{info.addr}}
+                </div>
+                <div class="infoBanner2">
+                    <i class="fa-solid fa-calendar"></i>
+                    {{info.cdate}}
+                </div>
+                <div class="infoBanner2">
+                    <i class="fa-regular fa-calendar"></i>
+                    {{info.udate}}
+                </div>
+            </div>
+            <div class="btnField">
+                <button class="releaseBtn">탈퇴</button>
+                <button class="editBtn" @click="fnEdit">수정</button>
             </div>
         </div>
 
@@ -184,6 +265,7 @@
                 </div>
             </div>
         </footer>
+         
     </div>
 </body>
 </html>
@@ -193,149 +275,37 @@
         data() {
             return {
                 // 변수 - (key : value)
-                id : "",
-                pwd : "",
-
-                //main 연결 시, main으로 옮길 것
-                code : "", 
-
-                kakaolocation: "${kakao_location}"
-
-                // navercode : "",//main 연결 시, main으로 옮길 것
-
-                // naverlocation: "${naver_location}"
-
+                sessionId : "${sessionId}",
+                info : {}
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
-            fnLogin: function () {
+            fnMyInfo: function () {
                 let self = this;
-
-                if(self.id.length==0){
-                    alert("아이디를 입력해주세요.");
-                    return;
-                }
-                if(self.pwd.length==0){
-                    alert("비밀번호를 입력해주세요.");
-                    return;
-                }
-
                 let param = {
-                    userId : self.id,
-                    pwd : self.pwd
+                    userId : self.sessionId
                 };
                 $.ajax({
-                    url: "/member/login.dox",
+                    url: "/mypage/myInfo.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
                         console.log(data);
-                        if(data.result=="success"){
-                            alert(data.msg);
-                            location.href="/main-list.do";
-                        } else{
-                            alert(data.msg);
-                            return;
-                        }
+                        self.info = data.info;
                     }
                 });
             },
 
-            fnFind : function () {
-                location.href="/member/find.do";
-            },
-
-            fnJoin : function () {
-                location.href="/member/join.do";
+            fnEdit: function() {
+                location.href="/myInfo/edit.do";
             }
-            
-            /*
-            ,
-
-            fnLogout : function () {
-                let self = this;
-
-                let param = {
-                };
-                $.ajax({
-                    url: "/member/logout.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: param,
-                    success: function (data) {
-                        alert(data.msg);
-                        location.href="/main-list.do";
-                    }
-                });
-            },
-            */
-
-            /*main 연결 시, fnKakao를 main으로 옮길 것----------------------
-            fnKakao : function () { 
-                let self = this;
-                let param = {
-                    code : self.code
-                };
-                $.ajax({
-                    url: "/kakao.dox",
-                    dataType: "json",
-                    type: "POST",
-                    data: param,
-                    success: function (data) {
-                        console.log(data);
-                        // self.sessionName = data.properties.nickname;
-                    }
-                });
-            }
-            ,*/
-
-            // fnNaver : function () { 
-            //     let self = this;
-            //     let param = {
-            //         code : self.code
-            //     };
-            //     $.ajax({
-            //         url: "/naver.dox",
-            //         dataType: "json",
-            //         type: "POST",
-            //         data: param,
-            //         success: function (data) {
-            //             console.log(data);
-            //             // self.sessionName = data.properties.nickname;
-            //         }
-            //     });
-            // }
-            //---------------------------------------------------------------
-
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
-
-            //----------main 연결 시, main으로 옮길 것--------------------------
-            // const queryParams = new URLSearchParams(window.location.search);
-            // self.code = queryParams.get('code') || '';
-            
-            // const state = queryParams.get('state');
-
-            // if(self.code != null){
-                // if(self.kakaoFlg){
-                //     self.fnKakao();
-                // }
-
-                // if(self.naverFlg){
-                //     self.naverFlg();
-                // }
-            // }
-            
-            
-            // if(self.code != null){
-            //     self.fnKakao();
-                // self.fnNaver();
-            // }
-            //------------------------------------------------------------------
+            self.fnMyInfo();
         }
     });
 
