@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-
+import org.apache.ibatis.annotations.Param;
 
 import com.example.test1.model.Review;
 
@@ -15,6 +15,9 @@ public interface ReviewMapper {
 	List<Review> myResList(HashMap<String , Object> map);
 	//후기리스트
 	List<Review> reviewList(HashMap<String , Object> map);
+	
+	//sortNo 구하기
+	int selectMaxSortNo(@Param("contentId") int contentId);
 	
 	//평점 업데이트
 	int rating(HashMap<String , Object>map);

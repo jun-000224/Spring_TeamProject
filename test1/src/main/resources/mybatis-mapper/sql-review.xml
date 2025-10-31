@@ -17,6 +17,12 @@
 		INNER JOIN RESERVATION R2 ON R1.RES_NUM = R2.RES_NUM		
 	</select>
 	
+	<select id="selectMaxSortNo" parameterType="int" resultType="int">
+    SELECT NVL(MAX(SORT_NO), 0)
+    FROM MEDIA
+    WHERE CONTENTID = #{contentId}
+</select>
+	
 	<insert id="resInsert" parameterType="hashmap">
 		INSERT INTO TBL_REVIEW
 		VALUES(REVIEW_SEQ.NEXTVAL,#{userId},'0','0',SYSDATE,#{resNum})
@@ -24,8 +30,9 @@
 	
 	<insert id="fileUpload" parameterType="hashmap">
 		INSERT INTO MEDIA
-		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId}, '0', #{userId}, #{boardNo})
+		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId}, #{sortNo}, #{userId}, #{boardNo,jdbcType=NUMERIC})
 	</insert>
+	
 	
 	
 </mapper>
