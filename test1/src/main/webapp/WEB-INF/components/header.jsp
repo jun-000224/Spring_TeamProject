@@ -55,3 +55,17 @@
 
 
 </header>
+
+<script>
+    window.sessionData = {
+        id: "${sessionId}",
+        status: "${sessionStatus}",
+        nickname: "${sessionNickname}",
+        name: "${sessionName}",
+        point: "${sessionPoint}"
+    };
+</script>
+
+<script src="https://unpkg.com/vue@3"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="../../js/header.js"></script>
