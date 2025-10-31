@@ -45,9 +45,9 @@
                 font-weight: bold;
             }
 
-            /* 내용 칸은 왼쪽 정렬 */
+           
             td:nth-child(2) {
-                text-align: left;
+                text-align: center;
             }
 
             /* 버튼 영역 */
@@ -262,19 +262,21 @@
 
             <!-- 댓글 코멘트 -->
             <table id="comment">
-                <tr v-for="item in commentList">
+                <tr v-for="item in commentList" :key="item.commentNo">
+                    
 
                     <th>{{item.commentNo}}</th>
 
-                    <!-- <th>{{item.nickName}}</th> -->
+                    <th>{{item.userId}}</th>
 
                     <th>
                         {{item.contents}}
                     </th>
 
-                    <div>
-                        <td><button>삭제</button></td>
-                        <td><button>수정</button></td>
+                    <!--수정사항-->
+                    <div v-if="info.userId == sessionId">
+                        <td><button @click="fncRemove(item.commentNo)">삭제</button></td>
+                        <td><button @click="fncUpdate(item.commentNo)">수정</button></td>
 
                     </div>
 
@@ -356,9 +358,10 @@
                     // 변수 - (key : value)
                     info: {},
                     boardNo: "${boardNo}",
-
                     sessionId: "${sessionId}",
-                    contents: ""
+                    contents: "",
+                    commentList : [],
+                    commentNo : "${commentNo}"
                 };
             },
             methods: {
@@ -377,9 +380,11 @@
                         data: param,
                         success: function (data) {
                             console.log(data);
+                            
                             self.info = data.info;
-
-
+                            self.commentList = data.commentList;
+                            
+                            console.log(self.commentList);
                         }
                     });
                 },
@@ -387,7 +392,7 @@
                     let self = this;
                     let param = {
                         boardNo: self.boardNo,
-
+                        sessionId : self.sessionId,
                         contents: self.contents
                     };
                     $.ajax({
@@ -413,8 +418,15 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            alert("삭제됨");
-                            location.href = "board-list.do";
+                            alert("정말로 삭제하시겠습니까?");
+                            if(data.result == "success"){
+                                alert("삭제되었습니다!");
+                                location.href = "board-list.do";
+                            }else{
+                                alert("오류발생");
+                            }
+                            
+                            
                         }
                     });
                 },
@@ -424,9 +436,39 @@
                     let self = this;
                     console.log(self.boardNo);
                     pageChange("board-edit.do", { boardNo: self.boardNo });
+
+                },
+                
+
+                fncRemove: function (commentNo) {
+                    let self = this;
+                    let param = {
+                        commentNo: commentNo,
+                    }
+                    console.log(self.commentNo);
+                    
+                    $.ajax({
+                        url: "/view-cDelete.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: param,
+                        success: function (data) {
+                           alert("정말로 삭제하시겠습니까?");
+                            if(data.result == "success"){
+                                alert("삭제되었습니다!");
+                                self.fnInfo();
+                            }else{
+                                alert("오류발생");
+                            }
+                        }
+                    });
                 },
 
-
+                fncUpdate: function (commentNo) {
+                    let self = this;
+                    console.log("수정 요청댓글번호",commentNo);
+                    pageChange("board-comment-edit.do", { commentNo: self.commentNo });
+                },
 
             }, // methods
             mounted() {

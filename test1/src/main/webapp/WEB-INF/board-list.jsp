@@ -15,13 +15,114 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
+            /* 🔹 전체 필터 영역 박스 */
+            .board-filter {
+                width: 90%;
+                margin: 30px auto;
+                background: #f9fbff;
+                border: 1px solid #dbe5f0;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 120, 255, 0.05);
+                padding: 15px 25px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            /* 🔹 각 행 정렬 */
+            .filter-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 10px;
+            }
+
+            /* 🔹 공통 select/input/button 스타일 */
+            .board-filter select,
+            .board-filter input,
+            .board-filter button {
+                border: 1px solid #c9d6e3;
+                border-radius: 6px;
+                padding: 7px 10px;
+                font-size: 14px;
+                background-color: #fff;
+                color: #333;
+                transition: all 0.2s ease;
+            }
+
+            .board-filter select:focus,
+            .board-filter input:focus {
+                outline: none;
+                border-color: #0078FF;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.2);
+            }
+
+            /* 🔹 검색창 크기 조절 */
+            .board-filter input {
+                width: 220px;
+            }
+
+            /* 🔹 검색 버튼 */
+            .board-filter button {
+                background-color: #0078FF;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                padding: 7px 16px;
+                font-weight: 500;
+            }
+
+            .board-filter button:hover {
+                background-color: #005FCC;
+                transform: translateY(-1px);
+            }
+
+            /* 반응형: 모바일에서 자동 줄바꿈 */
+            @media (max-width: 768px) {
+                .board-filter {
+                    width: 95%;
+                    padding: 15px;
+                }
+
+                .filter-row {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .board-filter input {
+                    width: 100%;
+                }
+            }
+
             /* 📘 게시판 전체 영역 */
             #app>div {
-                width: 90%;
+                width: 100%;
                 margin: 0 auto;
                 font-family: 'Noto Sans KR', sans-serif;
                 color: #333;
                 text-align: center;
+            }
+
+            /* ⭐️ 요청하신 커서 변경 CSS */
+            tr {
+                cursor: pointer;
+                /* 모든 행을 클릭 가능하게 표시 */
+            }
+
+            tr:hover {
+                background-color: #f4f9ff;
+            }
+
+            /* 제목 링크 */
+            td a {
+                color: #0078FF;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            td a:hover {
+                text-decoration: underline;
             }
 
             /* 📗 검색 + 필터 영역 */
@@ -77,6 +178,7 @@
                 overflow: hidden;
                 margin-bottom: 20px;
                 text-align: center;
+                font-weight: bold;
             }
 
             th {
@@ -138,15 +240,8 @@
                 text-align: center;
             }
 
-            .num:hover {
-                background-color: #0078FF;
-                color: white;
-            }
-
             .active {
-                background-color: #0078FF;
-                color: white !important;
-                border: 1px solid #0078FF;
+                color: #0078FF !important;
             }
 
             /* ◀ ▶ 버튼 */
@@ -161,10 +256,31 @@
                 color: #005FCC;
             }
 
-            /* 📗 글쓰기 버튼 */
-            #app>div:last-of-type {
-                text-align: center;
+            /* 📗 글쓰기 버튼 영역 (수정) */
+            .write-button-area {
+                text-align: right;
+                /* 버튼을 오른쪽으로 정렬 */
                 margin-top: 25px;
+                /* 버튼과 테이블 사이의 간격 */
+                padding-right: 5%;
+                /* 전체 width 100% 기준으로 테이블과 같은 수준으로 오른쪽 여백 적용 (테이블이 90% width를 사용하는 경우 필요에 따라 조정) */
+            }
+
+            /* 📗 글쓰기 버튼 스타일 (기존 스타일에서 가져옴) */
+            .write-button-area button {
+                background-color: #00A86B;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                margin-right: 1800px;
+            }
+
+            .write-button-area button:hover {
+                background-color: #008f5a;
             }
 
             #app>div:last-of-type button {
@@ -237,46 +353,42 @@
 
 
             </header>
-            <div>
-                <select v-model="searchOption">
-                    <option value="all">::전체::</option>
-                    <option value="title">::제목::</option>
-                    <option value="id">::작성자::</option>
-                </select>
+            <!-- 🔹 필터 영역 -->
+            <div class="board-filter">
+                <div class="filter-row">
+                    <select v-model="searchOption">
+                        <option value="all">::전체::</option>
+                        <option value="title">::제목::</option>
+                        <option value="id">::작성자::</option>
+                    </select>
 
-
-            </div>
-
-            <div>
-                <select v-model="pageSize">
-                    <option value="5">::5개씩::</option>
-                    <option value="10">::10개씩::</option>
-                    <option value="20">::20개씩::</option>
-                </select>
-                <div>
-                    검색어 : <input @keyup.enter="fnList" v-model="keyword" placeholder="검색어를 입력해주세요.">
+                    <input @keyup.enter="fnList" v-model="keyword" placeholder="검색어를 입력해주세요.">
                     <button @click="fnList">검색</button>
                 </div>
 
+                <div class="filter-row">
+                    <select v-model="pageSize" @change="fnList">
+                        <option value="5">::5개씩::</option>
+                        <option value="10">::10개씩::</option>
+                        <option value="15">::15개씩::</option>
+                    </select>
 
+                    <select v-model="type" @change="fnList">
+                        <option value="">::전체::</option>
+                        <option value="N">::공지사항::</option>
+                        <option value="F">::자유게시판::</option>
+                        <option value="Q">::질문게시판::</option>
+                    </select>
 
+                    <select v-model="order" @change="fnList">
+                        <option value="num">::번호순::</option>
+                        <option value="title">::제목순::</option>
+                        <option value="cnt">::조회수::</option>
+                    </select>
 
-                <select v-model="type">
-                    <option value="">::전체::</option>
-                    <option value="N">::공지사항::</option>
-                    <option value="F">::자유게시판::</option>
-                    <option value="Q">::질문게시판::</option>
-                </select>
+                </div>
 
-
-
-                <select v-model="order">
-                    <option value="num">::번호순::</option>
-                    <option value="title">::제목순::</option>
-                    <option value="cnt">::조회수::</option>
-                </select>
             </div>
-
 
             <table>
                 <tr>
@@ -289,12 +401,12 @@
 
                 </tr>
 
-                <tr v-for="item in list">
+                <tr v-for="item in list" @click="fnView(item.boardNo)">
                     <td>{{item.boardNo}}</td>
                     <td>{{item.userId}}</td>
                     <td>
-                        <a href="javascript:;" @click="fnView(item.boardNo)">{{item.title}}</a>
-
+                        <a href="javascript:;">{{item.title}}</a>
+                        <span v-if="item.commentCnt != 0" style="color:red;"> [{{item.commentCnt}}]</span>
                     </td>
                     <td> {{item.fav}}</td>
                     <td>{{item.cnt}}</td>
@@ -303,6 +415,11 @@
                 </tr>
 
             </table>
+            <div class="write-button-area">
+                <a href="board-add.do"><button>글쓰기</button></a>
+            </div>
+
+
             <div>
                 <a v-if="page !=1" @click="fnMove(-1)" href="javascript:;">◀</a>
                 <a href="javascript:;" v-for="num in index" class="num" @click="fnPage(num)">
@@ -312,11 +429,7 @@
                 </a>
                 <a v-if="page!=index" @click="fnMove(1)" href="javascript:;">▶</a>
             </div>
-            <div>
-                <a href="board-add.do"><button>글쓰기</button></a>
 
-
-            </div>
         </div>
 
         <footer>
@@ -382,6 +495,7 @@
                     order: "num",
                     keyword: "",
 
+                    sessionId: "${sessionId}",
                     page: 1,
                     index: 0,
                     num: ""
@@ -394,13 +508,14 @@
                 fnList: function () {
                     let self = this;
                     let param = {
-
+                        userId: self.userId,
                         type: self.type,
                         order: self.order,
                         keyword: self.keyword,
                         searchOption: self.searchOption,
                         pageSize: self.pageSize,
-                        page: (self.page - 1) * self.pageSize
+                        page: (self.page - 1) * self.pageSize,
+
                     };
                     $.ajax({
                         url: "board-list.dox",
@@ -433,6 +548,10 @@
             mounted() {
                 // 처음 시작할 때 실행되는 부분
                 let self = this;
+                if (self.sessionId == "") {
+                    alert("로그인 후 이용해 주세요");
+                    location.href = "/member/login.do";
+                }
                 self.fnList();
             }
         });

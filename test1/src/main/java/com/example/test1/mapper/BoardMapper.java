@@ -49,4 +49,10 @@ public interface BoardMapper {
 	//첨부파일 목록
 	List<Board> selectFileList(HashMap<String, Object> map);
 	
+	//코멘트 삭제 (view)
+	int viewComRemove(HashMap<String , Object> map);
+	
+	//코멘트 수정(board-comment-update)
+	int updateComment(HashMap<String , Object> map);
+	
 }

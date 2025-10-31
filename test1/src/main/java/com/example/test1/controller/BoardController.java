@@ -52,6 +52,14 @@ public class BoardController {
         return "/board-edit";
     }
 	
+	@RequestMapping("/board-comment-edit.do") 
+	
+    public String commentUpdate(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		System.out.println(map);
+		request.setAttribute("commentNo", map.get("commentNo"));
+        return "/board-comment-edit";
+    }
+	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String boardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -179,6 +187,22 @@ public class BoardController {
 		return fileName;
 	}
 
+	@RequestMapping(value = "/view-cDelete.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commRemove(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.commentRemove(map);
+		
+		return new Gson().toJson(resultMap);
+	}
 	
+	@RequestMapping(value = "/board-comment-edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String updateComment(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = boardService.commentUpdate(map);
+		
+		return new Gson().toJson(resultMap);
+	}
 	
 }
