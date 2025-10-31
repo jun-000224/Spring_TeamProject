@@ -4,18 +4,18 @@ import lombok.Data;
 
 @Data
 public class Review {
-	private String boardNo;
+	private int resNum;
 	private String userId;
-	private String title;
-	private String contents;
-	private String fav;
-	private String cnt;
-	private String cdateTime;
-	private String udateTime;
-	private String type;
+	private String packname;
+	private String price;
+	private String themNum;
+	private String descript;
+	private String rdatetime;
 	
-	private String fileNo;
-	private String filePath;
-	private String fileName;
+	private int fav;
+	private int cnt;
+	private String cdatetime;
+	private int boardNo;
+	
 	
 }

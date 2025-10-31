@@ -44,7 +44,6 @@ public class ShareBoardViewService {
                     + "&MobileOS=ETC&MobileApp=AppTest"
                     + "&contentId=" + contentId;
 
-			System.out.println(url);
             RestTemplate restTemplate = new RestTemplate();
             byte[] bytes = restTemplate.getForObject(url, byte[].class);
             String xmlResponse = new String(bytes); // 공공데이터가 EUC-KR인 경우
@@ -89,7 +88,7 @@ public class ShareBoardViewService {
 
         // DB에서 contentId 리스트 가져오기
         List<Share> shares = ShareBoardMapper.sharInfo(map);
-
+       
         for (Share share : shares) {
             String contentId = String.valueOf(share.getContentId());
             if (contentId == null || contentId.isEmpty()) continue;
@@ -108,7 +107,7 @@ public class ShareBoardViewService {
                     success = true; // 성공하면 반복 종료
                 } catch (Exception e) {
                     attempts++;
-                    System.out.println("API 호출 실패 contentId: " + contentId + ", 재시도 " + attempts + ", 에러: " + e.getMessage());
+                    
                     try {
                         Thread.sleep(1000); // 1초 대기 후 재시도
                     } catch (InterruptedException ie) {
@@ -119,15 +118,22 @@ public class ShareBoardViewService {
 
             // 최대 재시도 후에도 실패하면 경고 출력하고 빈 리스트 처리
             if (!success) {
-                System.out.println("최종 실패 contentId: " + contentId + ", 다음 contentId로 넘어갑니다.");
                 infoList = new ArrayList<>();
             }
-
+            Double rating = share.getRating();
+            String content = share.getContent();
             // dayNum별로 안전하게 map에 추가
             for (HashMap<String, Object> infoMap : infoList) {
                 if (infoMap.get("dayNum") != null) {
                     dayNum = Integer.parseInt(String.valueOf(infoMap.get("dayNum")));
                 }
+                if (rating != null) {
+                    infoMap.put("rating", rating);
+                    infoMap.put("content", content);
+                } else {
+                    infoMap.put("rating", 0); // 기본값
+                }
+                
                 dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
             }
         }

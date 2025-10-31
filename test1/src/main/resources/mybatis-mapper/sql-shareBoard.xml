@@ -10,6 +10,7 @@
 	     FROM POI t2
 	     WHERE TRUNC(t2.RESERV_DATE) &lt;= TRUNC(t.RESERV_DATE)
 	    ) AS day_num ,TO_CHAR(RESERV_DATE,'YYYY-MM-DD') AS day
+	    ,T.RATING
 		FROM POI t
         INNER JOIN RESERVATION R ON T.RES_NUM = R.RES_NUM
         WHERE R.RES_NUM = ${resNum}
