@@ -9,23 +9,102 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
         <style>
-            table,
-            tr,
-            td,
-            th {
-                border: 1px solid black;
+            /* 수정/등록 폼 테이블 */
+            table {
+                width: 80%;
+                margin: 30px auto;
                 border-collapse: collapse;
-                padding: 5px 10px;
+                background: #fff;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                border-radius: 10px;
+                overflow: hidden;
+                font-family: 'Noto Sans KR', sans-serif;
+                text-align: left;
+            }
+
+            th {
+                background-color: #0078FF;
+                color: white;
+                font-weight: 600;
+                padding: 14px 20px;
+                width: 130px;
+                vertical-align: middle;
+                font-size: 15px;
+            }
+
+            td {
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+                font-size: 14px;
+            }
+
+            /* select 스타일 */
+            select {
+                width: 150px;
+                padding: 8px 12px;
+                font-size: 14px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+                font-family: 'Noto Sans KR', sans-serif;
+            }
+
+            select:focus {
+                outline: none;
+                border-color: #0078FF;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.3);
+            }
+
+            /* input 스타일 */
+            input[type="text"] {
+                width: 100%;
+                padding: 10px 12px;
+                font-size: 14px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+                font-family: 'Noto Sans KR', sans-serif;
+            }
+
+            input[type="text"]:focus {
+                outline: none;
+                border-color: #0078FF;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.3);
+            }
+
+            /* 에디터 div */
+            #editor {
+                height: 300px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                padding: 12px;
+                font-size: 14px;
+                font-family: 'Noto Sans KR', sans-serif;
+                overflow-y: auto;
+            }
+
+            /* 버튼 중앙 정렬 */
+            div {
+                width: 80%;
+                margin: 20px auto 40px;
                 text-align: center;
             }
 
-            th {
-                background-color: beige;
+            /* 저장 버튼 스타일 */
+            button {
+                background-color: #0078FF;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 28px;
+                font-size: 15px;
+                cursor: pointer;
+                transition: background-color 0.25s ease;
             }
 
-            tr:nth-child(even) {
-                background-color: azure;
+            button:hover {
+                background-color: #005FCC;
             }
         </style>
     </head>
@@ -42,10 +121,7 @@
                     <th>작성자</th>
                     <td>{{userId}}</td>
                 </tr>
-                <tr>
-                    <th>파일첨부</th>
-                    <td><input type="file" id="file1" name="file1" accept=".jpg, .png"></td>
-                </tr>
+
                 <tr>
                     <th>게시글 종류</th>
                     <td>
@@ -61,8 +137,9 @@
                 <tr>
                     <th>내용</th>
 
-                    <td>
-                        <textarea v-model="contents" cols="40" rows="5" placeholder="내용을 입력하세요"></textarea>
+                    <td style="height: 300px; padding: 30px;">
+                        <!-- <textarea v-model="contents" cols="50" rows="20"></textarea> -->
+                        <div id="editor"></div>
                     </td>
 
                 </tr>
@@ -104,16 +181,17 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                             alert("등록되었습니다.");
+                            alert("등록되었습니다.");
                             console.log(data.boardNo);
                             var form = new FormData();
                             form.append("file1", $("#file1")[0].files[0]);
                             form.append("boardNo", data.boardNo);
                             self.upload(form);
-                            //    location.href="board-list.do";
+                            location.href = "board-list.do";
                         }
                     });
                 },
+                // 파일 업로드
                 upload: function (form) {
                     var self = this;
                     $.ajax({
@@ -122,23 +200,21 @@
                         , processData: false
                         , contentType: false
                         , data: form
-                        , success: function (response) {
+                        , success: function (data) {
                             console.log(data);
-
                         }
                     });
                 }
-
             }, // methods
             mounted() {
                 // 처음 시작할 때 실행되는 부분
                 let self = this;
-                //  if (self.sessionId == "") {
-                //         alert("로그인 후 이용해주세요");
-                //         location.href = "/member/login.do"
-                //     }
+                if (self.sessionId == "") {
+                    alert("로그인 후 이용해 주세요");
+                    location.href = "/member/login.do";
+                }
 
-                //**
+                // Quill 에디터 초기화
                 var quill = new Quill('#editor', {
                     theme: 'snow',
                     modules: {

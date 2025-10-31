@@ -121,12 +121,20 @@
 	<update id="updateView" parameterType="hashmap">
 		UPDATE TBL_BOARD
     	SET 
-    	TITLE = #{title}, CONTENTS = #{contents}
+    	TITLE = #{title}, CONTENTS = #{contents} 
     	WHERE BOARDNO = #{boardNo}
 	</update>
 	
+	<insert id="insertBoardImg" parameterType="hashmap">
+		INSERT INTO MEDIA
+		VALUES(MEDIA_SEQ.NEXTVAL, #{title}, #{path}, #{orgName}, 'F', #{userId}, #{boardNo})
+	</insert>
 	
-	
+	<select id = "selectFileList" parameterType="hashMap" resultType="com.example.test1.model.Board">
+		SELECT * 
+		FROM MEDIA
+		WHERE BOARDNO = #{boardNo}
+	</select>
 	
 </mapper>
 

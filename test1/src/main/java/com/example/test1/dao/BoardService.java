@@ -48,6 +48,8 @@ public class BoardService{
 			resultMap.put("info", info); 
 			resultMap.put("commentList", commentList);
 			resultMap.put("result", "success");
+			
+			
 		}catch(Exception e) {
 			resultMap.put("result", "fail");
 			System.out.println(e.getMessage());
@@ -139,7 +141,11 @@ public class BoardService{
 		return resultMap;
 	
 	}
-	
+	public void addBoardImg(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		int cnt = boardMapper.insertBoardImg(map);
+		
+	}
 	
 	
 }

@@ -40,9 +40,13 @@ public interface BoardMapper {
 	//view에서 게시글 삭제
 	int viewRemove(HashMap<String , Object> map);
 	
-	//view에서 게시글 수정
+	//view에서 게시글 수정(board-edit)
 	int updateView(HashMap<String , Object> map);
 	
+	//첨부파일(이미지) 업로드
+	int insertBoardImg(HashMap<String, Object> map);
 	
+	//첨부파일 목록
+	List<Board> selectFileList(HashMap<String, Object> map);
 	
 }
