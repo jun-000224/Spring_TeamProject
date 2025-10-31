@@ -32,6 +32,7 @@ public class MemberService {
 			resultMap.put("result", result);
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println(e.getMessage());
 			resultMap.put("msg", "오류가 발생했습니다.");
 			resultMap.put("result", "fail");
 			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
@@ -204,5 +205,7 @@ public class MemberService {
 		
 		return resultMap;
 	}
+	
+	
 	
 }
