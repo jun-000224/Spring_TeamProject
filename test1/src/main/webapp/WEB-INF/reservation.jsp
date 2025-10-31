@@ -10,10 +10,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script>const ctx = '${pageContext.request.contextPath}';</script>
 
-    <!-- 분리된 CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/reservation.css" />
     <style>
     </style>
@@ -24,9 +23,9 @@
       <h1 class="page-title">예약하기</h1>
 
       <div class="grid two-col">
-        <!-- Left: Theme & Region -->
         <section class="panel">
-          <h3>테마 선택 <span class="desc">복수 선택 가능</span></h3>
+          <h3>테마 선택 <span class="desc">복수 선택 가능</span>
+          </h3>
           <div class="desc">선택된 테마는 아래에 간단히 표시됩니다.</div>
 
           <div class="theme-grid">
@@ -41,7 +40,6 @@
           </div>
           <div class="desc" v-else>선택: 없음</div>
 
-          <!-- 지역 API는 보류하지만 UI는 유지 (값은 전송 시 null로 처리) -->
           <h3 style="margin-top:14px">지역 선택</h3>
           <div class="grid" style="grid-template-columns:1fr 1fr; gap:10px">
             <div class="field">
@@ -63,10 +61,7 @@
           <div class="inline" style="margin-top:4px">
             선택된 지역: <strong>{{ displayRegion }}</strong>
           </div>
-        </section>
-
-        <!-- Right: People & Budget -->
-        <section class="panel">
+          <br>
           <h3>인원 / 예산</h3>
           <div class="field">
             <label>총원</label>
@@ -81,16 +76,52 @@
           <div class="inline" style="margin-top:2px">
             입력값: 인원 <strong>{{ headCount || 0 }}</strong>명 / 예산 <strong>{{ (budget ?? 0).toLocaleString() }}</strong>원
           </div>
+        </section>
 
+        <section class="panel">
+          <h3 style="margin-top:14px">일정 선택</h3>
+          <div class="field-row">
+            <div class="field">
+              <label>시작일</label>
+              <input type="text" :value="startDate || ''" readonly placeholder="달력에서 선택">
+            </div>
+            <div class="field">
+              <label>종료일</label>
+              <input type="text" :value="endDate || ''" readonly placeholder="달력에서 선택">
+            </div>
+          </div>
+          <div class="inline" style="margin-top:2px; margin-bottom:8px;">
+            선택된 일정: <strong>{{ displayDateRange }}</strong>
+          </div>
+
+          <div class="calendar">
+            <div class="cal-header">
+              <button @click.prevent="prevMonth" type="button">&lt;</button>
+              <strong>{{ currentYear }}년 {{ monthName }}</strong>
+              <button @click.prevent="nextMonth" type="button">&gt;</button>
+            </div>
+            <div class="cal-grid week-days">
+              <div class="cal-day-label">일</div>
+              <div class="cal-day-label">월</div>
+              <div class="cal-day-label">화</div>
+              <div class="cal-day-label">수</div>
+              <div class="cal-day-label">목</div>
+              <div class="cal-day-label">금</div>
+              <div class="cal-day-label">토</div>
+            </div>
+            <div class="cal-grid days">
+              <div v-for="(day, i) in calendarGrid" :key="i" :class="['cal-day', getDayClasses(day)]"
+                @click="selectDate(day)">
+                {{ day.dayNum }}
+              </div>
+            </div>
+          </div>
           <div class="actions">
-            <!-- 지역 미선택이어도 테스트 가능하도록 유효성에서 제외 -->
             <button class="btn-primary" @click="fnCreate">코스 생성하기</button>
-            <!-- 다 고쳐지면 버튼에다가 다시 :disabled="!isFormValid" 추가 -->
           </div>
         </section>
       </div>
 
-      <!-- Budget Pie -->
       <section class="panel" style="margin-top:10px">
         <h3>예산 배분</h3>
         <div class="desc">
@@ -106,7 +137,6 @@
             <div class="help">도넛 두께 영역을 잡고 분기점을 회전시키세요. (잠금된 항목은 비율 고정)</div>
           </div>
 
-          <!-- Legend with Lock -->
           <div class="legend">
             <div class="legend-row" v-for="(c,idx) in categories" :key="c.key">
               <label style="display:flex;align-items:center;gap:6px;min-width:22px;">
@@ -136,16 +166,14 @@
         </div>
       </section>
 
-      <!-- 테스트 출력 영역 -->
       <section class="panel" style="margin-top:10px">
         <h3>넘어가는 파라미터 체크용 콘솔</h3>
         <div id="debugOut"></div>
       </section>
 
-      <!-- 플로팅 버튼 + 모달 마크업 추가 -->
       <button class="fab" @click="openBoardModal" aria-label="커뮤니티 열기" title="커뮤니티">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
           <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
         </svg>
       </button>
@@ -166,8 +194,9 @@
 
     </div>
 
-    <!-- 파이 모듈(믹스인) 임포트: 잠금 로직 포함 버전 -->
     <script src="${pageContext.request.contextPath}/js/reservation-pie.js"></script>
+
+    <script src="${pageContext.request.contextPath}/js/reservation-calendar.js"></script>
 
     <script>
       const app = Vue.createApp({
@@ -187,7 +216,7 @@
             ],
             selectedThemes: [],
 
-            // Region (API 보류)
+            // Region
             sidoList: [],
             sigunguList: [],
             selectedSido: '',
@@ -195,17 +224,21 @@
             loadingSido: false,
             loadingSigungu: false,
 
-            // Budget (값만, 나머지는 mixin이 관리)
+            // Budget
             budget: null,
             headCount: null,
 
-            // 커뮤니티 연결 모달/ 일단 연결 URL은 임시로, 추후에는 QNA로 할듯?
+            // [ ⭐ 2. ] 달력 선택 값
+            startDate: null,
+            endDate: null,
+            selectionState: 'start', // 'start' 또는 'end' (mixin이 사용)
+
+            // 커뮤니티 연결 모달
             showBoardModal: false,
             boardUrl: ctx + '/board-view.do'
           }
         },
         computed: {
-          // 지역은 테스트 단계에서는 유효성에서 제외
           isFormValid() {
             return this.selectedThemes.length > 0
               && this.headCount > 0
@@ -219,8 +252,8 @@
           }
         },
         methods: {
-          // (지역 API 자리만 유지)
-          async loadSido() { 
+          // (지역 API)
+          async loadSido() {
             const self = this;
             self.loadingSido = true;
             self.sidoList = [];
@@ -234,7 +267,7 @@
               self.loadingSido = false;
             }
           },
-          async loadSigungu() { 
+          async loadSigungu() {
             const self = this;
             self.loadingSigungu = true;
             self.sigunguList = [];
@@ -258,14 +291,20 @@
           },
           labelOf(code) { return this.themeOptions.find(t => t.code === code)?.label || code; },
 
-          // 코스 생성하기, 지역은 현재 api이슈로 패스하고 나머지는 키벨류 형태로 출력
-          fnCreate() {
+
+          // [ ⭐ 3. ] 코스 생성하기 (파라미터 + POI 결과 함께 출력)
+          async fnCreate() {
+            const self = this;
+            const el = document.getElementById('debugOut');
+
             const param = {
               themes: this.selectedThemes,
               areaCode: this.selectedSido || null,
               sigunguCode: this.selectedSigungu || null,
               headCount: this.headCount,
               budget: this.budget,
+              startDate: this.startDate,
+              endDate: this.endDate,
               budgetWeights: {
                 etc: this.weights[0],
                 accom: this.weights[1],
@@ -274,24 +313,61 @@
               }
             };
 
+            // 파라미터 목록 생성
             const lines = [
               ['themes', (param.themes && param.themes.length) ? param.themes.join(', ') : '(없음)'],
               ['areaCode', String(param.areaCode)],
               ['sigunguCode', String(param.sigunguCode)],
               ['headCount', String(param.headCount ?? '')],
               ['budget', ((param.budget ?? 0).toLocaleString()) + '원'],
-              ['etcAmount', (this.amountFor(0)).toLocaleString() + '원'],
-              ['accomAmount', (this.amountFor(1)).toLocaleString() + '원'],
-              ['foodAmount', (this.amountFor(2)).toLocaleString() + '원'],
-              ['actAmount', (this.amountFor(3)).toLocaleString() + '원']
+              ['--- (날짜) ---', ''],
+              ['startDate', String(param.startDate || '미선택')],
+              ['endDate', String(param.endDate || '미선택')],
+              ['--- (항목별 예산) ---', ''],
+              ['etcAmount', (this.amountFor(0)).toLocaleString() + '원 (' + param.budgetWeights.etc + '%)'],
+              ['accomAmount', (this.amountFor(1)).toLocaleString() + '원 (' + param.budgetWeights.accom + '%)'],
+              ['foodAmount', (this.amountFor(2)).toLocaleString() + '원 (' + param.budgetWeights.food + '%)'],
+              ['actAmount', (this.amountFor(3)).toLocaleString() + '원 (' + param.budgetWeights.act + '%)']
             ];
 
-            const el = document.getElementById('debugOut');
+            // 파라미터 목록을 debugOut에 먼저 출력
             if (el) {
-              el.textContent = lines.map(function (p) { return p[0] + ' : ' + p[1]; }).join('\n');
+              el.textContent = '===== 전송 파라미터 =====\n';
+              el.textContent += lines.map(function (p) { return p[0] + ' : ' + p[1]; }).join('\n');
+              el.textContent += '\n\n===== POI 조회 중... (API 호출) =====';
             }
+            console.log('전송 파라미터:', param);
 
-            console.log('전송 파라미터(테스트):', param);
+            // API 호출
+            try {
+              const response = await $.ajax({
+                url: ctx + '/api/recommend/generate',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(param)
+              });
+
+              // 성공 시, POI 결과를 기존 내용에 *추가*
+              console.log('백엔드 응답:', response);
+              if (el) {
+                el.textContent = el.textContent.replace(
+                  '===== POI 조회 중... (API 호출) =====',
+                  '===== 생성/조회된 POI 및 속성값 (ATTR 테이블) ====='
+                );
+                el.textContent += '\n' + JSON.stringify(response, null, 2);
+              }
+
+            } catch (e) {
+              // 실패 시, 오류 메시지를 *추가*
+              console.error('코스 생성 실패', e);
+              if (el) {
+                el.textContent = el.textContent.replace(
+                  '===== POI 조회 중... (API 호출) =====',
+                  '===== API 호출 실패 ====='
+                );
+                el.textContent += '\n오류: ' + (e.responseJSON?.message || e.responseText || e.statusText);
+              }
+            }
           },
 
           // 모달 열기/닫기
@@ -307,13 +383,17 @@
           }
         },
         async mounted() {
-          await this.loadSido(); // 현재는 비어있음
+          await this.loadSido();
           // 캔버스/리사이즈는 mixin에서 처리됨
         }
       });
 
       // 파이 차트 믹스인 주입
       app.mixin(window.ReservationPieMixin);
+
+      // [ ⭐ 4. ] 달력 믹스인 주입
+      app.mixin(window.ReservationCalendarMixin);
+
       app.mount('#app');
     </script>
   </body>

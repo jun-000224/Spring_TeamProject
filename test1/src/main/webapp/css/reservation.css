@@ -386,3 +386,130 @@ input[type="range"]:disabled {
   border: 0;
   display: block
 }
+/*
+ * reservation.css (달력 UI 추가)
+ */
+
+/* 시작일/종료일 필드 2열 정렬 */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.field-row .field {
+  margin-bottom: 0;
+}
+.field-row input[readonly] {
+  background: #f1f5f9;
+  cursor: default;
+  color: #334155;
+  font-weight: 600;
+}
+
+/* 달력 공통 */
+.calendar {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  padding: 10px;
+  margin-top: 10px;
+  user-select: none; /* 드래그 방지 */
+}
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 5px;
+}
+.cal-header strong {
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+.cal-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.cal-header button:hover {
+  background: #f1f5f9;
+}
+
+/* 달력 그리드 */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-grid.week-days {
+  margin-bottom: 6px;
+}
+.cal-day-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: #64748b;
+}
+/* 일요일 */
+.cal-day-label:first-child {
+  color: #ef4444;
+}
+/* 토요일 */
+.cal-day-label:last-child {
+  color: #3b82f6;
+}
+
+/* 날짜 칸 */
+.cal-day {
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 8px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  position: relative;
+}
+.cal-day:hover {
+  background: #f1f5f9;
+}
+.cal-day.not-current-month {
+  color: #94a3b8;
+  cursor: default;
+  pointer-events: none; /* 클릭 방지 */
+  background: none;
+}
+.cal-day.today {
+  font-weight: 700;
+  color: #2563eb;
+  /* 오늘 날짜 표시 (선택) */
+  /* border: 1px solid #93c5fd; */
+}
+
+/* 선택된 날짜 (범위) */
+.cal-day.in-range {
+  background-color: #eff6ff; /* 연한 파랑 */
+  color: #1d4ed8;
+  border-radius: 0;
+}
+.cal-day.selected-start,
+.cal-day.selected-end {
+  background-color: #3b82f6; /* 진한 파랑 */
+  color: #fff;
+  font-weight: 700;
+}
+/* 범위의 시작과 끝 모서리 둥글게 */
+.cal-day.selected-start {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.cal-day.selected-end {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+/* 날짜 하나만 선택 시 (시작=종료) */
+.cal-day.selected-start.selected-end {
+    border-radius: 4px;
+}
