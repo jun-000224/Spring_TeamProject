@@ -24,8 +24,8 @@ public class Attr {
     @Column(name = "FAMILY")    private double family;
     @Column(name = "LUXURY")    private double luxury;
     
-    // [ ⭐ 1. (핵심) ] 'UNIQUE'는 Oracle 예약어라 컬럼명으로 사용 불가
-    // 'MOOD_UNIQUE'로 변경합니다. (DB 테이블 컬럼도 MOOD_UNIQUE여야 함)
+    // 'UNIQUE'는 Oracle 예약어라 컬럼명으로 사용 불가
+    // 'MOOD_UNIQUE'로 변경
     @Column(name = "MOOD_UNIQUE") private double unique;
 
     @Column(name = "ADVENTURE") private double adventure;
@@ -44,7 +44,7 @@ public class Attr {
 
         this.family = randomScore(rand);
         this.luxury = randomScore(rand);
-        this.unique = randomScore(rand); // [ ⭐ 2. ] 필드명 일치 (unique)
+        this.unique = randomScore(rand); 
         this.adventure = randomScore(rand);
         this.budget = randomScore(rand);
         this.friend = randomScore(rand);
