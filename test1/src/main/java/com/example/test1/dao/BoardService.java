@@ -189,4 +189,19 @@ try {
 	
 	}
 	
+//	11.02
+	public HashMap<String, Object> getComment(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        int info = boardMapper.selectComment(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("info", info);
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("msg", "댓글 조회 오류");
+	    }
+	    return resultMap;
+	}
+	
+	
 }

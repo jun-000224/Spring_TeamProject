@@ -104,7 +104,7 @@
 	
 	<insert id="addBoard" parameterType="hashmap">
 		INSERT INTO TBL_BOARD
-		VALUES(BOARD_SEQ.NEXTVAL ,#{userId}, #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  <!--마지막 수정사항-->
+		VALUES(BOARD_SEQ.NEXTVAL ,#{userId}, #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  
 	</insert><!--수정사항 있음-->
 	
 	<update id="updateCnt" parameterType="hashmap">
@@ -147,6 +147,13 @@
     CONTENTS = #{contents}
 	WHERE COMMENTNO = #{commentNo}
 	</update>
+	
+	<!--11.02-->
+	<select id="selectComment" parameterType="hashmap" resultType="hashmap">
+    SELECT COMMENTNO, USERID, CONTENTS, BOARDNO
+    FROM TBL_COMMENT
+    WHERE COMMENTNO = #{commentNo}
+	</select>
 </mapper>
 
 

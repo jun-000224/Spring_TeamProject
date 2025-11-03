@@ -94,10 +94,10 @@
                     width: 100%;
                 }
             }
-
+            /* 검색영역 */
             /* 📘 게시판 전체 영역 */
             #app>div {
-                width: 100%;
+                width: 80%;
                 margin: 0 auto;
                 font-family: 'Noto Sans KR', sans-serif;
                 color: #333;
@@ -170,7 +170,7 @@
 
             /* 📘 게시판 테이블 */
             table {
-                width: 100%;
+                width: 82.5%;
                 border-collapse: collapse;
                 background: white;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -179,6 +179,7 @@
                 margin-bottom: 20px;
                 text-align: center;
                 font-weight: bold;
+                margin: auto;
             }
 
             th {
@@ -276,7 +277,8 @@
                 font-size: 14px;
                 cursor: pointer;
                 transition: background-color 0.2s;
-                margin-right: 1800px;
+                margin-right: 1300px;
+                margin-top: 10px;
             }
 
             .write-button-area button:hover {
@@ -405,7 +407,7 @@
                     <td>{{item.boardNo}}</td>
                     <td>{{item.userId}}</td>
                     <td>
-                        <a href="javascript:;">{{item.title}}</a>
+                        <a href="javascript:;" >{{item.title}}</a>
                         <span v-if="item.commentCnt != 0" style="color:red;"> [{{item.commentCnt}}]</span>
                     </td>
                     <td> {{item.fav}}</td>
