@@ -275,14 +275,14 @@
                         contentNode: null,
                         markers: [],
                         currCategory: '',
-                        id: "${sessionId}",
-                        status: "${sessionStatus}",
-                        nickname: "${sessionNickname}",
-                        name: "${sessionName}",
+                        id: window.sessionData.id,
+                        status: window.sessionData.status,
+                        nickname: window.sessionData.nickname,
+                        name: window.sessionData.name,
                         showLogoutMenu: false,
-                        point: "${sessionPoint}",
+                        point: window.sessionData.point,
 
-                        code:""
+                        code:window.sessionData.code
                     };
                 },
                 computed: {

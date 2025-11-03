@@ -16,4 +16,6 @@ public interface MypageMapper {
 	int mypageRelease(HashMap<String, Object> map);
 	//탈퇴 전 확인(임시)(sms인증 복구 시 지울 예정)
 	Mypage mypageConfirm(HashMap<String, Object> map);
+	//구독 결제 성공 시, 등급 변경
+	int updateStatus(HashMap<String, Object> map);
 }

@@ -80,7 +80,7 @@
         }
         .editBtn{
             float: right;
-            margin-right: 10px;
+            /* margin-right: 10px; */
         }
         .joinBlock{
             margin-top: 20px;
@@ -374,7 +374,7 @@
             },
 
             fnBack: function () {
-                location.href="/myInfo/detail.do";
+                location.href="/myInfo.do";
             }
         }, // methods
         mounted() {
