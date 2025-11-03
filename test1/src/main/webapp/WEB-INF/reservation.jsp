@@ -151,12 +151,11 @@
             <canvas id="budgetPie" width="640" height="480" @mousedown="onPieDown" @mousemove="onPieMove"
               @mouseup="onPieUp" @mouseleave="onPieUp" @touchstart.prevent="onPieDownTouch"
               @touchmove.prevent="onPieMoveTouch" @touchend.prevent="onPieUp"></canvas>
-            <div class="help">도넛 두께 영역을 잡고 분기점을 회전시키세요. (잠금된 항목은 비율 고정)</div>
-
-            <div class.actions>
+            <div class="help">*도넛 두께 영역을 잡고 분기점을 회전시키세요. (잠금된 항목은 비율 고정)</div>
+            <br>
+            <div class="actions">
               <button class="btn-primary" @click="fnCreate">코스 생성하기</button>
             </div>
-
           </div>
           <div class="legend">
             <div class="legend-row" v-for="(c,idx) in categories" :key="c.key">
@@ -365,10 +364,12 @@
             const selectedArea = String(selected.sidoCode);
             const selectedSigungu = String(selected.sigunguCode); 
             
+            // '시/도'만 선택한 경우 (e.g., "서울 (전체)")
             if (selected.sigunguCode === null || selected.sigunguCode === 'null') { 
-              return poiArea === selectedArea; // "서울 (전체)"
+              return poiArea === selectedArea;
             }
-            return poiArea === selectedArea && poiSigungu === selectedSigungu; // "서울 강남구"
+            // '시/군/구'까지 선택한 경우 (e.g., "서울 강남구")
+            return poiArea === selectedArea && poiSigungu === selectedSigungu;
           });
           
           return list;
@@ -425,13 +426,12 @@
         
         // [수정] "월 일" 버그 수정을 위해 dateTabs를 감시
         dateTabs(newTabs, oldTabs) {
-          if (newTabs.length > 0 && (oldTabs.length === 0 || this.activeDate === null)) {
-            // 날짜 탭이 처음 생성되거나, 리셋되었다가 다시 생성될 때
+          // 탭 배열의 길이가 달라질 때 (=날짜 선택/초기화 시)
+          if (newTabs.length > 0 && newTabs.length !== oldTabs.length) {
             this.activeDate = newTabs[0].date;
             this.itinerary = {}; 
             this.selectedPoi = null; 
           } else if (newTabs.length === 0 && oldTabs.length > 0) {
-            // 날짜 선택이 리셋될 때
             this.activeDate = null;
             this.itinerary = {};
             this.selectedPoi = null;
@@ -456,14 +456,14 @@
           self.loadingSigungu = true;
           self.sigunguList = [];
           try {
-            if (!self.currentSido) return; // [수정] currentSido 사용
+            if (!self.currentSido) return; // [신규] currentSido 사용
             const data = await $.get(ctx + '/api/areas/sigungu', { areaCode: self.currentSido });
             self.sigunguList = Array.isArray(data) ? data : [];
           } catch (e) { console.error('시/군/구 조회 실패', e); }
           finally { self.loadingSigungu = false; }
         },
         onChangeSido() {
-          this.currentSigungu = ''; // [수정] currentSigungu 사용
+          this.currentSigungu = ''; // [신규] currentSigungu 사용
           this.sigunguList = [];
           this.loadSigungu();
         },
@@ -521,7 +521,6 @@
             if (this.infowindow) {
                 this.infowindow.close();
             }
-            // (watch가 filteredPoiList를 감지하여 drawMarkers를 자동 호출)
         },
 
         // 카테고리 탭(관광지/숙박/식당) 클릭
@@ -584,7 +583,6 @@
             if (response.length > 0) {
               this.panToFirstPoi(response);
             }
-            // [수정] 결과 없을 시 panToSelectedRegion() 호출 제거 (다중 지역이므로)
           } catch (e) {
             console.error('코스 생성 실패', e);
             if (el) el.textContent = 'API 호출 실패: ' + (e.responseJSON?.message || e.responseText || e.statusText);

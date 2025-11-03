@@ -116,7 +116,6 @@ body {
   margin-top: 10px
 }
 
-/* [수정] 칩 삭제 버튼을 위해 display/align/gap 추가 */
 .chip {
   padding: 6px 10px;
   font-size: 12px;
@@ -124,6 +123,7 @@ body {
   background: #f2f3f5;
   border: 1px solid var(--border);
   color: #374151;
+  /* (신규) 칩 삭제 버튼을 위해 추가 */
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -671,7 +671,7 @@ input[type="range"]:disabled {
   line-height: 1;
   cursor: pointer;
   transition: background .12s;
-  margin-bottom: 12px;
+  margin-bottom: 12px; /* .field의 margin-bottom과 동일하게 */
 }
 .btn-add-region:hover {
   background: #3a7bc2;
