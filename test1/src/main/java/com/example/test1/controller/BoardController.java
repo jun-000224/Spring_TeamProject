@@ -205,4 +205,13 @@ public class BoardController {
 		return new Gson().toJson(resultMap);
 	}
 	
+//	11.02
+	@RequestMapping(value = "/comment-view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commentView(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.getComment(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	
 }

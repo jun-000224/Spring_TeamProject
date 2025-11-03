@@ -21,50 +21,77 @@
                 margin: 30px auto;
                 border-collapse: collapse;
                 background: #fff;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 border-radius: 10px;
                 overflow: hidden;
-                text-align: center;
+
             }
 
-            th {
+            /* 게시글 테이블 헤더 (제목, 작성자, 조회수, 내용) */
+            table:not(#comment):not(#input) th {
                 background-color: #0078FF;
+                /* 메인 색상 */
                 color: white;
                 font-weight: bold;
-                padding: 12px;
+                padding: 15px;
+                font-size: 16px;
+                text-align: center;
+                width: 15%;
+                /* 헤더 너비 조정 */
+                border: none;
+            }
+
+            /* 게시글 테이블 데이터 */
+            table:not(#comment):not(#input) td {
+                padding: 15px 20px;
+                border-bottom: 1px solid #e0e0e0;
                 font-size: 15px;
                 text-align: center;
-                width: 20%;
+                font-weight: bold;
+                vertical-align: top;
+                font-weight: auto;
+
             }
 
-            td {
-                padding: 15px;
-                border-bottom: 1px solid #eee;
-                font-size: 14px;
+            /* 제목과 내용이 들어가는 두 번째 칸 센터 */
+            table:not(#comment):not(#input) tr:first-child td,
+            table:not(#comment):not(#input) tr:nth-last-child(2) td {
                 text-align: center;
                 font-weight: bold;
+
+
             }
 
-           
-            td:nth-child(2) {
-                text-align: center;
+            /* 내용 표시 영역 (v-html 사용) */
+            table:not(#comment):not(#input) td div {
+                min-height: 100px;
+                /* 내용 영역 최소 높이 확보 */
+                line-height: 1.6;
+                margin-top: 50px;
             }
 
-            /* 버튼 영역 */
-            table+div {
-                display: inline-block;
-                margin: 10px 5px;
+            /* 버튼 영역 감싸는 div (게시글 수정/삭제) */
+            .post-actions {
+                width: 80%;
+                margin: 0px auto 30px auto;
+                text-align: left;
+                /* 버튼을 오른쪽으로 배치 */
+
             }
 
+            /* 버튼 스타일 통일 */
             button {
                 background-color: #0078FF;
                 color: white;
                 border: none;
                 border-radius: 6px;
-                padding: 8px 14px;
+                padding: 10px 18px;
                 font-size: 14px;
+                font-weight: bold;
                 cursor: pointer;
-                transition: 0.2s;
+                transition: background-color 0.2s;
+                margin-left: 10px;
+                /* 버튼 간격 추가 */
             }
 
             button:hover {
@@ -73,69 +100,152 @@
 
             /* 📗 삭제, 수정 버튼 따로 색 지정 */
             button.delete-btn {
-                background-color: #ff5252;
+                background-color: #d63b3b;
+                margin-left: 1390px;
             }
 
-            button.delete-btn:hover {
-                background-color: #d63b3b;
-            }
+            
 
             button.edit-btn {
-                background-color: #00A86B;
+                background-color: #00a769;
             }
 
-            button.edit-btn:hover {
-                background-color: #008f5a;
-            }
+           
 
             /* 📙 댓글 목록 */
             #comment {
                 width: 80%;
                 margin: 40px auto 20px auto;
                 border-collapse: collapse;
-                background: #f9fbff;
+                background: #ffffff;
+                /* 흰색 배경으로 변경 */
                 border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
                 overflow: hidden;
                 text-align: center;
             }
 
-            #comment th,
-            #comment td {
+            /* 댓글 목록 제목줄 (CommentNo, UserId, Contents) */
+            #comment th:not(:first-child):not(:last-child) {
+                /* 첫번째(번호)와 마지막(버튼) 제외 */
+                background-color: #f0f0f0;
+                color: #333;
+                font-weight: bold;
+                padding: 12px;
+                font-size: 14px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            /* 댓글 내용, 작성자 등 */
+            #comment td,
+            #comment th {
                 padding: 12px;
                 border-bottom: 1px solid #eee;
                 font-size: 14px;
-                color: #ffffff;
+                color: #333;
+                /* 댓글 내용 색상 수정 (원래 white였음) */
+                text-align: center;
+                vertical-align: middle;
+                font-weight: normal;
             }
+
+            #comment th:nth-child(3) {
+                /* 댓글 내용 영역 */
+                text-align: left;
+                width: auto;
+            }
+
+            #comment tr {
+                display: flex;
+                /* 자식 요소들을 가로로 배열하기 위해 flex 사용 */
+                align-items: center;
+                border-bottom: 1px solid #eee;
+            }
+
+            #comment tr th:nth-child(1) {
+                width: 5%;
+            }
+
+            /* 번호 */
+            #comment tr th:nth-child(2) {
+                width: 15%;
+            }
+
+            /* 작성자 */
+            #comment tr th:nth-child(3) {
+                flex-grow: 1;
+                text-align: left;
+                padding: 12px 20px;
+            }
+
+            /* 내용 */
+            #comment tr td:nth-child(4) {
+                width: 80px;
+            }
+
+            /* 삭제 버튼 */
+            #comment tr td:nth-child(5) {
+                width: 80px;
+                
+            }
+
+            /* 수정 버튼 */
 
             #comment tr:hover {
                 background-color: #f4f9ff;
             }
 
+            /* 댓글 버튼 영역의 div 스타일 수정 */
+            #comment tr div {
+                display: flex;
+                gap: 5px;
+                margin-left: auto;
+                /* 버튼 영역을 오른쪽으로 밀어냄 */
+            }
+
+            #comment tr div button {
+                padding: 5px 10px;
+                /* 댓글 버튼 크기 작게 */
+                font-size: 12px;
+            }
+
             /* 📒 댓글 입력 영역 */
             #input {
-                width: 80%;
-                margin: 30px auto;
+                width: 30%;
+                margin: 0px 180px;
                 border-collapse: collapse;
                 background: #f4f9ff;
                 border-radius: 10px;
                 padding: 15px;
-                text-align: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                display: flex;
+
             }
 
             #input th {
                 background-color: #0078FF;
                 color: white;
-                padding: 10px;
+                padding: 15px;
                 width: 100px;
+                vertical-align: middle;
+                border-radius: 8px 0 0 8px;
             }
 
-            #input td {
-                padding: 10px;
-                vertical-align: middle;
+            #input td:first-of-type {
+                flex-grow: 1;
+                padding: 15px;
+                vertical-align: top;
+            }
+
+            #input td:last-of-type {
+                width: 100px;
+                padding: 15px;
+                vertical-align: bottom;
             }
 
             #input textarea {
                 width: 100%;
+                height: 80px;
                 border-radius: 6px;
                 border: 1px solid #ccc;
                 padding: 10px;
@@ -155,8 +265,9 @@
                 color: white;
                 border: none;
                 border-radius: 6px;
-                padding: 8px 16px;
+                padding: 10px 16px;
                 cursor: pointer;
+                height: 40px;
             }
 
             #input button:hover {
@@ -167,7 +278,12 @@
             hr {
                 width: 80%;
                 margin: 40px auto;
-                border: 1px solid #ddd;
+                border: 0;
+                height: 1px;
+                background-color: #ddd;
+            }
+            footer {
+                margin-top: 30px;
             }
         </style>
     </head>
@@ -246,11 +362,9 @@
                     <td>
                         <div v-html="info.contents"></div>
                     </td>
+
                 </tr>
-                <div style="text-align:center;" v-if="info.userId == sessionId">
-                    <button class="delete-btn" @click="fnRemove">삭제</button>
-                    <button class="edit-btn" @click="fnUpdate">수정</button>
-                </div>
+
 
 
 
@@ -258,12 +372,17 @@
 
             </table>
 
+            <div style="text-align:center;" v-if="info.userId == sessionId">
+                <button class="delete-btn" @click="fnRemove">삭제</button>
+                <button class="edit-btn" @click="fnUpdate">수정</button>
+            </div>
+
             <hr>
 
             <!-- 댓글 코멘트 -->
             <table id="comment">
                 <tr v-for="item in commentList" :key="item.commentNo">
-                    
+
 
                     <th>{{item.commentNo}}</th>
 
@@ -300,7 +419,7 @@
 
             </table>
         </div>
-        <footer>
+        <footer style="">
             <div class="footer-content">
                 <div class="footer-links" style="display: flex">
                     <div class="footer-section">
@@ -360,8 +479,8 @@
                     boardNo: "${boardNo}",
                     sessionId: "${sessionId}",
                     contents: "",
-                    commentList : [],
-                    commentNo : "${commentNo}"
+                    commentList: [],
+                    commentNo: "${commentNo}"
                 };
             },
             methods: {
@@ -380,10 +499,10 @@
                         data: param,
                         success: function (data) {
                             console.log(data);
-                            
+
                             self.info = data.info;
                             self.commentList = data.commentList;
-                            
+
                             console.log(self.commentList);
                         }
                     });
@@ -392,7 +511,7 @@
                     let self = this;
                     let param = {
                         boardNo: self.boardNo,
-                        sessionId : self.sessionId,
+                        sessionId: self.sessionId,
                         contents: self.contents
                     };
                     $.ajax({
@@ -419,14 +538,14 @@
                         data: param,
                         success: function (data) {
                             alert("정말로 삭제하시겠습니까?");
-                            if(data.result == "success"){
+                            if (data.result == "success") {
                                 alert("삭제되었습니다!");
                                 location.href = "board-list.do";
-                            }else{
+                            } else {
                                 alert("오류발생");
                             }
-                            
-                            
+
+
                         }
                     });
                 },
@@ -438,7 +557,7 @@
                     pageChange("board-edit.do", { boardNo: self.boardNo });
 
                 },
-                
+
 
                 fncRemove: function (commentNo) {
                     let self = this;
@@ -446,18 +565,18 @@
                         commentNo: commentNo,
                     }
                     console.log(self.commentNo);
-                    
+
                     $.ajax({
                         url: "/view-cDelete.dox",
                         dataType: "json",
                         type: "POST",
                         data: param,
                         success: function (data) {
-                           alert("정말로 삭제하시겠습니까?");
-                            if(data.result == "success"){
+                            alert("정말로 삭제하시겠습니까?");
+                            if (data.result == "success") {
                                 alert("삭제되었습니다!");
                                 self.fnInfo();
-                            }else{
+                            } else {
                                 alert("오류발생");
                             }
                         }
@@ -466,8 +585,8 @@
 
                 fncUpdate: function (commentNo) {
                     let self = this;
-                    console.log("수정 요청댓글번호",commentNo);
-                    pageChange("board-comment-edit.do", { commentNo: self.commentNo });
+                    console.log("수정 요청댓글번호", commentNo);
+                    pageChange("board-comment-edit.do", { commentNo: commentNo });
                 },
 
             }, // methods

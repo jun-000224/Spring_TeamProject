@@ -55,4 +55,8 @@ public interface BoardMapper {
 	//코멘트 수정(board-comment-update)
 	int updateComment(HashMap<String , Object> map);
 	
+	
+	//11.02 코멘트 선택해서 불러오기
+	int selectComment(HashMap<String , Object> map);
+	
 }
