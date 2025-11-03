@@ -18,6 +18,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.example.test1.mapper.ShareBoardMapper;
+import com.example.test1.mapper.ReviewMapper;
+import com.example.test1.model.Review;
 import com.example.test1.model.Share;
 
 
@@ -31,6 +33,8 @@ public class ShareBoardViewService {
 	@Autowired
 	ShareBoardMapper ShareBoardMapper;
 	
+	@Autowired
+	ReviewMapper reviewMapper;
 	
     //디테일 정보
     public List<HashMap<String, Object>> getInfo(String contentId, String day , int dayNum)throws Exception {
@@ -141,7 +145,55 @@ public class ShareBoardViewService {
         return dayMap;
     }
 
+  //디테일 정보
+    public List<HashMap<String, Object>> DetailInfo(String contentId)throws Exception {
+		// TODO Auto-generated method stub
+		List<HashMap<String, Object>> resultMap = new ArrayList<>();
 
+		
+		
+			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
+                    + "?ServiceKey=" + apiKey
+                    + "&MobileOS=ETC&MobileApp=AppTest"
+                    + "&contentId=" + contentId;
+
+            RestTemplate restTemplate = new RestTemplate();
+            byte[] bytes = restTemplate.getForObject(url, byte[].class);
+            String xmlResponse = new String(bytes); // 공공데이터가 EUC-KR인 경우
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            InputSource is = new InputSource(new StringReader(xmlResponse));
+
+            Document doc = factory.newDocumentBuilder().parse(is);
+
+            NodeList items = doc.getElementsByTagName("item");
+          
+            HashMap<String, Object> map = new HashMap<>();
+            for (int i = 0; i < items.getLength(); i++) {
+                Element item = (Element) items.item(i);
+                map.put("title", getTag(item, "title"));
+                map.put("addr1", getTag(item, "addr1"));
+                map.put("mapx", getTag(item, "mapx"));
+                map.put("mapy", getTag(item, "mapy"));
+                map.put("firstimage", getTag(item, "firstimage"));
+                map.put("contentid", getTag(item, "contentid"));
+                map.put("tel", getTag(item, "tel"));
+                map.put("overview",getTag(item, "overview"));
+                map.put("homepage",getTag(item, "homepage"));           
+            }
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("contentId", contentId);
+
+            List<Review> reviewList = reviewMapper.detailReviewList(paramMap);
+            List<Review> reviewImgList = reviewMapper.detailReviewImgList(paramMap);
+            
+           map.put("list", reviewList);
+           map.put("imgList", reviewImgList);
+          
+           resultMap.add(map);
+       
+        return resultMap;
+    }
 
 	
 }
