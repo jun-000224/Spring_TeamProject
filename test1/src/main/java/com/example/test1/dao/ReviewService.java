@@ -92,11 +92,9 @@ public class ReviewService{
 		return resultMap;
 	}
 	//제목 조회
-	public String selectImg(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-
-		return ReviewMapper.selectOldImg(map);
-	}
+	public List<String> selectImgs(HashMap<String, Object> map) {
+        return ReviewMapper.selectOldImg(map);
+    }
 	
 	
 	public int selectMaxSortNo(int contentId) {

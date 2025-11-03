@@ -31,7 +31,7 @@ public interface ReviewMapper {
 	//사진업로드
 	int fileUpload(HashMap<String , Object>map);
 	//사진 이름
-	String selectOldImg(HashMap<String, Object> map);
+	List<String> selectOldImg(HashMap<String, Object> map);
 	//사진 삭제
 	int deleteImg(HashMap<String, Object> map);
 	
