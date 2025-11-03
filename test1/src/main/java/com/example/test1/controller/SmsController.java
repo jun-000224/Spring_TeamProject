@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,9 +35,9 @@ public class SmsController {
 
     final DefaultMessageService messageService;
 
-    public SmsController() {
-        // 반드시 계정 내 등록된 유효한 API 키, API Secret Key를 입력해주셔야 합니다!
-        this.messageService = NurigoApp.INSTANCE.initialize("NCSTJQMJ5CRXQPU2", "8CQM1WRYSPLMNVBGQGCPRVNPRNT9DALK", "https://api.coolsms.co.kr");
+ // sms 컨트롤러에 생성자를 아래와 같이 수정
+    public SmsController(@Value("${SMS_API_KEY}") String apiKey, @Value("${SMS_SECRET_KEY}") String secretKey ) {
+    	this.messageService = NurigoApp.INSTANCE.initialize(apiKey, secretKey, "https://api.coolsms.co.kr");
     }
 
     /**
