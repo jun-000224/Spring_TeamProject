@@ -169,8 +169,8 @@
             }
 
             .modal-content img {
-                width: 150px;
-                height: 150px;
+                width: 300px;
+                height: 300px;
                 border-radius: 8px;
                 object-fit: cover;
             }
