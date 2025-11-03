@@ -21,13 +21,13 @@
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
-			USERID LIKE '%' || #{keyword} || '%'
+			USER_ID LIKE '%' || #{keyword} || '%'
 			)
 		 
 		</if>
 		
 		<if test="searchOption == 'id'">
-		AND USERID LIKE '%' || #{keyword} || '%' 
+		AND USER_ID LIKE '%' || #{keyword} || '%' 
 		</if>
 		<if test="searchOption == 'title'">
 		AND TITLE LIKE '%' || #{keyword} || '%' 
@@ -62,13 +62,13 @@
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
-			USERID LIKE '%' || #{keyword} || '%'
+			USER_ID LIKE '%' || #{keyword} || '%'
 			)
 		 
 		</if>
 		
 		<if test="searchOption == 'id'">
-		AND USERID LIKE '%' || #{keyword} || '%' 
+		AND USER_ID LIKE '%' || #{keyword} || '%' 
 		</if>
 		<if test="searchOption == 'title'">
 		AND TITLE LIKE '%' || #{keyword} || '%' 
@@ -94,8 +94,8 @@
 	</select>
 	<insert id="insertComment" parameterType="hashmap">
 		INSERT INTO TBL_COMMENT
-		VALUES(COMMENT_SEQ.NEXTVAL ,#{boardNo}, #{sessionId}, NULL , #{contents}, 'F', SYSDATE, SYSDATE, NULL)
-	</insert>   <!--수정사항 있음-->
+		VALUES(COMMENT_SEQ.NEXTVAL ,#{boardNo}, #{userId}, NULL , #{contents}, 'F', SYSDATE, SYSDATE, NULL)
+	</insert>   
 	
 	<delete id="removeList" parameterType="hashmap">
 		DELETE TBL_BOARD
@@ -104,8 +104,8 @@
 	
 	<insert id="addBoard" parameterType="hashmap">
 		INSERT INTO TBL_BOARD
-		VALUES(BOARD_SEQ.NEXTVAL ,#{userId}, #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type})  
-	</insert><!--수정사항 있음-->
+		VALUES(BOARD_SEQ.NEXTVAL ,#{userId}, #{title}, #{contents} , 0 , 0 ,SYSDATE, SYSDATE, #{type}, 0)  
+	</insert>
 	
 	<update id="updateCnt" parameterType="hashmap">
 		UPDATE TBL_BOARD
@@ -150,7 +150,7 @@
 	
 	<!--11.02-->
 	<select id="selectComment" parameterType="hashmap" resultType="hashmap">
-    SELECT COMMENTNO, USERID, CONTENTS, BOARDNO
+    SELECT COMMENTNO, USER_ID, CONTENTS, BOARDNO
     FROM TBL_COMMENT
     WHERE COMMENTNO = #{commentNo}
 	</select>
