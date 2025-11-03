@@ -11,19 +11,13 @@ public class PoiRecommendation {
     private Long contentId;
     private Integer typeId;
     private String title;   // 장소명 (e.g., "경복궁")
-    
-    // TourAPI는 좌표를 String으로 주므로, String으로 받습니다.
-    private String mapx; // 경도 (Longitude)
-    private String mapy; // 위도 (Latitude)
-
-    private double score; // [핵심] 테마 기반 가중 평균 점수
-
-    // ==========================================
-    // ⭐ [수정] 이미지 필드 2개 추가
-    // ==========================================
+    private String mapx; // 경도 (Longitude) >> TourAPI는 좌표를 String으로 받음.
+    private String mapy; // 위도 (Latitude) 
+    private double score; // 테마 기반 가중 평균 점수 >> 핵심이라고 할 수 있음
     private String firstimage;  // 대표 이미지 (원본)
     private String firstimage2; // 대표 이미지 (썸네일)
-
+    private String areaCode; // 추가 지역 필터링
+    private String sigunguCode; //추가 지역 필터링
 
     // TourPoiEnvelope.PoiItem과 Attr 객체를 조합하기 위한 생성자
     public PoiRecommendation(TourPoiEnvelope.PoiItem poi, Attr attr) {
@@ -34,10 +28,11 @@ public class PoiRecommendation {
         this.mapy = poi.getMapy();
         this.score = 0; // 점수는 서비스에서 별도 계산 후 세팅
         
-        // ==========================================
-        // ⭐ [수정] 생성자에서 이미지 URL 복사
-        // ==========================================
+        //생성자에서 이미지 URL 복사
         this.firstimage = poi.getFirstimage();
         this.firstimage2 = poi.getFirstimage2();
+        
+        this.areaCode = poi.getAreaCode();
+        this.sigunguCode = poi.getSigunguCode();
     }
 }

@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import java.util.List;
 
-/**
- * TourAPI /areaBasedList2 (지역기반 관광정보) 응답 구조
- * (TourAreaEnvelope 참조를 제거하고 완전히 독립적인 클래스로 수정)
- */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TourPoiEnvelope {
@@ -61,10 +57,13 @@ public class TourPoiEnvelope {
         private String mapx; // 경도
         private String mapy; // 위도
 		
-        // ==========================================
-        // ⭐ [수정] 이미지 필드 2개 추가
-        // ==========================================
+        //요기는 이미지 필드
         private String firstimage;  // 대표 이미지 (원본)
         private String firstimage2; // 대표 이미지 (썸네일)
+        
+        //여기는 지역 필터링 위해서 추가하는 파트임
+        private String areaCode;
+        private String sigunguCode;
     }
+    
 }
