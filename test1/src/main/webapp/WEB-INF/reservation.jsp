@@ -305,7 +305,7 @@
           budget: null,
           headCount: null,
 
-          // [수정] 달력 믹스인(calendar.js)용 (data에 선언)
+          // [수정] 달력 믹스인(calendar.js)용
           startDate: null,
           endDate: null,
           selectionState: 'start',
