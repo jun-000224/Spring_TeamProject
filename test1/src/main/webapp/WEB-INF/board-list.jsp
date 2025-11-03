@@ -27,6 +27,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+                
             }
 
             /* 🔹 각 행 정렬 */
@@ -36,6 +37,7 @@
                 align-items: center;
                 justify-content: flex-start;
                 gap: 10px;
+
             }
 
             /* 🔹 공통 select/input/button 스타일 */
@@ -61,6 +63,7 @@
             /* 🔹 검색창 크기 조절 */
             .board-filter input {
                 width: 220px;
+                
             }
 
             /* 🔹 검색 버튼 */
@@ -299,6 +302,8 @@
             #app>div:last-of-type button:hover {
                 background-color: #008f5a;
             }
+            
+           
         </style>
     </head>
 
@@ -399,6 +404,7 @@
                     <th>제목</th>
                     <th>추천수</th>
                     <th>조회수</th>
+                    <th>작성일</th>
 
 
                 </tr>
@@ -412,6 +418,7 @@
                     </td>
                     <td> {{item.fav}}</td>
                     <td>{{item.cnt}}</td>
+                    <td>{{item.cdate}}</td>
 
 
                 </tr>

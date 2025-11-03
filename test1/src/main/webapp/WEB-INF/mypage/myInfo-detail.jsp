@@ -222,26 +222,26 @@
                 location.href="/myInfo/edit.do";
             },
 
-                fnRelease : function () {
-                    let self = this;
-                    let userId = self.sessionId;
+            fnRelease : function () {
+                let self = this;
+                let userId = self.sessionId;
 
-                    let popup = window.open(
-                        "/myInfo/release.do",
-                        "회원탈퇴",
-                        "width=500,height=500,top=100,left=200,location=no"
-                    );
+                let popup = window.open(
+                    "/myInfo/release.do",
+                    "회원탈퇴",
+                    "width=500,height=500,top=100,left=200,location=no"
+                );
 
-                    if(!popup){
-                        alert("팝업이 차단되었습니다. 브라우저 설정을 확인해주세요.");
-                        return;
-                    }
-
-                    setTimeout(function () {
-                        popup.postMessage({ userId: userId }, window.location.origin);
-                        // console.log("보낸 세션 : ", userId);
-                    }, 500);
+                if(!popup){
+                    alert("팝업이 차단되었습니다. 브라우저 설정을 확인해주세요.");
+                    return;
                 }
+
+                setTimeout(function () {
+                    popup.postMessage({ userId: userId }, window.location.origin);
+                    // console.log("보낸 세션 : ", userId);
+                }, 500);
+            }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분

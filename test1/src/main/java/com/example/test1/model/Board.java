@@ -15,6 +15,7 @@ public class Board {
 	private String type;
 	private int commentCnt;
 	private int commentNo;
+	private String cdate;
 	
 	
 	

@@ -269,7 +269,8 @@
                     userId: "${sessionId}",
                     contents: "",
                     type: "N",
-                    sessionId: "${sessionId}"
+                    sessionId: "${sessionId}",
+                    
 
                 };
             },
@@ -304,7 +305,7 @@
                                     alert("제목을 적어주세요");
                                 } else {
                                     alert("등록되었습니다.");
-                                    console.log(data.boardNo);
+                                    console.log(data);
                                     location.href = "board-list.do";
                                 }
 
@@ -317,6 +318,7 @@
                 // 파일 업로드
                 upload: function (form) {
                     var self = this;
+                    
                     $.ajax({
                         url: "/fileUpload.dox"
                         , type: "POST"

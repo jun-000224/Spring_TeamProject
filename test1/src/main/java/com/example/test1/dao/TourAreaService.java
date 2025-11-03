@@ -65,11 +65,10 @@ public class TourAreaService {
                 .queryParam("pageNo", 1)
                 .queryParam("numOfRows", rows);
                 
-        // [ ⭐ 1. (핵심 수정) ]
-        // 'INVALID_REQUEST_PARAMETER_ERROR(listYN)' 오류 해결을 위해
-        // listYN과 arrange 파라미터 2줄 제거
-        // .queryParam("listYN", "Y")
-        // .queryParam("arrange", "A");
+        // ==========================================================
+        // ⭐ [수정] 
+        // API 오류를 일으켰던 4개 파라미터(defaultYN 등)를 다시 제거합니다.
+        // ==========================================================
         
         if (contentTypeId != null && !contentTypeId.isBlank()) {
             b.queryParam("contentTypeId", contentTypeId);
@@ -141,8 +140,7 @@ public class TourAreaService {
     }
 
     /**
-     * [ ⭐ 2. (핵심 수정) ] 
-     * 원본 JSON 로깅 코드를 -> DTO 파싱 코드로 복원
+     * (수정 없음)
      */
     public List<TourPoiEnvelope.PoiItem> listPoisByArea(String areaCode, String sigunguCode) {
         if (areaCode == null || areaCode.isBlank()) {
@@ -161,7 +159,6 @@ public class TourAreaService {
             log.info("[TourAPI::POI] 조회 시도 (areaCode={}, sigunguCode={}, contentTypeId={})", areaCode, finalSigunguCode, typeId);
             
             try {
-                // [ ⭐ 2-1. ] String.class -> TourPoiEnvelope.class로 복원
                 ResponseEntity<TourPoiEnvelope> res = restTemplate.getForEntity(uri, TourPoiEnvelope.class);
                 
                 if (!res.getStatusCode().is2xxSuccessful()) {
@@ -169,7 +166,6 @@ public class TourAreaService {
                     continue; 
                 }
 
-                // [ ⭐ 2-2. ] DTO 파싱 로직 복원
                 TourPoiEnvelope env = res.getBody();
                 if (env == null || env.getResponse() == null || env.getResponse().getHeader() == null) {
                     log.warn("[TourAPI::POI] (type={}) 응답 구조 이상", typeId);
@@ -179,12 +175,10 @@ public class TourAreaService {
                 String resultCode = env.getResponse().getHeader().getResultCode();
                 String resultMsg = env.getResponse().getHeader().getResultMsg();
 
-                // [ ⭐ 2-3. ] "10" (파라미터 오류)도 에러로 처리
                 if (!"0000".equals(resultCode)) {
                     if ("0001".equals(resultCode) || "NODATA".equalsIgnoreCase(resultMsg)) {
                         log.info("[TourAPI::POI] API (type={}) 결과 없음", typeId);
                     } else {
-                        // (resultCode=10, resultMsg=INVALID_...) 등이 여기에 해당
                         log.error("[TourAPI::POI] API (type={}) Error: Code={}, Msg={}", typeId, resultCode, resultMsg);
                     }
                     continue; 
@@ -193,7 +187,6 @@ public class TourAreaService {
                 allPois.addAll(extractPoiItems(env));
 
             } catch (Exception e) {
-                // (e.g., JSON 파싱 실패 시)
                 log.error("[TourAPI::POI] RestTemplate (type={}) 호출 중 예외: {}", typeId, e.getMessage());
                 continue; 
             }
