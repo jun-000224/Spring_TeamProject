@@ -252,7 +252,7 @@ body {
 
       <h4>후기를 작성해주세요</h4>
       <textarea v-model="reviewText" maxlength="500" placeholder="방문 경험을 공유해주세요..."></textarea>
-      <input type="file" id="file1" name="file1">
+      <input type="file" id="file1" name="file1" multiple>
       <div style="font-size:12px; color:gray;">{{ reviewText.length }}/500자</div>
 
       <div class="modal-footer">
@@ -380,14 +380,17 @@ body {
                     success: function (data) {
                       alert("후기작성완료되었습니다.");
                       console.log(data);
+                      console.log($("#file1")[0].files);
                       
-                      let form = new FormData();
-                      form.append( "file1",  $("#file1")[0].files[0] );
-                      form.append( "contentId",  data.contentId); // 임시 pk
-                      form.append( "userId",  self.userId);
-                      form.append( "title",  self.selectedItem.title)
+                      for(let i=0; i<$("#file1")[0].files.length;i++){
+                        let form = new FormData();
+                        form.append( "file1",  $("#file1")[0].files[i] );
+                        form.append( "contentId",  data.contentId); // 임시 pk
+                        form.append( "userId",  self.userId);
+                        form.append( "title",  self.selectedItem.title)
+                        self.upload(form);  
+                      }
                       
-                      self.upload(form);  
 
                       self.fninfo();                  
                       if (self.selectedItem) {

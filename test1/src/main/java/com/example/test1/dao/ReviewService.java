@@ -72,15 +72,32 @@ public class ReviewService{
 		
 		return resultMap;
 	}
-	
+	//파일추가
 	public HashMap<String, Object> insertImg(HashMap<String, Object> map) {
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
+
 		int cnt = ReviewMapper.fileUpload(map);
-		
+
 		return resultMap;
 	}
+	//파일 삭제
+	
+	public HashMap<String, Object> deleteImg(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		int cnt = ReviewMapper.deleteImg(map);
+
+		return resultMap;
+	}
+	//제목 조회
+	public String selectImg(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+
+		return ReviewMapper.selectOldImg(map);
+	}
+	
 	
 	public int selectMaxSortNo(int contentId) {
 	    return ReviewMapper.selectMaxSortNo(contentId);

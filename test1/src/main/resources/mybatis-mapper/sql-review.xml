@@ -7,21 +7,25 @@
 		SELECT * FROM RESERVATION 
 		WHERE USER_ID = #{userId}		
 	</select>
-	<update id="rating" parameterType="hashmap">
-		UPDATE POI SET RATING = #{rating} ,CONTENT = #{content}
-		WHERE CONTENT_ID = #{contentId}
-	</update>
 	
 	<select id="reviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
 		SELECT * FROM TBL_REVIEW R1
 		INNER JOIN RESERVATION R2 ON R1.RES_NUM = R2.RES_NUM		
 	</select>
 	
-	<select id="selectMaxSortNo" parameterType="int" resultType="int">
-    SELECT NVL(MAX(SORT_NO), 0)
-    FROM MEDIA
-    WHERE CONTENTID = #{contentId}
-</select>
+	<select id="detailReviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
+		SELECT CONTENT_ID , P.RES_NUM, RATING , CONTENT, U.USER_ID,NICKNAME,TO_CHAR(RESERV_DATE,'YYYY-MM-DD')AS rdatetime  FROM POI P
+		INNER JOIN RESERVATION R ON P.RES_NUM = R.RES_NUM
+		INNER JOIN USERS U ON R.USER_ID = U.USER_ID
+		WHERE P.CONTENT_ID = #{contentId}	
+	</select>
+	
+	<select id="detailReviewImgList" parameterType="hashmap" resultType="com.example.test1.model.Review">
+		SELECT * FROM POI P
+		INNER JOIN MEDIA M ON P.CONTENT_ID = M.CONTENTID
+		WHERE P.CONTENT_ID = #{contentId}
+		ORDER BY SORT_NO ASC
+	</select>
 	
 	<insert id="resInsert" parameterType="hashmap">
 		INSERT INTO TBL_REVIEW
@@ -30,10 +34,28 @@
 	
 	<insert id="fileUpload" parameterType="hashmap">
 		INSERT INTO MEDIA
-		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId}, #{sortNo}, #{userId}, #{boardNo,jdbcType=NUMERIC})
+		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId},  (SELECT NVL(MAX(SORT_NO), 0) + 1 FROM MEDIA WHERE CONTENTID = #{contentId}), #{userId}, #{boardNo,jdbcType=NUMERIC})
 	</insert>
 	
+	<select id="selectOldImg" parameterType="hashmap" resultType="string">
+    SELECT TITLE
+    FROM MEDIA
+    WHERE CONTENTID = #{contentId}
+      AND USER_ID = #{userId}
+     
+	</select>
 	
+	<delete id="deleteImg" parameterType="hashmap">
+    DELETE FROM MEDIA
+    WHERE CONTENTID = #{contentId}
+      AND USER_ID = #{userId}
+      
+	</delete>
+	
+	<update id="rating" parameterType="hashmap">
+		UPDATE POI SET RATING = #{rating} ,CONTENT = #{content}
+		WHERE CONTENT_ID = #{contentId}
+	</update>
 	
 </mapper>
 
