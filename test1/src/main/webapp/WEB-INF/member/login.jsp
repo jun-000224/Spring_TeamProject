@@ -85,7 +85,7 @@
                     
                 </div>
                 <div class="kakaoBtn">
-                    <a :href="kakaolocation" onclick="fnKakao">
+                    <a :href="kakaolocation">
                         <img src="/img/kakao.png" alt="">
                     </a>
                 </div>

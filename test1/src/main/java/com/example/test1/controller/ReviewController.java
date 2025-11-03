@@ -39,6 +39,13 @@ public class ReviewController {
         return "/review-add";
     }
 	
+	@RequestMapping("review-detail.do") 
+    public String reviewDetail(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		request.setAttribute("contentId", map.get("contentId"));
+		
+        return "/review-detail";
+    }
+	
 	@RequestMapping("/review-rating.do") 
     public String rating(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		request.setAttribute("resNum", map.get("resNum"));
@@ -111,6 +118,23 @@ public class ReviewController {
 	        System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
 
 	        if (!multi.isEmpty()) {
+	        	
+	        	//파일 삭제
+	        	
+	        	 HashMap<String, Object> delMap = new HashMap<>();
+	             delMap.put("contentId", contentId);
+	             delMap.put("boardNo", boardNo);
+	             delMap.put("userId", userId);
+	             //파일 조회
+	             String oldFilename = ReviewService.selectImg(delMap);
+	             System.out.println(oldFilename);
+	             if (oldFilename != null && !oldFilename.isEmpty()) {
+	                 File oldFile = new File(path2 + "\\src\\main\\webapp\\img", oldFilename);
+	                 if (oldFile.exists()) oldFile.delete(); // 실제 파일 삭제
+	                 ReviewService.deleteImg(delMap); // DB에서 삭제
+	                 System.out.println("기존 파일 삭제 완료: " + oldFilename);
+	             }
+	             
 	            // 파일 저장
 	            File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
 	            multi.transferTo(file);
@@ -119,9 +143,8 @@ public class ReviewController {
 	            int boardNoValue = (boardNo != null) ? boardNo : 0;
 
 	            // 현재 boardNo 기준 max sortNo 조회
-	            int maxSortNo = ReviewService.selectMaxSortNo(contentId);
-	            int  newSortNo= maxSortNo + 1;
-	          
+	           
+
 	            HashMap<String, Object> map = new HashMap<>();
 	            map.put("filename", saveFileName);
 	            map.put("path", "../img/" + saveFileName);
@@ -129,7 +152,6 @@ public class ReviewController {
 	            map.put("userId", userId);
 	            map.put("boardNo", boardNoValue);
 	            map.put("title", title);
-	            map.put("sortNo", newSortNo);
 
 	            System.out.println("Insert Map: " + map);
 	            ReviewService.insertImg(map);
