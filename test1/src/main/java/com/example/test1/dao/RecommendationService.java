@@ -21,23 +21,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RecommendationService {
 
-    private final AttrRepository attrRepository; 
+    private final AttrRepository attrRepository; // (이 파일은 원래 있으셔야 합니다)
     private final TourAreaService tourAreaService; 
 
     @Transactional
     public List<PoiRecommendation> generateAndSaveAttributes(RecommendationRequest request) {
         
-        // 로그에서 regions를 확인하도록 변경
+        // [수정] 로그에서 regions를 확인하도록 변경
         log.info("추천 요청 받음. (테마: {}, 지역: {}, 날짜: {}~{})", 
             request.getThemes(), request.getRegions(), request.getStartDate(), request.getEndDate());
 
-        // 지역 파라미터가 없는 경우
+        // [수정] 지역 파라미터가 없는 경우
         if (request.getRegions() == null || request.getRegions().isEmpty()) {
              log.warn("선택된 지역이 없습니다. 빈 목록을 반환합니다.");
             return Collections.emptyList();
         }
 
-        // TourAPI 호출 (멀티 지역)
+        // [ 1. TourAPI 호출 (멀티 지역) ]
         List<TourPoiEnvelope.PoiItem> allPois = new ArrayList<>();
         
         // 프론트에서 받은 모든 지역을 순회하며 API 호출
@@ -65,7 +65,7 @@ public class RecommendationService {
         log.info("TourAPI에서 총 {}개의 고유 POI 목록을 받았습니다.", requestedContentIds.size());
 
         
-        //On-Demand 로직: ATTR 테이블 조회 및 신규 생성/저장
+        // [ 2. On-Demand 로직: ATTR 테이블 조회 및 신규 생성/저장 ]
         
         // 2-1. 이미 DB에 저장된 Attr 조회
         List<Attr> existingAttrs = attrRepository.findByContentIdIn(requestedContentIds);
