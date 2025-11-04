@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.test1.mapper.MypageMapper">
 	<select id="mypageInfo" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
-		SELECT U.*, TO_CHAR(BIRTH,'YYYY-MM-DD') BDATE, TO_CHAR(CDATETIME,'YYYY-MM-DD') CDATE, TO_CHAR(UDATETIME,'YYYY-MM-DD') UDATE
+		SELECT U.*, TO_CHAR(BIRTH,'YYYY-MM-DD') BDATE, TO_CHAR(CDATETIME,'YYYY-MM-DD') CDATE, TO_CHAR(UDATETIME,'YYYY-MM-DD') UDATE, SUBSTR((SYSDATE-CDATETIME),1,1) CDATE2 
 		FROM USERS U
 		WHERE USER_ID = #{userId}
 	</select>
@@ -32,6 +32,13 @@
 		FROM USERS 
 		WHERE USER_ID = #{userId} AND PHONE = #{phone}
 	</select>
+	
+	<update id="updateStatus" parameterType="hashmap">
+		UPDATE USERS
+		SET
+			STATUS = 'S'
+		WHERE USER_ID = #{userId}
+	</update>
 	
 </mapper>
 

@@ -3,6 +3,7 @@ package com.example.test1.controller;
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,13 @@ public class ReviewController {
 		request.setAttribute("resNum", map.get("resNum"));
 		
         return "/review-add";
+    }
+	
+	@RequestMapping("review-detail.do") 
+    public String reviewDetail(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		request.setAttribute("contentId", map.get("contentId"));
+		
+        return "/review-detail";
     }
 	
 	@RequestMapping("/review-rating.do") 
@@ -86,7 +94,7 @@ public class ReviewController {
 	
 	@RequestMapping("/review-fileUpload.dox")
 	public String file(
-	        @RequestParam("file1") MultipartFile multi,
+	        @RequestParam("file1") MultipartFile[] files, // 여러 파일 받기
 	        @RequestParam("contentId") int contentId,
 	        @RequestParam("userId") String userId,
 	        @RequestParam(value="boardNo", required=false) Integer boardNo,
@@ -94,74 +102,67 @@ public class ReviewController {
 	        HttpServletRequest request,
 	        Model model) {
 
-	    String path = "c:\\img";
+	    // 저장 경로
+	    String path2 = System.getProperty("user.dir") + "\\src\\main\\webapp\\img";
+	    int boardNoValue = (boardNo != null) ? boardNo : 0;
 
 	    try {
-	        String originFilename = multi.getOriginalFilename();
-	        String extName = originFilename.substring(originFilename.lastIndexOf("."));
-	        String saveFileName = SaveFileName(extName);
+	        // 1️⃣ 기존 파일 삭제
+	        HashMap<String, Object> delMap = new HashMap<>();
+	        delMap.put("contentId", contentId);
+	        delMap.put("boardNo", boardNoValue);
+	        delMap.put("userId", userId);
 
-	        System.out.println("uploadpath : " + path);
-	        System.out.println("userId : " + userId);
-	        System.out.println("boardNo : " + boardNo);
-	        System.out.println("title : " + title);
-	        System.out.println("saveFileName : " + saveFileName);
+	        List<String> oldFiles = ReviewService.selectImgs(delMap);
+	        for(String filename : oldFiles) {
+	            File oldFile = new File(path2, filename);
+	            if(oldFile.exists()) oldFile.delete();
+	        }
+	        ReviewService.deleteImg(delMap);
 
-	        String path2 = System.getProperty("user.dir");
-	        System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
+	        // 2️⃣ 새 파일 반복 처리
+	        for(MultipartFile multi : files) {
+	            if(!multi.isEmpty()) {
+	                String originFilename = multi.getOriginalFilename();
+	                String extName = originFilename.substring(originFilename.lastIndexOf("."));
+	                String saveFileName = SaveFileName(extName);
 
-	        if (!multi.isEmpty()) {
-	            // 파일 저장
-	            File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
-	            multi.transferTo(file);
+	                // 파일 저장
+	                File file = new File(path2, saveFileName);
+	                multi.transferTo(file);
 
-	            // boardNo가 null이면 0으로 처리
-	            int boardNoValue = (boardNo != null) ? boardNo : 0;
+	                // DB insert
+	                HashMap<String,Object> map = new HashMap<>();
+	                map.put("filename", saveFileName);
+	                map.put("path", "../img/" + saveFileName);
+	                map.put("contentId", contentId);
+	                map.put("userId", userId);
+	                map.put("boardNo", boardNoValue);
+	                map.put("title", title);
 
-	            // 현재 boardNo 기준 max sortNo 조회
-	            int maxSortNo = ReviewService.selectMaxSortNo(contentId);
-	            int  newSortNo= maxSortNo + 1;
-	          
-	            HashMap<String, Object> map = new HashMap<>();
-	            map.put("filename", saveFileName);
-	            map.put("path", "../img/" + saveFileName);
-	            map.put("contentId", contentId);
-	            map.put("userId", userId);
-	            map.put("boardNo", boardNoValue);
-	            map.put("title", title);
-	            map.put("sortNo", newSortNo);
-
-	            System.out.println("Insert Map: " + map);
-	            ReviewService.insertImg(map);
-
-	            model.addAttribute("filename", originFilename);
-	            model.addAttribute("uploadPath", file.getAbsolutePath());
-
-	            return "redirect:list.do";
+	                ReviewService.insertImg(map);
+	            }
 	        }
 
 	    } catch (Exception e) {
-	        System.out.println(e);
+	        e.printStackTrace();
 	    }
 
 	    return "redirect:list.do";
 	}
-	    
+
 	// 현재 시간을 기준으로 파일 이름 생성
 	private String SaveFileName(String extName) {
-		String fileName = "";
-		
-		Calendar calendar = Calendar.getInstance();
-		fileName += calendar.get(Calendar.YEAR);
-		fileName += calendar.get(Calendar.MONTH);
-		fileName += calendar.get(Calendar.DATE);
-		fileName += calendar.get(Calendar.HOUR);
-		fileName += calendar.get(Calendar.MINUTE);
-		fileName += calendar.get(Calendar.SECOND);
-		fileName += calendar.get(Calendar.MILLISECOND);
-		fileName += extName;
-		
-		return fileName;
+	    Calendar calendar = Calendar.getInstance();
+	    return "" +
+	            calendar.get(Calendar.YEAR) +
+	            calendar.get(Calendar.MONTH) +
+	            calendar.get(Calendar.DATE) +
+	            calendar.get(Calendar.HOUR) +
+	            calendar.get(Calendar.MINUTE) +
+	            calendar.get(Calendar.SECOND) +
+	            calendar.get(Calendar.MILLISECOND) +
+	            extName;
 	}
 
 	

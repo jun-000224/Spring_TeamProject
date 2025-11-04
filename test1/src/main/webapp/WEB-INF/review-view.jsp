@@ -12,7 +12,7 @@
         ></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-
+        <script src="/js/page-change.js"></script>
         <style>
             body {
                 background: #f3f7ff;
@@ -50,7 +50,6 @@
 
             .day-item-con img {
                 width: 280px;
-                height: 200px;
                 object-fit: cover;
             }
 
@@ -126,6 +125,9 @@
                 background: #1565c0;
                 color: white;
             }
+            a{
+                text-decoration: none;
+            }
         </style>
     </head>
     <body>
@@ -148,11 +150,12 @@
             </div>
             <div class="main-con" v-if="positionsByDay[selectedDay]">
                 <div class="day-num">{{ selectedDay }}일차 - {{ positionsByDay[selectedDay][0].day }}</div>
-
+                
                 <div
-                    v-for="item in positionsByDay[selectedDay]"
-                    :key="item.title"
-                    class="day-item-con"
+                v-for="item in positionsByDay[selectedDay]"
+                :key="item.title"
+                class="day-item-con"
+                @click="fnView(item.contentId)"
                 >
                     <img :src="item.firstimage" alt="이미지" />
                     <div class="item-md">
@@ -235,15 +238,16 @@
                     },
                 });
             },
-            setRating(i) {
-                let self = this;
-                self.rating = i;
-            },
+           
             getStarIcon(index, itemRating) {
                 if (itemRating >= index) return "star";
                 else if (itemRating >= index - 0.5) return "star_half";
                 else return "star_border";
             },
+            fnView(contentId){
+                let self=this;
+                pageChange("review-detail.do",{contentId:contentId})
+            }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분

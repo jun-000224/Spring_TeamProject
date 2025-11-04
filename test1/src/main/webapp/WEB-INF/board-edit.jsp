@@ -11,10 +11,12 @@
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
         <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-         <link rel="stylesheet" href="/css/main-style.css">
+        <link rel="stylesheet" href="/css/main-style.css">
         <link rel="stylesheet" href="/css/common-style.css">
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
         <style>
             table {
                 width: 80%;
@@ -26,6 +28,7 @@
                 overflow: hidden;
                 text-align: center;
                 font-family: 'Noto Sans KR', sans-serif;
+
             }
 
             th {
@@ -40,8 +43,9 @@
             td {
                 padding: 15px;
                 border-bottom: 1px solid #eee;
-                font-size: 14px;
-                text-align: left;
+                font-size: 20px;
+                text-align: center;
+                font-weight: bold;
             }
 
             /* input, textarea 스타일 */
@@ -84,13 +88,36 @@
             button:hover {
                 background-color: #005FCC;
             }
+
+
+            /* ... 기존 스타일 유지 ... */
+
+            /* 제목 입력 필드 전용 스타일 */
+            .input-title {
+                font-size: 18px;
+                margin-right: 200px;
+                /* 글꼴 크기 키우기 */
+                
+                /* 약간 굵게 */
+                color: #333;
+                /* 글꼴 색상 진하게 */
+                height: 20px;
+                width: 96% ;
+                /* 높이 설정 */
+                padding: 8px 15px;
+                /* 상하 패딩 조정 */
+            }
+
+          
+            
+        
         </style>
     </head>
 
     <body>
         <div id="app">
             <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-              <header>
+            <header>
                 <div class="logo">
                     <a href="http://localhost:8081/main-list.do">
                         <!-- <img src="이미지.png" alt="Team Project"> -->
@@ -143,7 +170,7 @@
             <table>
                 <tr>
                     <th>제목</th>
-                    <td><input v-model="title"></td>
+                    <td><input v-model="title" class="input-title"></td>
                 </tr>
                 <tr>
                     <th>작성자</th>
@@ -151,12 +178,18 @@
                 </tr>
                 <tr>
                     <th>내용</th>
-                    <td><textarea v-model="contents" cols="50" rows="20"></textarea> </td>
+
+                    <td style="height: 300px; padding: 30px;">
+                        <!-- <textarea v-model="contents" cols="50" rows="20"></textarea> -->
+                        <div id="editor"></div> 
+                    </td>
+
                 </tr>
-                <div>
-                    <button @click="fnUpdate">수정</button>
-                </div>
+
             </table>
+            <div>
+                <button @click="fnUpdate">수정</button>
+            </div>
         </div>
 
         </div>
@@ -281,7 +314,29 @@
                 // 처음 시작할 때 실행되는 부분
                 let self = this;
                 self.fnInfo();
+
+
+                // Quill 에디터 초기화
+                var quill = new Quill('#editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            ['bold', 'italic', 'underline'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            ['link', 'image'],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                // 에디터 내용이 변경될 때마다 Vue 데이터를 업데이트
+                quill.on('text-change', function () {
+                    self.contents = quill.root.innerHTML;
+                });
+
             }
+            
         });
 
         app.mount('#app');
