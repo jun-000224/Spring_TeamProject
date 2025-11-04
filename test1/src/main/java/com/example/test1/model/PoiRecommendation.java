@@ -3,41 +3,34 @@ package com.example.test1.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// 프론트엔드 지도 표시에 필요한 최종 정보를 담는 DTO
 @Data
 @NoArgsConstructor
 public class PoiRecommendation {
 
     private Long contentId;
     private Integer typeId;
-    private String title;   // 장소명 (e.g., "경복궁")
-    
-    // TourAPI는 좌표를 String으로 주므로, String으로 받습니다.
-    private String mapx; // 경도 (Longitude)
-    private String mapy; // 위도 (Latitude)
+    private String title;
+    private String mapx;
+    private String mapy;
+    private double score;
+    private String firstimage;
+    private String firstimage2;
+    private String areaCode;    // 프론트에서 사용할 필드 (camelCase)
+    private String sigunguCode; // 프론트에서 사용할 필드 (camelCase)
 
-    private double score; // [핵심] 테마 기반 가중 평균 점수
-
-    // ==========================================
-    // ⭐ [수정] 이미지 필드 2개 추가
-    // ==========================================
-    private String firstimage;  // 대표 이미지 (원본)
-    private String firstimage2; // 대표 이미지 (썸네일)
-
-
-    // TourPoiEnvelope.PoiItem과 Attr 객체를 조합하기 위한 생성자
     public PoiRecommendation(TourPoiEnvelope.PoiItem poi, Attr attr) {
         this.contentId = poi.getContentid();
         this.typeId = poi.getContenttypeid();
         this.title = poi.getTitle();
         this.mapx = poi.getMapx();
         this.mapy = poi.getMapy();
-        this.score = 0; // 점수는 서비스에서 별도 계산 후 세팅
+        this.score = 0;
         
-        // ==========================================
-        // ⭐ [수정] 생성자에서 이미지 URL 복사
-        // ==========================================
         this.firstimage = poi.getFirstimage();
         this.firstimage2 = poi.getFirstimage2();
+        
+        // [수정] poi.getAreacode() (소문자) 호출
+        this.areaCode = poi.getAreacode();
+        this.sigunguCode = poi.getSigungucode();
     }
 }

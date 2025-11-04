@@ -59,6 +59,13 @@ public class MypageController {
 	      
 	}
 	
+	@RequestMapping("/myInfo/subscribe.do") 
+    public String infoSubscribe(Model model) throws Exception{
+
+    return "/mypage/myInfo-subscribe";
+	      
+	}
+	
 	@RequestMapping(value = "/mypage/myInfo.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String mymyinfo(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -91,6 +98,15 @@ public class MypageController {
 	public String mypageTemp(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = mypageService.mypageTemp(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/mypage/statusUp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String payHistory(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = mypageService.updateStatus(map);
 		
 		return new Gson().toJson(resultMap);
 	}

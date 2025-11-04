@@ -57,7 +57,16 @@ public class BoardController {
     public String commentUpdate(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		System.out.println(map);
 		request.setAttribute("commentNo", map.get("commentNo"));
+		request.setAttribute("boardNo", map.get("boardNo"));
         return "/board-comment-edit";
+    }
+	
+	@RequestMapping("/board-report.do") 
+	
+    public String report(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		System.out.println(map);
+		request.setAttribute("userId", map.get("userId"));
+        return "/board-report";
     }
 	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -200,9 +209,26 @@ public class BoardController {
 	@ResponseBody
 	public String updateComment(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
 		resultMap = boardService.commentUpdate(map);
 		
 		return new Gson().toJson(resultMap);
 	}
+	
+//	11.02
+	@RequestMapping(value = "/comment-view.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String commentView(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.getComment(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board-report.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String report(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.getComment(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
 	
 }
