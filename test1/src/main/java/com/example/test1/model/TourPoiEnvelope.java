@@ -27,7 +27,7 @@ public class TourPoiEnvelope {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Body {
-        private Items items;
+        private Items items; 
         private int numOfRows;
         private int pageNo;
         private int totalCount;
@@ -51,7 +51,6 @@ public class TourPoiEnvelope {
         private String firstimage;
         private String firstimage2;
         
-        // API 원본 필드명 (소문자)
         private String areacode;
         private String sigungucode;
     }

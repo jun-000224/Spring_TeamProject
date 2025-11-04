@@ -134,7 +134,7 @@
                     placeholder="예산을 입력하세요." />
                 </div>
                 <div class="inline" style="margin-top:2px">
-                  입력값: 인원 <strong>{{ headCount || 0 }}</strong>명 / 예산 <strong>{{ (budget ?? 0).toLocaleString()
+                  입력값: 인원 <strong>{{ headCount || 0 }}</strong>명 / 예산 <strong>{{ (budget || 0).toLocaleString()
                     }}</strong>원
                 </div>
               </section>
@@ -186,6 +186,9 @@
 
             <section class="panel" style="margin-top:10px">
               <h3>추천 코스 (지도)</h3>
+              <div class="desc">
+                *연관도가 높을수록 마커가 크게 표시됩니다.
+              </div>
 
               <div class="tabs date-tabs" v-if="dateTabs.length > 0">
                 <button type="button" v-for="tab in dateTabs" :key="tab.date"
@@ -218,7 +221,7 @@
                   <i class="fa-solid fa-utensils"></i> 식당 ({{ countForTab(39) }})
                 </button>
               </div>
-              <div class="desc">*연관도가 높을수록 마커가 크게 표시됩니다.</div>
+
               <div id="map-recommend" class="map-recommend-area"></div>
               <div id="debugOut" style="display: none;"></div>
 
@@ -234,7 +237,25 @@
 
             <section class="panel" style="margin-top:10px">
               <h3>나의 최종 일정 (순서 변경 가능)</h3>
-              <div class="desc">
+
+              <div class="budget-status-wrap" v-if="budget > 0">
+                <div class="budget-status-item">
+                  <span class="label">숙박 예산</span>
+                  <span :class="['amount', { over: spentAccom > accomBudgetLimit }]">
+                    <span class="current">{{ spentAccom.toLocaleString() }}원</span> /
+                    <span class="total">{{ accomBudgetLimit.toLocaleString() }}원</span>
+                  </span>
+                </div>
+                <div class="budget-status-item">
+                  <span class="label">식당 예산</span>
+                  <span :class="['amount', { over: spentFood > foodBudgetLimit }]">
+                    <span class="current">{{ spentFood.toLocaleString() }}원</span> /
+                    <span class="total">{{ foodBudgetLimit.toLocaleString() }}원</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="desc" v-if="dateTabs.length > 0">
                 일정 항목을 마우스로 잡고 위아래로 끌어서 순서를 변경할 수 있습니다.
               </div>
 
@@ -251,8 +272,13 @@
                     }" @dragstart="onDragStart(tab.date, index)" @dragover.prevent="onDragOver(tab.date, index)"
                         @dragleave="onDragLeave" @drop="onDrop(tab.date, index)" @dragend="onDragEnd">
 
-                        <span>{{ poi.title || "이름 없음" }} ({{ poi.typeId === 12 ? '관광' : (poi.typeId === 32 ? '숙박' :
-                          '식당') }})</span>
+                        <span>
+                          {{ poi.title || "이름 없음" }}
+                          ({{ poi.typeId === 12 ? '관광' : (poi.typeId === 32 ? '숙박' : '식당') }})
+                          <span v-if="poi.price > 0" style="color: #64748b; font-size: 0.9em; margin-left: 5px;">
+                            - {{ poi.price.toLocaleString() }}원
+                          </span>
+                        </span>
                         <button @click.stop="removePoiFromItinerary(tab.date, index)">삭제</button>
                       </li>
                     </ul>
@@ -324,6 +350,9 @@
                 // 예산, 인원
                 budget: null,
                 headCount: null,
+                spentAccom: 0,      // [신규] 숙박 사용액
+                spentFood: 0,       // [신규] 식당 사용액
+                spentActivity: 0,   // [신규] 관광/체험 사용액
 
                 // 달력 믹스인(calendar.js)용
                 startDate: null,
@@ -341,7 +370,7 @@
                 fullPoiList: [],
                 activeTab: 12,
                 infowindow: null,
-                baseMarkerImageSrc: null, // [수정] 마커 이미지 URL
+                baseMarkerImageSrc: null,
 
                 // 일정 플래너
                 itinerary: {},
@@ -438,6 +467,20 @@
 
               activeItinerary() {
                 return this.itinerary[this.activeDate] || [];
+              },
+
+              // --- [신규] 예산 한도 계산 (파이 차트 연동) ---
+              accomBudgetLimit() {
+                // this.weights는 pie.js 믹스인에서 제공 [기타, 숙박, 식당, 체험]
+                return Math.floor((this.budget || 0) * (this.weights[1] / 100.0));
+              },
+              foodBudgetLimit() {
+                // weights[2] is food
+                return Math.floor((this.budget || 0) * (this.weights[2] / 100.0));
+              },
+              activityBudgetLimit() {
+                // weights[3] is act (관광/체험)
+                return Math.floor((this.budget || 0) * (this.weights[3] / 100.0));
               }
             },
 
@@ -585,10 +628,16 @@
                   return;
                 }
 
+                // [신규] 예산 관련 로직 초기화
+                this.spentAccom = 0;
+                this.spentFood = 0;
+                this.spentActivity = 0;
+                this.itinerary = {};
+
                 const el = document.getElementById('debugOut');
                 const param = {
                   themes: this.selectedThemes,
-                  regions: this.selectedRegions, // 백엔드로 지역 '배열' 전송
+                  regions: this.selectedRegions,
                   headCount: this.headCount,
                   budget: this.budget,
                   startDate: this.startDate,
@@ -650,31 +699,9 @@
                   removable: true
                 });
 
-                const markerSize = new kakao.maps.Size(24, 35);
-                const markerOffset = new kakao.maps.Point(12, 35);
+                // [수정] "별 마커" 이미지 (https + 캐시 방지)
                 const cacheBuster = '?v=' + new Date().getTime();
-
-                this.markerImages = {
-                  // Top 20% (빨강)
-                  red: new kakao.maps.MarkerImage(
-                    // 'https://' 프로토콜 사용
-                    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png' + cacheBuster,
-                    markerSize, { offset: markerOffset }
-                  ),
-                  // Top 20-50% (노랑)
-                  orange: new kakao.maps.MarkerImage(
-                    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_yellow.png' + cacheBuster,
-                    markerSize, { offset: markerOffset }
-                  ),
-                  // 나머지 (파랑)
-                  yellow: new kakao.maps.MarkerImage(
-                    'https://t1.daumcdn.net/mapjsapi/images/p_marker.png' + cacheBuster,
-                    markerSize, { offset: markerOffset }
-                  )
-                };
-
-                // [수정] 기본 "별 마커"도 https로 변경
-                this.baseMarkerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+                this.baseMarkerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png' + cacheBuster;
               },
 
               clearMarkers() {
@@ -694,7 +721,6 @@
                 if (!this.mapInstance) return;
                 this.clearMarkers();
 
-                // 1. 'filteredPoiList' (현재 탭 기준)를 점수 순으로 정렬
                 const listToDraw = [...this.filteredPoiList].sort((a, b) => {
                   const scoreA = a.score || 0;
                   const scoreB = b.score || 0;
@@ -705,13 +731,11 @@
                   return;
                 }
 
-                // 2. 컷오프 계산 기준을 '현재 탭'의 개수(listToDraw.length)로 변경
                 const totalCount = listToDraw.length;
-                const top10Cutoff = Math.floor(totalCount * 0.10); // 10%
-                const top30Cutoff = Math.floor(totalCount * 0.30); // 30%
-                const top50Cutoff = Math.floor(totalCount * 0.50); // 50%
+                const top10Cutoff = Math.floor(totalCount * 0.10);
+                const top30Cutoff = Math.floor(totalCount * 0.30);
+                const top50Cutoff = Math.floor(totalCount * 0.50);
 
-                // 3. 'listToDraw'를 순회 (index가 곧 등수(rank))
                 for (const [index, poi] of listToDraw.entries()) {
                   const mapy_num = parseFloat(poi.mapy);
                   const mapx_num = parseFloat(poi.mapx);
@@ -720,99 +744,134 @@
                     continue;
                   }
 
-                  // [수정] 4. index(등수) 기준으로 마커 크기 결정
-                  let markerWidth, markerHeight;
-                  let offsetX, offsetY;
-                  const baseWidth = 24;  // 기본 핀 너비
-                  const baseHeight = 35; // 기본 핀 높이
-
+                  let imgSize;
                   if (index < top10Cutoff) {
-                    // 상위 10% (제일 크게)
-                    markerWidth = baseWidth * 1.5; // 36
-                    markerHeight = baseHeight * 1.5; // 52.5
+                    imgSize = 45; // 상위 10%
                   } else if (index < top30Cutoff) {
-                    // 상위 10% ~ 30% (중간 크기)
-                    markerWidth = baseWidth * 1.15; // 약 28
-                    markerHeight = baseHeight * 1.15; // 약 40
+                    imgSize = 30; // 10% ~ 30%
                   } else if (index < top50Cutoff) {
-                    // 상위 30% ~ 50% (기본 크기)
-                    markerWidth = baseWidth; // 24
-                    markerHeight = baseHeight; // 35
+                    imgSize = 20; // 30% ~ 50%
                   } else {
-                    // 나머지 (가장 작게)
-                    markerWidth = baseWidth * 0.75; // 18
-                    markerHeight = baseHeight * 0.75; // 26.25
+                    imgSize = 10; // 나머지
                   }
 
-                  // 오프셋 계산 (핀의 발이 가리키는 위치를 좌표와 일치시키기 위함)
-                  offsetX = markerWidth / 2;
-                  offsetY = markerHeight;
-
-                  // [수정] 5. 마커 이미지 동적 생성
                   const markerImage = new kakao.maps.MarkerImage(
-                    this.baseMarkerImageSrc, // (파란색 핀)
-                    new kakao.maps.Size(markerWidth, markerHeight), // 계산된 크기 적용
-                    { offset: new kakao.maps.Point(offsetX, offsetY) } // 계산된 오프셋 적용
+                    this.baseMarkerImageSrc, // "별 마커"
+                    new kakao.maps.Size(imgSize, imgSize),
+                    { offset: new kakao.maps.Point(imgSize / 2, imgSize / 2) }
                   );
 
                   const marker = new kakao.maps.Marker({
                     map: this.mapInstance,
                     position: new kakao.maps.LatLng(mapy_num, mapx_num),
                     title: poi.title + ' (점수: ' + (poi.score || 0).toFixed(2) + ')',
-                    image: markerImage // [수정] 동적으로 생성된 마커 이미지 적용
+                    image: markerImage
                   });
 
-                  // 마커 클릭 이벤트 (네이버 검색 링크 포함)
+                  // 마커 클릭 이벤트 (가격 조회 기능 추가)
                   kakao.maps.event.addListener(marker, 'click', () => {
                     this.selectedPoi = poi;
 
-                    const title = poi.title || "이름 없음";
-                    let imageUrl = poi.firstimage2 || poi.firstimage;
-                    let content = '';
-                    let isValidImage = false;
-                    if (imageUrl && imageUrl !== "false" && imageUrl.trim() !== "") {
-                      isValidImage = true;
-                      if (imageUrl.startsWith('http://')) {
-                        imageUrl = imageUrl.replace('http://', 'https://');
-                      }
-                    }
-
-                    const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(title)}`;
-
-                    if (isValidImage) {
-                      content = `
-                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
-                      <img src="${imageUrl}" 
-                           width="180" height="120" 
-                           style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px; max-width: 100%;">
-                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                          <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
-                              ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
-                          </a>
-                      </div>
-                  </div>
-                `;
+                    if (poi.price === undefined) {
+                      this.fetchPoiPrice(poi);
                     } else {
-                      content = `
-                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
-                      <div style="width: 180px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px;">
-                          (이미지 없음)
-                      </div>
-                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                          <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
-                              ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
-                          </a>
-                      </div>
-                  </div>
-                `;
+                      this.updateInfowindowContent(poi, poi.price);
                     }
-
-                    this.infowindow.setContent(content);
-                    this.infowindow.open(this.mapInstance, marker);
                   });
 
                   this.markers.push(marker);
                 }
+              },
+
+              // --- [신규] 가격 조회 및 인포윈도우 업데이트 ---
+
+              async fetchPoiPrice(poi) {
+                this.updateInfowindowContent(poi, null); // "가격 조회 중..."
+
+                try {
+                  const response = await $.get(ctx + '/api/recommend/getPrice', {
+                    contentId: poi.contentId,
+                    typeId: poi.typeId,
+                    startDate: this.startDate
+                  });
+
+                  poi.price = response.price;
+                  if (this.selectedPoi && this.selectedPoi.contentId === poi.contentId) {
+                    this.selectedPoi.price = response.price;
+                  }
+
+                  this.updateInfowindowContent(poi, response.price);
+
+                } catch (e) {
+                  console.error("가격 조회 API 호출 실패", e);
+                  poi.price = 0;
+                  if (this.selectedPoi && this.selectedPoi.contentId === poi.contentId) {
+                    this.selectedPoi.price = 0;
+                  }
+                  this.updateInfowindowContent(poi, 0);
+                }
+              },
+
+              updateInfowindowContent(poi, price) {
+                const title = poi.title || "이름 없음";
+                let imageUrl = poi.firstimage2 || poi.firstimage;
+                let content = '';
+                let isValidImage = false;
+                if (imageUrl && imageUrl !== "false" && imageUrl.trim() !== "") {
+                  isValidImage = true;
+                  if (imageUrl.startsWith('http://')) {
+                    imageUrl = imageUrl.replace('http://', 'https://');
+                  }
+                }
+
+                const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(title)}`;
+
+                let priceText = '';
+                if (price === null) {
+                  priceText = `<span style="font-size: 12px; color: #888;">(가격 조회 중...)</span>`;
+                } else if (price > 0) {
+                  priceText = `<span style="font-size: 13px; color: #d9480f; font-weight: bold;">${price.toLocaleString()}원~</span>`;
+                } else {
+                  priceText = `<span style="font-size: 12px; color: #888;">(가격 정보 없음)</span>`;
+                }
+
+                if (poi.typeId === 12) {
+                  priceText = '';
+                }
+
+                if (isValidImage) {
+                  content = `
+                <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                    <img src="${imageUrl}" 
+                         width="180" height="120" 
+                         style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px; max-width: 100%;">
+                    <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
+                            ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top: 4px;">${priceText}</div>
+                </div>
+              `;
+                } else {
+                  content = `
+                <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                    <div style="width: 180px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px;">
+                        (이미지 없음)
+                    </div>
+                    <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
+                            ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top: 4px;">${priceText}</div>
+                </div>
+              `;
+                }
+
+                this.infowindow.setContent(content);
+                const position = new kakao.maps.LatLng(parseFloat(poi.mapy), parseFloat(poi.mapx));
+                this.infowindow.open(this.mapInstance, new kakao.maps.Marker({ position: position }));
               },
 
               // 추천 목록 중 첫번째 POI로 지도 이동
@@ -845,6 +904,49 @@
               // "일정에 추가하기" 버튼 클릭
               addPoiToItinerary() {
                 if (!this.activeDate || !this.selectedPoi) return;
+
+                if (this.selectedPoi.price === undefined) {
+                  alert("가격 정보를 로드 중입니다. 잠시 후 다시 시도해주세요.");
+                  return;
+                }
+
+                // [수정] 카테고리별 예산 체크
+                const poiPrice = this.selectedPoi.price || 0;
+                const poiType = this.selectedPoi.typeId;
+
+                let newCategoryTotal = 0;
+                let categoryLimit = 0;
+                let categoryName = '';
+
+                if (poiType === 32) { // 숙박
+                  newCategoryTotal = this.spentAccom + poiPrice;
+                  categoryLimit = this.accomBudgetLimit;
+                  categoryName = '숙박';
+                } else if (poiType === 39) { // 식당
+                  newCategoryTotal = this.spentFood + poiPrice;
+                  categoryLimit = this.foodBudgetLimit;
+                  categoryName = '식당';
+                } else if (poiType === 12) { // 관광
+                  newCategoryTotal = this.spentActivity + poiPrice;
+                  categoryLimit = this.activityBudgetLimit;
+                  categoryName = '체험 및 관광';
+                } else {
+                  // 기타 (12, 32, 39 외) - 예산 체크 안 함
+                }
+
+                // 예산 체크 (0원 이상일 때만)
+                if (categoryName && categoryLimit > 0 && newCategoryTotal > categoryLimit) {
+                  if (!confirm(`'${categoryName}' 예산(${categoryLimit.toLocaleString()}원)을 초과합니다. (초과액: ${(newCategoryTotal - categoryLimit).toLocaleString()}원)\n그래도 추가하시겠습니까?`)) {
+                    return; // 추가 취소
+                  }
+                }
+
+                // 예산에 합산
+                if (poiType === 32) this.spentAccom = newCategoryTotal;
+                else if (poiType === 39) this.spentFood = newCategoryTotal;
+                else if (poiType === 12) this.spentActivity = newCategoryTotal;
+
+
                 if (!this.itinerary[this.activeDate]) {
                   this.itinerary[this.activeDate] = [];
                 }
@@ -858,7 +960,13 @@
               // 일정 목록에서 "삭제" 버튼 클릭
               removePoiFromItinerary(date, index) {
                 if (this.itinerary[date] && this.itinerary[date].length > index) {
-                  this.itinerary[date].splice(index, 1);
+                  const removedPoi = this.itinerary[date].splice(index, 1)[0];
+                  const poiPrice = removedPoi.price || 0;
+                  if (poiPrice > 0) {
+                    if (removedPoi.typeId === 32) this.spentAccom -= poiPrice;
+                    else if (removedPoi.typeId === 39) this.spentFood -= poiPrice;
+                    else if (removedPoi.typeId === 12) this.spentActivity -= poiPrice;
+                  }
                 }
               },
 
