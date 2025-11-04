@@ -59,6 +59,13 @@ public class KakaoController {
 //	    System.out.println(serviceType);
 //	    System.out.println(code);
 		
+		String code = (String) map.get("code");
+	    if (code == null || code.isEmpty()) {
+	        System.out.println("⚠️ Kakao 인가 코드가 없습니다. 요청 중단");
+	        resultMap.put("error", "인가 코드가 없습니다.");
+	        return new Gson().toJson(resultMap);
+	    }
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -66,10 +73,13 @@ public class KakaoController {
 		ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
 
 		Map<String, Object> responseBody = response.getBody();
-		System.out.println(responseBody);
+		
+//		System.out.println(responseBody);
+		
 		resultMap = (HashMap<String, Object>) getUserInfo((String)responseBody.get("access_token"));
 			//String으로 다운 캐스팅
-		System.out.println(resultMap);
+		
+//		System.out.println(resultMap);
 
 		
 		return new Gson().toJson(resultMap);
