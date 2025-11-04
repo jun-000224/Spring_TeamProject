@@ -123,13 +123,11 @@ body {
   background: #f2f3f5;
   border: 1px solid var(--border);
   color: #374151;
-  /* (신규) 칩 삭제 버튼을 위해 추가 */
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-/* (신규) 칩 삭제 버튼 */
 .chips .chip button {
   background: #b9c2ce;
   color: white;
@@ -535,7 +533,7 @@ input[type="range"]:disabled {
   gap: 6px;
   border-bottom: 2px solid var(--border);
   margin-bottom: 12px;
-  flex-wrap: wrap; /* 날짜 탭이 많을 경우 줄바꿈 허용 */
+  flex-wrap: wrap;
 }
 .tab-btn {
   padding: 10px 16px;
@@ -609,50 +607,6 @@ input[type="range"]:disabled {
     transform: translateY(1px);
 }
 
-/* 일정 목록 */
-.itinerary-list {
-    margin-top: 16px;
-}
-.itinerary-list h4 {
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-}
-.itinerary-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--card);
-}
-.itinerary-list li {
-    padding: 10px 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #f1f5f9;
-}
-.itinerary-list li:last-child {
-    border-bottom: none;
-}
-.itinerary-list li span {
-    font-weight: 500;
-    color: #334155;
-}
-.itinerary-list li button {
-    font-size: 0.8rem;
-    padding: 3px 8px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.itinerary-list li button:hover {
-    background: #dc2626;
-}
-
 /* [신규] 지역 추가 버튼 */
 .region-select-wrap {
   display: grid;
@@ -700,4 +654,91 @@ input[type="range"]:disabled {
     width: auto;
     min-width: 50px;
     margin-bottom: 0;
+}
+
+/* =================================
+   ▼ [신규] 최종 일정 패널 (드래그 앤 드롭)
+   ================================= */
+.itinerary-day-block {
+    margin-bottom: 16px;
+}
+.itinerary-day-block h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+}
+
+.itinerary-list {
+    /* (기존 스타일 유지) */
+}
+.itinerary-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+}
+.itinerary-list li {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: grab; /* [신규] 드래그 커서 */
+    transition: background-color 0.2s;
+}
+.itinerary-list li:last-child {
+    border-bottom: none;
+}
+.itinerary-list li span {
+    font-weight: 500;
+    color: #334155;
+    pointer-events: none; /* 텍스트가 드래그 이벤트 방해 안 하도록 */
+}
+.itinerary-list li button {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.itinerary-list li button:hover {
+    background: #dc2626;
+}
+
+/* 드래그 앤 드롭 스타일 */
+.itinerary-list li.dragging {
+    opacity: 0.5;
+    background: #f0f4f9;
+}
+.itinerary-list li.drag-over {
+    /* 드롭될 위치(다른 항목) 위에 올렸을 때 */
+    border-top: 3px solid #2563eb;
+}
+/* 카카오맵 기본 마커 이미지를 사용합니다.
+  (빨강: m, 주황/노랑: y, 그 외: p) 
+*/
+.kakao-map-marker {
+    width: 24px;
+    height: 35px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.marker-red {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/m_marker.png);
+}
+.marker-orange {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/y_marker.png);
+}
+.marker-yellow {
+    /* 카카오가 노란색 핀을 제공하지 않아, 기본 파란색 핀으로 대체합니다 */
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/p_marker.png);
+}
 }
