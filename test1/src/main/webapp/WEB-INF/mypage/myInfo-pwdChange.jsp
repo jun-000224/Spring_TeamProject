@@ -228,11 +228,37 @@
                 info : {},
                 nowPwd : "",
                 newPwd : "",
-                newPwd2 : ""
+                newPwd2 : "",
+
+                id: window.sessionData.id,
+                status: window.sessionData.status,
+                nickname: window.sessionData.nickname,
+                name: window.sessionData.name,
+                showLogoutMenu: false,
+                point: window.sessionData.point,
+
+                tempProperties : {}
             };
+        },
+        computed: {
+            isLoggedIn() {
+                return this.nickname !== "";
+            },
+            gradeLabel() {
+                switch (this.status) {
+                    case 'A': return '👑 ';
+                    case 'S': return '✨ ';
+                    case 'U': return '🙂 ';
+                    default: return '❓ 미지정';
+                }
+            }
         },
         methods: {
             // 함수(메소드) - (key : function())
+            toggleLogoutMenu() {
+                this.showLogoutMenu = !this.showLogoutMenu;
+            },
+
             fnPwdConfirm: function () {
                 let self = this;
                 let param = {
