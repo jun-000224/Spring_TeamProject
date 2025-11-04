@@ -230,5 +230,20 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping(value = "/board-adopt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String givePoint(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.pointGive(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/board-report-submit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String BoardReport(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.reportBoard(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	
 	
 }

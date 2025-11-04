@@ -321,9 +321,38 @@
             footer {
                 margin-top: 30px;
             }
-            
-            .report{
+
+            .report {
                 margin-left: 1600px;
+            }
+            /* 모달 css */
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal_body {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                width: 300px;
+            }
+
+            .modal textarea{
+                width: 300px;
+                height: 300px;
+            }
+
+            .modal button{
+                margin-left: 60px;
+                
             }
         </style>
     </head>
@@ -375,16 +404,8 @@
                     </div>
                 </div>
 
-
-
-
-
-
             </header>
-            <div class="report">
-                <button @click="fnReport(info.userId)">신고하기</button>
-            </div>
-            
+
             <table>
 
                 <tr>
@@ -410,6 +431,33 @@
                 </tr>
 
 
+                <!-- 게시글 모달 -->
+                <div class="report">
+                    <button @click="fnReport(info.userId)">신고하기</button> <!-- userId 전달 -->
+                </div>
+
+
+                <div v-if="reportFlg" class="modal">
+                    <div class="modal_body">
+                        <h2>신고하기</h2>
+                        <p>신고 대상: {{ userId }}</p>
+                        <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
+                        
+                        <div>● 신고유형 선택</div>
+                        <div>
+                            <select v-model="reportType">
+                            <option value="E">오류제보</option>
+                            <option value="I">불편사항</option>
+                            <option value="S">사기신고</option>
+                        </select>
+                        </div>
+                        <div>
+                            <button @click="submitReport">제출</button>
+                            <button @click="closeReportModal">취소</button>
+                        </div>
+                    </div>
+                </div>
+
 
 
 
@@ -431,7 +479,7 @@
 
 
                     <th>{{item.userId}}</th>
-                    
+
                     <th>
                         <span v-if="!editFlg">
                             {{item.contents}}
@@ -448,25 +496,48 @@
                         <button v-else @click="fncUpdate(item.commentNo,item.contents)">완료</button>
                     </td>
 
-                     <td v-if="item.userId != userId || status =='A'">
-                        <button @click="fnAdopt">채택</button>
+                    <td v-if="item.userId != userId || status =='A'">
+                        <button @click="fnAdopt(item.commentNo, item.userId)">채택하기</button>
                     </td>
-                    
 
+                    <!-- 코멘트 모달 -->
+                    <td v-if="item.userId != userId">
+                        <button @click="fnCReport(item.useId)">신고하기</button>
+                    </td>
+                     <div v-if="CoReportFlg" class="modal">
+                    <div class="modal_body">
+                        <h2>신고하기</h2>
+                        <p>신고 대상: {{ userId }}</p>
+                        <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
+                        
+                        <div>● 신고유형 선택</div>
+                        <div>
+                            <select v-model="CoReportTyle">
+                            <option value="E">오류제보</option>
+                            <option value="I">불편사항</option>
+                            <option value="S">사기신고</option>
+                        </select>
+                        </div>
+                        <div>
+                            <button @click="CsubmitReport">제출</button>
+                            <button @click="CcloseReportModal">취소</button>
+                        </div>
+                    </div>
+                </div>
                 </tr>
 
 
             </table>
-            
+
             <!-- 댓글 작성 -->
             <table id="input">
                 <th>댓글 입력</th>
                 <td>
-                    <textarea cols="40" rows="4" v-model="contents" @keyup.enter="fnSave" ></textarea>
+                    <textarea cols="40" rows="4" v-model="contents" @keyup.enter="fnSave"></textarea>
                 </td>
                 <td>
                     <button @click="fnSave">저장</button>
-                    
+
                 </td>
 
             </table>
@@ -475,7 +546,7 @@
 
             </table>
         </div>
-        <footer style="">
+        <footer>
             <div class="footer-content">
                 <div class="footer-links" style="display: flex">
                     <div class="footer-section">
@@ -537,8 +608,20 @@
                     contents: "",
                     commentList: [],
                     commentNo: "${commentNo}",
-                    type : "",
-                    editFlg: false
+                    type: "",
+                    editFlg: false,
+                    reportFlg: false,   // 모달 표시 여부
+                    userId: "",         // 신고 대상
+                    reason: "",          // 신고 사유,
+                    reportType : "E",
+
+
+
+                    CoReportFlg: false,   // 모달 표시 여부
+                    CoReportTyle: "",         // 신고 유형
+                    comReason: "",          // 신고 사유,
+                    CreportType : "E",
+
                 };
             },
             methods: {
@@ -548,7 +631,7 @@
                     let self = this;
                     let param = {
                         boardNo: self.boardNo,
-                        type : self.type
+                        type: self.type
 
                     };
                     $.ajax({
@@ -597,27 +680,27 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            
+
                             if (confirm("정말로 삭제하시겠습니까?")) {
-                                if(data.result == "success"){
+                                if (data.result == "success") {
                                     alert("삭제되었습니다!");
                                     location.href = "board-list.do";
                                 }
-                   
+
                             } else {
                                 alert("오류발생");
                             }
                         }
                     });
                 },
-                fnflg(){
-                    let self= this;
-                    if(self.userId == self.userId){
+                fnflg() {
+                    let self = this;
+                    if (self.userId == self.userId) {
                         self.editFlg = true;
-                    }else{
+                    } else {
                         self.editFlg = false;
                     }
-                    
+
                 },
 
                 fnUpdate: function () {
@@ -631,10 +714,13 @@
 
                 fncRemove: function (commentNo) {
                     let self = this;
+                    if (!confirm("정말로 삭제하시겠습니까?")) {
+                        return; 
+                    }
                     let param = {
                         commentNo: commentNo,
                     }
-                    console.log(self.commentNo);
+                    console.log(commentNo);
 
                     $.ajax({
                         url: "/view-cDelete.dox",
@@ -642,7 +728,7 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            alert("정말로 삭제하시겠습니까?");
+                            
                             if (data.result == "success") {
                                 alert("삭제되었습니다!");
                                 self.fnInfo();
@@ -653,11 +739,11 @@
                     });
                 },
 
-                fncUpdate: function (commentNo,content) {
+                fncUpdate: function (commentNo, content) {
                     let self = this;
                     let param = {
                         commentNo: commentNo,
-                        contents:content
+                        contents: content
                     }
                     $.ajax({
                         url: "/board-comment-edit.dox",
@@ -666,43 +752,121 @@
                         data: param,
                         success: function (data) {
                             self.fnInfo();
-                            self.editFlg=false;
+                            self.editFlg = false;
                         }
                     });
                     // pageChange("board-comment-edit.do", { commentNo: commentNo, boardNo: boardNo });
                 },
 
 
-                 fnAdopt: function () {
+                fnAdopt: function (commentNo, userId) {
+                    console.log("채택된 댓글 번호:", commentNo);
+                    console.log("채택 대상 userId:", userId);
+
                     let self = this;
                     let param = {
-                        
+                        userId: userId,  // 채택될 사람의 userId
+                        commentNo: commentNo
                     };
+
                     $.ajax({
-                        url: "",
+                        url: "/board-adopt.dox",
                         dataType: "json",
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            
+                            console.log(data);
+
+                            if (confirm("정말로 채택하시겠습니까?")) {
+                                if (data.result === "success") {
+                                    alert("상대방에게 100pt가 지급되었습니다!");
+                                    self.fnInfo();
+                                } else {
+                                    alert("오류가 발생했습니다");
+                                }
+                            } 
                         }
                     });
                 },
-                fnReport : function () {
-                    let self = this;
-                    console.log(self.userId);
-                    pageChange("board-report.do", { userId: self.userId });
 
+                //게시글 모달
+                fnReport(userId) {
+                    this.userId = userId;   // 신고 대상 지정
+                    this.reportFlg = true;  // 모달 열기
                 },
+                closeReportModal() {
+                    this.reportFlg = false; // 모달 닫기
+                    this.reason = "";       // 신고이유
+                },
+                submitReport() {
+                    let self = this;
+                    const param = {
+                        reportType : self.reportType,
+                        userId: self.userId,
+                        reason: self.reason,
+                        boardNo : self.boardNo
+                    };
+                    // Ajax로 서버에 신고 정보 전송
+                    $.ajax({
+                        url: "/board-report-submit.dox",
+                        type: "POST",
+                        data: param,
+                        dataType: "json",
+                        success: (data) => {
+                            console.log(self.reportType,self.userId,  self.reason,self.boardNo);
+                            if(confirm("정말 신고하시겠습니까?")){
+                            if(data.result == "success"){
+                            alert("신고가 접수되었습니다.");
+                            this.closeReportModal();
+                        }else{
+                            alert("오류가 발생하였습니다.");
+                        }
+                    }
+                        }
+                    });
+                },
+
+                // 코멘트 모달
+                fnCReport(userId) {
+                    console.log(userId);
+                    this.userId = userId;   // 신고 대상 지정
+                    this.CoReportFlg = true;  // 모달 열기
+                },
+                CcloseReportModal() {
+                    this.CoReportFlg = false; // 모달 닫기
+                    this.comReason = "";       // 신고이유
+                },
+                CsubmitReport() {
+                    const param = {
+                        CreprotType : self.CreportType,
+                        userId: self.userId,
+                        comReason: self.comReason
+                    };
+                    // Ajax로 서버에 신고 정보 전송
+                    $.ajax({
+                        url: "/board-Creport-submit.dox",
+                        type: "POST",
+                        data: param,
+                        dataType: "json",
+                        success: (data) => {
+                            if(confirm("정말 신고하시겠습니까?")){
+                            if(data.result == "success"){
+                            alert("신고가 접수되었습니다.");
+                            this.CcloseReportModal();
+                        }else{
+                            alert("오류가 발생하였습니다.");
+                        }
+                    }
+                        }
+                    });
+                }
+
+
             }, // methods
             mounted() {
                 // 처음 시작할 때 실행되는 부분
                 let self = this;
-                if (self.userId === "") {
-                    alert("로그인 후 이용해 주세요.");
-                    location.href = "/member/login.do";
-                    return;
-                }
+               
                 self.fnInfo();
             }
         });
