@@ -28,6 +28,7 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     padding: 20px;
     transition: all 0.3s ease;  
+    margin-bottom: 20px;
   }
 
   .card:hover {

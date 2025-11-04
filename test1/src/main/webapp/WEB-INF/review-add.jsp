@@ -297,9 +297,11 @@ body {
             data:param,
             success: function(data) {
                 self.info = data;  // dayMap 전체
+                console.log(data);
                 
             //키값 넣어주기
             const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
+            console.log(days);
             for (let i = 0; i < days.length; i++) {
               const day = days[i];
               const dayList = data[day];
@@ -320,9 +322,10 @@ body {
                       day:item.day,
                       rating:item.rating,
                     });
-                    console.log(item.rating);
                     
                   }
+                  console.log(self.positionsByDay);
+                  
                   self.selectedDay = days[0];
                   
               }
@@ -370,7 +373,8 @@ body {
                 let param = {
                   rating:self.rating,
                   content:self.reviewText,
-                  contentId:self.contentId
+                  contentId:self.contentId,
+                  resNum:self.resNum
                 };
                 $.ajax({
                     url: "/update-rating.dox",

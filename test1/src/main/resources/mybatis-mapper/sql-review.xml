@@ -9,8 +9,26 @@
 	</select>
 	
 	<select id="reviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
-		SELECT * FROM TBL_REVIEW R1
-		INNER JOIN RESERVATION R2 ON R1.RES_NUM = R2.RES_NUM		
+		SELECT 
+        R1.BOARDNO,
+        R1.FAV,
+        R1.CNT,
+        R1.RES_NUM,
+        R2.THEMNUM,
+        R2.USER_ID,
+        R2.PRICE,
+        R2.DESCRIPT,
+        CASE 
+            WHEN F.USER_ID IS NOT NULL THEN 1 
+            ELSE 0 
+        END AS liked
+    FROM TBL_REVIEW R1
+    INNER JOIN RESERVATION R2 
+        ON R1.RES_NUM = R2.RES_NUM
+    LEFT JOIN FAV F 
+        ON F.BOARDNO = R1.BOARDNO
+        AND F.USER_ID = #{userId}
+    ORDER BY R1.BOARDNO DESC		
 	</select>
 	
 	<select id="detailReviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
@@ -27,6 +45,20 @@
 		ORDER BY SORT_NO ASC
 	</select>
 	
+	<select id="selectOldImg" parameterType="hashmap" resultType="string">
+    SELECT TITLE
+    FROM MEDIA
+    WHERE CONTENTID = #{contentId}
+      AND USER_ID = #{userId}
+     
+	</select>
+	
+	<select id="selectFavorite" parameterType="hashmap" resultType="com.example.test1.model.Review">
+	
+	SELECT * FROM FAV
+	WHERE USER_ID= #{userId} AND BOARDNO = #{boardNo}
+	</select>
+	
 	<insert id="resInsert" parameterType="hashmap">
 		INSERT INTO TBL_REVIEW
 		VALUES(REVIEW_SEQ.NEXTVAL,#{userId},'0','0',SYSDATE,#{resNum})
@@ -37,13 +69,11 @@
 		VALUES(MEDIA_SEQ.NEXTVAL, #{filename}, #{path}, #{contentId},  (SELECT NVL(MAX(SORT_NO), 0) + 1 FROM MEDIA WHERE CONTENTID = #{contentId}), #{userId}, #{boardNo,jdbcType=NUMERIC})
 	</insert>
 	
-	<select id="selectOldImg" parameterType="hashmap" resultType="string">
-    SELECT TITLE
-    FROM MEDIA
-    WHERE CONTENTID = #{contentId}
-      AND USER_ID = #{userId}
-     
-	</select>
+	<insert id="favorite" parameterType="hashmap">
+		INSERT INTO FAV
+		VALUES(FAV_SEQ.NEXTVAL,#{boardNo},#{userId})
+	</insert>
+	
 	
 	<delete id="deleteImg" parameterType="hashmap">
     DELETE FROM MEDIA
@@ -54,9 +84,24 @@
 	
 	<update id="rating" parameterType="hashmap">
 		UPDATE POI SET RATING = #{rating} ,CONTENT = #{content}
-		WHERE CONTENT_ID = #{contentId}
+		WHERE CONTENT_ID = #{contentId} AND RES_NUM = #{resNum}
 	</update>
 	
+	<update id="reviewCnt" parameterType="hashmap">
+		UPDATE TBL_REVIEW SET CNT = CNT+1
+		WHERE RES_NUM = #{resNum}
+	</update>
+	
+	<update id="reviewFavorite" parameterType="hashmap">
+		UPDATE TBL_REVIEW SET FAV = (SELECT COUNT(*) FROM FAV WHERE BOARDNO = #{boardNo})
+		WHERE BOARDNO = #{boardNo}
+	</update>
+	
+	<delete id="deletefavorite" parameterType="hashmap">
+		DELETE FROM FAV 
+		WHERE BOARDNO =#{boardNo} AND USER_ID = #{userId}
+	</delete>
+		
 </mapper>
 
 

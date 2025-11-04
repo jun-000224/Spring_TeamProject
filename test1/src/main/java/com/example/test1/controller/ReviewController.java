@@ -92,6 +92,25 @@ public class ReviewController {
 		return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping(value = "/review-cnt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String updateReviewCnt(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = ReviewService.updateReviewCnt(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/review-favorite.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String favorite(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		boolean liked = ReviewService.favorite(map);
+		resultMap.put("liked", liked);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
 	@RequestMapping("/review-fileUpload.dox")
 	public String file(
 	        @RequestParam("file1") MultipartFile[] files, // 여러 파일 받기
@@ -107,7 +126,7 @@ public class ReviewController {
 	    int boardNoValue = (boardNo != null) ? boardNo : 0;
 
 	    try {
-	        // 1️⃣ 기존 파일 삭제
+	        // 1️ 기존 파일 삭제
 	        HashMap<String, Object> delMap = new HashMap<>();
 	        delMap.put("contentId", contentId);
 	        delMap.put("boardNo", boardNoValue);
@@ -120,7 +139,7 @@ public class ReviewController {
 	        }
 	        ReviewService.deleteImg(delMap);
 
-	        // 2️⃣ 새 파일 반복 처리
+	        // 2️ 새 파일 반복 처리
 	        for(MultipartFile multi : files) {
 	            if(!multi.isEmpty()) {
 	                String originFilename = multi.getOriginalFilename();

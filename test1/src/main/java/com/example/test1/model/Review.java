@@ -25,6 +25,7 @@ public class Review {
 	private String sortNo;
 	
 	private String nickname;
+	private int liked;
 	
 	
 }
