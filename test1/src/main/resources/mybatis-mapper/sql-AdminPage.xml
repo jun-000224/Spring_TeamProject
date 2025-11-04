@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.AdminMapper">
+
+    <!-- 문의 게시판 글 조회 -->
+    <select id="selectInquiryBoards" resultType="com.example.test1.model.MainBoard">
+        SELECT 
+            BOARDNO, 
+            USER_ID, 
+            TITLE, 
+            CONTENTS, 
+            FAV, 
+            CNT, 
+            CDATETIME, 
+            UDATETIME, 
+            TYPE, 
+            REPORT_CNT
+        FROM TBL_BOARD
+        WHERE TYPE = 'SQ'
+        ORDER BY CDATETIME DESC
+    </select>
+
+</mapper>
