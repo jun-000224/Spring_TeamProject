@@ -38,10 +38,10 @@ public class MypageController {
 	      
 	}
 
-	@RequestMapping("/myInfo/detail.do") 
+	@RequestMapping("/myInfo/pwdChange.do") 
     public String infoDetail(Model model) throws Exception{
 
-    return "/mypage/myInfo-detail";
+    return "/mypage/myInfo-pwdChange";
 	      
 	}
 	
@@ -63,6 +63,13 @@ public class MypageController {
     public String infoSubscribe(Model model) throws Exception{
 
     return "/mypage/myInfo-subscribe";
+	      
+	}
+	
+	@RequestMapping("/myInfo/pwdCerti.do") 
+    public String pwdCerti(Model model) throws Exception{
+
+    return "/mypage/myInfo-pwdCerti";
 	      
 	}
 	
