@@ -741,4 +741,39 @@ input[type="range"]:disabled {
     /* 카카오가 노란색 핀을 제공하지 않아, 기본 파란색 핀으로 대체합니다 */
     background-image: url(http://t1.daumcdn.net/mapjsapi/images/p_marker.png);
 }
+.budget-status-wrap {
+    padding: 10px 14px;
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    display: grid; /* 3줄로 표시하기 위해 grid 사용 */
+    gap: 8px; /* 줄 간격 */
+}
+.budget-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.budget-status-item .label {
+    font-weight: 700;
+    font-size: 1.0rem;
+    color: #374151;
+}
+.budget-status-item .amount {
+    font-size: 1.0rem;
+    font-weight: 600;
+}
+.budget-status-item .amount .current {
+    color: #ef4444; /* 사용액 (빨강) */
+}
+.budget-status-item .amount .total {
+    color: #1d4ed8; /* 총액 (파랑) */
+    font-size: 0.9rem;
+}
+/* 예산 초과 시 */
+.budget-status-item .amount.over .current,
+.budget-status-item .amount.over .total {
+    color: #ef4444;
+    font-weight: 800;
 }
