@@ -711,7 +711,7 @@ input[type="range"]:disabled {
     background: #dc2626;
 }
 
-/* [신규] 드래그 앤 드롭 스타일 */
+/* 드래그 앤 드롭 스타일 */
 .itinerary-list li.dragging {
     opacity: 0.5;
     background: #f0f4f9;
@@ -719,4 +719,26 @@ input[type="range"]:disabled {
 .itinerary-list li.drag-over {
     /* 드롭될 위치(다른 항목) 위에 올렸을 때 */
     border-top: 3px solid #2563eb;
+}
+/* 카카오맵 기본 마커 이미지를 사용합니다.
+  (빨강: m, 주황/노랑: y, 그 외: p) 
+*/
+.kakao-map-marker {
+    width: 24px;
+    height: 35px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.marker-red {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/m_marker.png);
+}
+.marker-orange {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/y_marker.png);
+}
+.marker-yellow {
+    /* 카카오가 노란색 핀을 제공하지 않아, 기본 파란색 핀으로 대체합니다 */
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/p_marker.png);
+}
 }
