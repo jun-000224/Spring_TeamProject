@@ -52,7 +52,7 @@
                   <span class="chip" v-for="t in selectedThemes" :key="t">{{ labelOf(t) }}</span>
                 </div>
                 <div class="desc" v-else>선택: 없음</div>
-                <br>
+
                 <h3 style="margin-top:14px">지역 선택</h3>
                 <div class="region-select-wrap">
                   <div class="field">
@@ -134,7 +134,7 @@
                     placeholder="예산을 입력하세요." />
                 </div>
                 <div class="inline" style="margin-top:2px">
-                  입력값: 인원 <strong>{{ headCount || 0 }}</strong>명 / 예산 <strong>{{ (budget ?? 0).toLocaleString()
+                  입력값: 인원 <strong>{{ headCount || 0 }}</strong>명 / 예산 <strong>{{ (budget || 0).toLocaleString()
                     }}</strong>원
                 </div>
               </section>
@@ -186,6 +186,9 @@
 
             <section class="panel" style="margin-top:10px">
               <h3>추천 코스 (지도)</h3>
+              <div class="desc">
+                *연관도가 높을수록 마커가 크게 표시됩니다.
+              </div>
 
               <div class="tabs date-tabs" v-if="dateTabs.length > 0">
                 <button type="button" v-for="tab in dateTabs" :key="tab.date"
@@ -230,21 +233,66 @@
                 <button class="btn-secondary" @click="selectedPoi = null; infowindow.close();">취소</button>
               </div>
 
-              <div class="itinerary-list" v-if="activeItinerary.length > 0">
-                <h4>[ {{ activeDateLabel }} ] 일정 목록</h4>
-                <ul>
-                  <li v-for="(poi, index) in activeItinerary" :key="poi.contentId + '-' + index">
-                    <span>{{ poi.title || "이름 없음" }} ({{ poi.typeId === 12 ? '관광' : (poi.typeId === 32 ? '숙박' : '식당')
-                      }})</span>
-                    <button @click="removePoiFromItinerary(index)">삭제</button>
-                  </li>
-                </ul>
-              </div>
-              <div class="desc" v-if="activeDate && activeItinerary.length === 0">
-                이 날짜의 일정이 비어있습니다. 지도에서 마커를 클릭하여 일정을 추가하세요.
+            </section>
+
+            <section class="panel" style="margin-top:10px">
+              <h3>나의 최종 일정 (순서 변경 가능)</h3>
+
+              <div class="budget-status-wrap" v-if="budget > 0">
+                <div class="budget-status-item">
+                  <span class="label">숙박 예산</span>
+                  <span :class="['amount', { over: spentAccom > accomBudgetLimit }]">
+                    <span class="current">{{ spentAccom.toLocaleString() }}원</span> /
+                    <span class="total">{{ accomBudgetLimit.toLocaleString() }}원</span>
+                  </span>
+                </div>
+                <div class="budget-status-item">
+                  <span class="label">식당 예산</span>
+                  <span :class="['amount', { over: spentFood > foodBudgetLimit }]">
+                    <span class="current">{{ spentFood.toLocaleString() }}원</span> /
+                    <span class="total">{{ foodBudgetLimit.toLocaleString() }}원</span>
+                  </span>
+                </div>
               </div>
 
+              <div class="desc" v-if="dateTabs.length > 0">
+                일정 항목을 마우스로 잡고 위아래로 끌어서 순서를 변경할 수 있습니다.
+              </div>
+
+              <div v-if="dateTabs.length > 0">
+                <div v-for="tab in dateTabs" :key="tab.date" class="itinerary-day-block">
+                  <h4>[ {{ tab.label }} ] 일정 목록</h4>
+
+                  <div class="itinerary-list" v-if="itinerary[tab.date] && itinerary[tab.date].length > 0">
+                    <ul>
+                      <li v-for="(poi, index) in itinerary[tab.date]" :key="poi.contentId + '-' + index"
+                        :draggable="true" :class="{ 
+                      dragging: isDragging(tab.date, index),
+                      'drag-over': isDragOver(tab.date, index) 
+                    }" @dragstart="onDragStart(tab.date, index)" @dragover.prevent="onDragOver(tab.date, index)"
+                        @dragleave="onDragLeave" @drop="onDrop(tab.date, index)" @dragend="onDragEnd">
+
+                        <span>
+                          {{ poi.title || "이름 없음" }}
+                          ({{ poi.typeId === 12 ? '관광' : (poi.typeId === 32 ? '숙박' : '식당') }})
+                          <span v-if="poi.price > 0" style="color: #64748b; font-size: 0.9em; margin-left: 5px;">
+                            - {{ poi.price.toLocaleString() }}원
+                          </span>
+                        </span>
+                        <button @click.stop="removePoiFromItinerary(tab.date, index)">삭제</button>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="desc" v-else>
+                    - 일정이 비어있습니다 -
+                  </div>
+                </div>
+              </div>
+              <div class="desc" v-else>
+                먼저 캘린더에서 여행 <strong>시작일</strong>과 <strong>종료일</strong>을 선택해주세요.
+              </div>
             </section>
+
 
             <button class="fab" @click="openBoardModal" aria-label="커뮤니티 열기" title="커뮤니티">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -294,39 +342,49 @@
                 loadingSido: false,
                 loadingSigungu: false,
 
-                // [신규] 멀티 지역 선택용
-                currentSido: '',      // 현재 <select>에서 선택중인 시/도
-                currentSigungu: '', // 현재 <select>에서 선택중인 시/군/구
-                selectedRegions: [],  // '+' 버튼으로 추가된 지역 목록 (백엔드에 보낼 데이터)
+                // 멀티 지역 선택용
+                currentSido: '',
+                currentSigungu: '',
+                selectedRegions: [],
 
                 // 예산, 인원
                 budget: null,
                 headCount: null,
+                spentAccom: 0,      // [신규] 숙박 사용액
+                spentFood: 0,       // [신규] 식당 사용액
+                spentActivity: 0,   // [신규] 관광/체험 사용액
 
-                // [수정] 달력 믹스인(calendar.js)용
+                // 달력 믹스인(calendar.js)용
                 startDate: null,
                 endDate: null,
                 selectionState: 'start',
 
                 // 모달
                 showBoardModal: false,
-                boardUrl: ctx + '/board-view.do', // [수정] ctx 사용
+                boardUrl: ctx + '/board-view.do',
 
                 // 지도
                 mapInstance: null,
                 geocoder: null,
                 markers: [],
-                fullPoiList: [],      // 백엔드에서 받은 '모든 지역'의 POI 원본
+                fullPoiList: [],
                 activeTab: 12,
                 infowindow: null,
+                baseMarkerImageSrc: null,
 
                 // 일정 플래너
                 itinerary: {},
                 activeDate: null,
                 selectedPoi: null,
 
-                // [신규] 지역 필터
-                activeRegion: 'all' // 지도에 표시할 지역 필터 ('all' 또는 selectedRegions의 index)
+                // 지역 필터
+                activeRegion: 'all',
+
+                // 드래그 앤 드롭
+                draggedDate: null,
+                draggedIndex: null,
+                dragOverDate: null,
+                dragOverIndex: null
               }
             },
 
@@ -334,7 +392,6 @@
               isFormValid() {
                 return this.selectedThemes.length > 0 && this.headCount > 0 && this.budget >= 0;
               },
-              // [신규] 현재 '선택 중인' 지역 표시용
               displayRegion() {
                 if (!this.currentSido) return '미선택';
                 const s = this.sidoList.find(x => x.code === this.currentSido)?.name || '';
@@ -342,18 +399,18 @@
                 return s + (g ? ' ' + g : ' (전체)');
               },
 
-              // --- 필터링 로직 (신규/수정) ---
+              // --- 필터링 로직 ---
 
-              // 1. [신규] 지역 필터링
+              // 1. 지역 필터링
               regionFilteredList() {
                 let list = this.fullPoiList;
                 if (this.activeRegion === 'all') {
-                  return list; // '전체' 선택 시 모든 POI 반환
+                  return list;
                 }
 
                 const selected = this.selectedRegions[this.activeRegion];
                 if (!selected) {
-                  return []; // 선택된 지역이 없으면 빈 목록 반환
+                  return [];
                 }
 
                 list = list.filter(poi => {
@@ -362,20 +419,17 @@
                   const selectedArea = String(selected.sidoCode);
                   const selectedSigungu = String(selected.sigunguCode);
 
-                  // '시/도'만 선택한 경우 (e.g., "서울 (전체)")
                   if (selected.sigunguCode === null || selected.sigunguCode === 'null') {
                     return poiArea === selectedArea;
                   }
-                  // '시/군/구'까지 선택한 경우 (e.g., "서울 강남구")
                   return poiArea === selectedArea && poiSigungu === selectedSigungu;
                 });
 
                 return list;
               },
 
-              // 2. [수정] 카테고리 필터링
+              // 2. 카테고리 필터링
               filteredPoiList() {
-                // 1차로 거른 'regionFilteredList'에서 카테고리(activeTab)로 2차 필터링
                 return this.regionFilteredList.filter(poi => poi.typeId === this.activeTab);
               },
 
@@ -413,18 +467,29 @@
 
               activeItinerary() {
                 return this.itinerary[this.activeDate] || [];
+              },
+
+              // --- [신규] 예산 한도 계산 (파이 차트 연동) ---
+              accomBudgetLimit() {
+                // this.weights는 pie.js 믹스인에서 제공 [기타, 숙박, 식당, 체험]
+                return Math.floor((this.budget || 0) * (this.weights[1] / 100.0));
+              },
+              foodBudgetLimit() {
+                // weights[2] is food
+                return Math.floor((this.budget || 0) * (this.weights[2] / 100.0));
+              },
+              activityBudgetLimit() {
+                // weights[3] is act (관광/체험)
+                return Math.floor((this.budget || 0) * (this.weights[3] / 100.0));
               }
             },
 
             watch: {
-              // [수정] filteredPoiList (최종 필터링된 목록)이 바뀌면 마커를 다시 그림
               filteredPoiList(newList, oldList) {
                 this.drawMarkers();
               },
 
-              // [수정] "월 일" 버그 수정을 위해 dateTabs를 감시
               dateTabs(newTabs, oldTabs) {
-                // 탭 배열의 길이가 달라질 때 (=날짜 선택/초기화 시)
                 if (newTabs.length > 0 && newTabs.length !== oldTabs.length) {
                   this.activeDate = newTabs[0].date;
                   this.itinerary = {};
@@ -454,14 +519,14 @@
                 self.loadingSigungu = true;
                 self.sigunguList = [];
                 try {
-                  if (!self.currentSido) return; // [신규] currentSido 사용
+                  if (!self.currentSido) return;
                   const data = await $.get(ctx + '/api/areas/sigungu', { areaCode: self.currentSido });
                   self.sigunguList = Array.isArray(data) ? data : [];
                 } catch (e) { console.error('시/군/구 조회 실패', e); }
                 finally { self.loadingSigungu = false; }
               },
               onChangeSido() {
-                this.currentSigungu = ''; // [신규] currentSigungu 사용
+                this.currentSigungu = '';
                 this.sigunguList = [];
                 this.loadSigungu();
               },
@@ -474,7 +539,7 @@
               openBoardModal() { this.showBoardModal = true; },
               closeBoardModal() { this.showBoardModal = false; },
 
-              // --- [신규] 지역 (멀티) 관련 메소드 ---
+              // --- 지역 (멀티) 관련 메소드 ---
               addRegion() {
                 if (!this.currentSido) return;
 
@@ -482,7 +547,7 @@
                 const sigunguName = this.sigunguList.find(g => g.code === this.currentSigungu)?.name || '';
 
                 const regionName = sidoName + (sigunguName ? ' ' + sigunguName : ' (전체)');
-                const sigunguCodeVal = this.currentSigungu || null; // 빈 문자열은 null로
+                const sigunguCodeVal = this.currentSigungu || null;
 
                 const isDuplicate = this.selectedRegions.some(r =>
                   r.sidoCode === this.currentSido && r.sigunguCode === sigunguCodeVal
@@ -498,14 +563,12 @@
                   alert("이미 추가된 지역입니다.");
                 }
 
-                // 선택 드롭다운 초기화
                 this.currentSido = '';
                 this.currentSigungu = '';
                 this.sigunguList = [];
               },
               removeRegion(index) {
                 this.selectedRegions.splice(index, 1);
-                // 만약 지운 지역이 현재 필터였다면 '전체'로 복귀
                 if (this.activeRegion == index) {
                   this.activeRegion = 'all';
                 }
@@ -513,30 +576,26 @@
 
               // --- 플래너/지도 관련 메소드 ---
 
-              // [신규] 지역 필터 드롭다운 변경 시
+              // 지역 필터 드롭다운 변경 시
               onRegionChange() {
                 this.selectedPoi = null;
                 if (this.infowindow) {
                   this.infowindow.close();
                 }
 
-                // [신규] 지도 이동 로직
                 if (this.activeRegion === 'all') {
-                  // '전체 보기'일 경우, fullPoiList의 첫번째 항목으로 이동
                   if (this.fullPoiList.length > 0) {
                     this.panToFirstPoi(this.fullPoiList);
                   }
                 } else {
-                  // 특정 지역을 선택한 경우
                   const region = this.selectedRegions[this.activeRegion];
                   if (region && this.geocoder && this.mapInstance) {
-                    const address = region.name; // "서울 강남구" 또는 "서울 (전체)"
+                    const address = region.name;
 
                     this.geocoder.addressSearch(address, (result, status) => {
                       if (status === kakao.maps.services.Status.OK) {
                         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
                         this.mapInstance.panTo(coords);
-                        // 시/군/구까지 선택했으면 줌 레벨 7, 시/도만 선택했으면 9
                         const level = region.sigunguCode ? 7 : 9;
                         this.mapInstance.setLevel(level);
                       }
@@ -553,15 +612,13 @@
                   this.infowindow.close();
                 }
               },
-              // [수정] 카테고리별 POI 개수 카운트
+              // 카테고리별 POI 개수 카운트 (지역 필터 반영)
               countForTab(typeId) {
-                // 1차 필터링된 'regionFilteredList' 기준으로 카운트
                 return this.regionFilteredList.filter(p => p.typeId === typeId).length;
               },
 
               // "코스 생성하기" 버튼 (백엔드 API 호출)
               async fnCreate() {
-                // [수정] 멀티 지역 선택 검증
                 if (this.selectedRegions.length === 0) {
                   if (this.currentSido) {
                     alert("지역을 선택한 후 '+' 버튼을 눌러 목록에 추가해주세요.");
@@ -571,10 +628,16 @@
                   return;
                 }
 
+                // [신규] 예산 관련 로직 초기화
+                this.spentAccom = 0;
+                this.spentFood = 0;
+                this.spentActivity = 0;
+                this.itinerary = {};
+
                 const el = document.getElementById('debugOut');
                 const param = {
                   themes: this.selectedThemes,
-                  regions: this.selectedRegions, // [수정] 백엔드로 지역 '배열' 전송
+                  regions: this.selectedRegions,
                   headCount: this.headCount,
                   budget: this.budget,
                   startDate: this.startDate,
@@ -589,7 +652,7 @@
                 console.log('전송 파라미터:', param);
                 this.fullPoiList = [];
                 this.clearMarkers();
-                this.activeRegion = 'all'; // API 호출 시 지역 필터는 '전체'로 초기화
+                this.activeRegion = 'all';
 
                 try {
                   const response = await $.ajax({
@@ -613,7 +676,6 @@
 
               // --- 지도 관련 함수들 ---
 
-              // 지도 초기화 (최초 1회 실행)
               initMap() {
                 if (!window.kakao || !window.kakao.maps) {
                   console.error("카카오맵 SDK가 로드되지 않았습니다.");
@@ -636,9 +698,12 @@
                   content: '',
                   removable: true
                 });
+
+                // [수정] "별 마커" 이미지 (https + 캐시 방지)
+                const cacheBuster = '?v=' + new Date().getTime();
+                this.baseMarkerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png' + cacheBuster;
               },
 
-              // 지도 위 마커/인포윈도우/선택패널 모두 제거
               clearMarkers() {
                 if (this.infowindow) {
                   this.infowindow.close();
@@ -647,21 +712,31 @@
                   marker.setMap(null);
                 }
                 this.markers = [];
-                this.selectedPoi = null; // POI 선택 패널 닫기
+                this.selectedPoi = null;
               },
 
 
-              // POI 목록으로 마커 그리기
+              // [수정] POI 목록으로 마커 그리기 (점수 순위별 크기 적용)
               drawMarkers() {
                 if (!this.mapInstance) return;
                 this.clearMarkers();
 
-                if (!this.filteredPoiList || this.filteredPoiList.length === 0) {
+                const listToDraw = [...this.filteredPoiList].sort((a, b) => {
+                  const scoreA = a.score || 0;
+                  const scoreB = b.score || 0;
+                  return scoreB - scoreA; // 점수 내림차순
+                });
+
+                if (listToDraw.length === 0) {
                   return;
                 }
 
-                for (const poi of this.filteredPoiList) {
-                  const score = (typeof poi.score === 'number') ? poi.score : 0;
+                const totalCount = listToDraw.length;
+                const top10Cutoff = Math.floor(totalCount * 0.10);
+                const top30Cutoff = Math.floor(totalCount * 0.30);
+                const top50Cutoff = Math.floor(totalCount * 0.50);
+
+                for (const [index, poi] of listToDraw.entries()) {
                   const mapy_num = parseFloat(poi.mapy);
                   const mapx_num = parseFloat(poi.mapx);
                   if (isNaN(mapy_num) || isNaN(mapx_num)) {
@@ -669,10 +744,19 @@
                     continue;
                   }
 
-                  const scale = 0.7 + (score * 0.6);
-                  const imgSize = Math.round(32 * scale);
+                  let imgSize;
+                  if (index < top10Cutoff) {
+                    imgSize = 45; // 상위 10%
+                  } else if (index < top30Cutoff) {
+                    imgSize = 30; // 10% ~ 30%
+                  } else if (index < top50Cutoff) {
+                    imgSize = 20; // 30% ~ 50%
+                  } else {
+                    imgSize = 10; // 나머지
+                  }
+
                   const markerImage = new kakao.maps.MarkerImage(
-                    'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+                    this.baseMarkerImageSrc, // "별 마커"
                     new kakao.maps.Size(imgSize, imgSize),
                     { offset: new kakao.maps.Point(imgSize / 2, imgSize / 2) }
                   );
@@ -680,64 +764,114 @@
                   const marker = new kakao.maps.Marker({
                     map: this.mapInstance,
                     position: new kakao.maps.LatLng(mapy_num, mapx_num),
-                    title: poi.title + ' (점수: ' + score.toFixed(2) + ')',
+                    title: poi.title + ' (점수: ' + (poi.score || 0).toFixed(2) + ')',
                     image: markerImage
                   });
 
-                  // 마커 클릭 이벤트
+                  // 마커 클릭 이벤트 (가격 조회 기능 추가)
                   kakao.maps.event.addListener(marker, 'click', () => {
-                    this.selectedPoi = poi; // "일정 추가" 패널용
+                    this.selectedPoi = poi;
 
-                    const title = poi.title || "이름 없음";
-                    let imageUrl = poi.firstimage2 || poi.firstimage;
-                    let content = '';
-                    let isValidImage = false;
-                    if (imageUrl && imageUrl !== "false" && imageUrl.trim() !== "") {
-                      isValidImage = true;
-                      if (imageUrl.startsWith('http://')) {
-                        imageUrl = imageUrl.replace('http://', 'https://');
-                      }
-                    }
-
-                    // [수정] 네이버 검색 링크 생성
-                    const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(title)}`;
-
-                    if (isValidImage) {
-                      content = `
-                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
-                      <img src="${imageUrl}" 
-                           width="180" height="120" 
-                           style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px; max-width: 100%;">
-                      
-                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                          <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
-                              ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
-                          </a>
-                      </div>
-                  </div>
-                `;
+                    if (poi.price === undefined) {
+                      this.fetchPoiPrice(poi);
                     } else {
-                      content = `
-                  <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
-                      <div style="width: 180px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px;">
-                          (이미지 없음)
-                      </div>
-                      
-                      <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                          <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
-                              ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
-                          </a>
-                      </div>
-                  </div>
-                `;
+                      this.updateInfowindowContent(poi, poi.price);
                     }
-
-                    this.infowindow.setContent(content);
-                    this.infowindow.open(this.mapInstance, marker);
                   });
 
                   this.markers.push(marker);
                 }
+              },
+
+              // --- [신규] 가격 조회 및 인포윈도우 업데이트 ---
+
+              async fetchPoiPrice(poi) {
+                this.updateInfowindowContent(poi, null); // "가격 조회 중..."
+
+                try {
+                  const response = await $.get(ctx + '/api/recommend/getPrice', {
+                    contentId: poi.contentId,
+                    typeId: poi.typeId,
+                    startDate: this.startDate
+                  });
+
+                  poi.price = response.price;
+                  if (this.selectedPoi && this.selectedPoi.contentId === poi.contentId) {
+                    this.selectedPoi.price = response.price;
+                  }
+
+                  this.updateInfowindowContent(poi, response.price);
+
+                } catch (e) {
+                  console.error("가격 조회 API 호출 실패", e);
+                  poi.price = 0;
+                  if (this.selectedPoi && this.selectedPoi.contentId === poi.contentId) {
+                    this.selectedPoi.price = 0;
+                  }
+                  this.updateInfowindowContent(poi, 0);
+                }
+              },
+
+              updateInfowindowContent(poi, price) {
+                const title = poi.title || "이름 없음";
+                let imageUrl = poi.firstimage2 || poi.firstimage;
+                let content = '';
+                let isValidImage = false;
+                if (imageUrl && imageUrl !== "false" && imageUrl.trim() !== "") {
+                  isValidImage = true;
+                  if (imageUrl.startsWith('http://')) {
+                    imageUrl = imageUrl.replace('http://', 'https://');
+                  }
+                }
+
+                const searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(title)}`;
+
+                let priceText = '';
+                if (price === null) {
+                  priceText = `<span style="font-size: 12px; color: #888;">(가격 조회 중...)</span>`;
+                } else if (price > 0) {
+                  priceText = `<span style="font-size: 13px; color: #d9480f; font-weight: bold;">${price.toLocaleString()}원~</span>`;
+                } else {
+                  priceText = `<span style="font-size: 12px; color: #888;">(가격 정보 없음)</span>`;
+                }
+
+                if (poi.typeId === 12) {
+                  priceText = '';
+                }
+
+                if (isValidImage) {
+                  content = `
+                <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                    <img src="${imageUrl}" 
+                         width="180" height="120" 
+                         style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px; max-width: 100%;">
+                    <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
+                            ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top: 4px;">${priceText}</div>
+                </div>
+              `;
+                } else {
+                  content = `
+                <div style="padding:7px; width: 200px; text-align: center; box-sizing: border-box;">
+                    <div style="width: 180px; height: 120px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px;">
+                        (이미지 없음)
+                    </div>
+                    <div style="font-weight: bold; margin-top: 5px; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${searchUrl}" target="_blank" title="네이버 검색" style="color: inherit; text-decoration: none;">
+                            ${title} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px; color: #888;"></i>
+                        </a>
+                    </div>
+                    <div style="margin-top: 4px;">${priceText}</div>
+                </div>
+              `;
+                }
+
+                this.infowindow.setContent(content);
+                const position = new kakao.maps.LatLng(parseFloat(poi.mapy), parseFloat(poi.mapx));
+                this.infowindow.open(this.mapInstance, new kakao.maps.Marker({ position: position }));
               },
 
               // 추천 목록 중 첫번째 POI로 지도 이동
@@ -752,7 +886,6 @@
                 this.mapInstance.setLevel(7);
               },
 
-              // [수정] panToSelectedRegion (다중 지역이라 사용 보류)
               panToSelectedRegion() {
                 console.log("panToSelectedRegion: 다중 지역 선택 모드에서는 사용하지 않음.");
               },
@@ -771,6 +904,49 @@
               // "일정에 추가하기" 버튼 클릭
               addPoiToItinerary() {
                 if (!this.activeDate || !this.selectedPoi) return;
+
+                if (this.selectedPoi.price === undefined) {
+                  alert("가격 정보를 로드 중입니다. 잠시 후 다시 시도해주세요.");
+                  return;
+                }
+
+                // [수정] 카테고리별 예산 체크
+                const poiPrice = this.selectedPoi.price || 0;
+                const poiType = this.selectedPoi.typeId;
+
+                let newCategoryTotal = 0;
+                let categoryLimit = 0;
+                let categoryName = '';
+
+                if (poiType === 32) { // 숙박
+                  newCategoryTotal = this.spentAccom + poiPrice;
+                  categoryLimit = this.accomBudgetLimit;
+                  categoryName = '숙박';
+                } else if (poiType === 39) { // 식당
+                  newCategoryTotal = this.spentFood + poiPrice;
+                  categoryLimit = this.foodBudgetLimit;
+                  categoryName = '식당';
+                } else if (poiType === 12) { // 관광
+                  newCategoryTotal = this.spentActivity + poiPrice;
+                  categoryLimit = this.activityBudgetLimit;
+                  categoryName = '체험 및 관광';
+                } else {
+                  // 기타 (12, 32, 39 외) - 예산 체크 안 함
+                }
+
+                // 예산 체크 (0원 이상일 때만)
+                if (categoryName && categoryLimit > 0 && newCategoryTotal > categoryLimit) {
+                  if (!confirm(`'${categoryName}' 예산(${categoryLimit.toLocaleString()}원)을 초과합니다. (초과액: ${(newCategoryTotal - categoryLimit).toLocaleString()}원)\n그래도 추가하시겠습니까?`)) {
+                    return; // 추가 취소
+                  }
+                }
+
+                // 예산에 합산
+                if (poiType === 32) this.spentAccom = newCategoryTotal;
+                else if (poiType === 39) this.spentFood = newCategoryTotal;
+                else if (poiType === 12) this.spentActivity = newCategoryTotal;
+
+
                 if (!this.itinerary[this.activeDate]) {
                   this.itinerary[this.activeDate] = [];
                 }
@@ -782,10 +958,67 @@
               },
 
               // 일정 목록에서 "삭제" 버튼 클릭
-              removePoiFromItinerary(index) {
-                if (this.itinerary[this.activeDate] && this.itinerary[this.activeDate].length > index) {
-                  this.itinerary[this.activeDate].splice(index, 1);
+              removePoiFromItinerary(date, index) {
+                if (this.itinerary[date] && this.itinerary[date].length > index) {
+                  const removedPoi = this.itinerary[date].splice(index, 1)[0];
+                  const poiPrice = removedPoi.price || 0;
+                  if (poiPrice > 0) {
+                    if (removedPoi.typeId === 32) this.spentAccom -= poiPrice;
+                    else if (removedPoi.typeId === 39) this.spentFood -= poiPrice;
+                    else if (removedPoi.typeId === 12) this.spentActivity -= poiPrice;
+                  }
                 }
+              },
+
+              // --- 드래그 앤 드롭 메소드 ---
+
+              onDragStart(date, index) {
+                this.draggedDate = date;
+                this.draggedIndex = index;
+                this.selectedPoi = null;
+                if (this.infowindow) {
+                  this.infowindow.close();
+                }
+              },
+              onDragOver(date, index) {
+                if (date !== this.draggedDate) {
+                  this.dragOverDate = null;
+                  this.dragOverIndex = null;
+                  return;
+                }
+                if (index !== this.draggedIndex && index !== this.dragOverIndex) {
+                  this.dragOverDate = date;
+                  this.dragOverIndex = index;
+                }
+              },
+              onDragLeave() {
+                this.dragOverDate = null;
+                this.dragOverIndex = null;
+              },
+              onDrop(date, droppedIndex) {
+                if (date !== this.draggedDate || this.draggedIndex === null || this.draggedIndex === droppedIndex) {
+                  this.onDragEnd();
+                  return;
+                }
+
+                const list = this.itinerary[date];
+                const draggedItem = list.splice(this.draggedIndex, 1)[0];
+                list.splice(droppedIndex, 0, draggedItem);
+
+                this.onDragEnd();
+              },
+              onDragEnd() {
+                this.draggedDate = null;
+                this.draggedIndex = null;
+                this.dragOverDate = null;
+                this.dragOverIndex = null;
+              },
+
+              isDragging(date, index) {
+                return this.draggedDate === date && this.draggedIndex === index;
+              },
+              isDragOver(date, index) {
+                return this.dragOverDate === date && this.dragOverIndex === index;
               }
 
             },
