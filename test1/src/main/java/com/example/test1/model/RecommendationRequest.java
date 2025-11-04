@@ -1,21 +1,22 @@
-package com.example.test1.model; // (패키지명은 본인 것에 맞게 확인)
+package com.example.test1.model;
 
 import lombok.Data;
 import java.util.List;
-import java.util.Map; // Map도 import해야 합니다.
+import java.util.Map; 
 
 @Data
 public class RecommendationRequest {
     
-    // --- 기존 필드 ---
     private List<String> themes;
     private Integer headCount;
-    private Integer budget;
+    private Long budget; 
     private String startDate;
     private String endDate;
     private Map<String, Integer> budgetWeights;
+
+    // 멀티 지역 선택용
     private List<RegionDto> regions;
-   
+
     @Data
     public static class RegionDto {
         private String sidoCode;

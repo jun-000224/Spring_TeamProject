@@ -25,7 +25,7 @@ public class SecurityConfig {
             .formLogin(form -> form.disable()) // 기본 로그인 페이지 비활성화
             .httpBasic(basic -> basic.disable()) // HTTP Basic 인증 비활성화
             
-            // [수정] iframe(모달)을 허용하도록 .frameOptions() 추가
+            //iframe(모달)을 허용하도록 .frameOptions() 추가
             .headers(headers -> headers
                 .cacheControl(cache -> cache.disable())
                 // iframe을 동일 출처(같은 사이트)에서는 허용
