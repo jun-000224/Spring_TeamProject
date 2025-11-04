@@ -382,14 +382,14 @@ body {
                       console.log(data);
                       console.log($("#file1")[0].files);
                       
+                      let form = new FormData();
                       for(let i=0; i<$("#file1")[0].files.length;i++){
-                        let form = new FormData();
                         form.append( "file1",  $("#file1")[0].files[i] );
-                        form.append( "contentId",  data.contentId); // 임시 pk
-                        form.append( "userId",  self.userId);
-                        form.append( "title",  self.selectedItem.title)
-                        self.upload(form);  
                       }
+                      form.append( "contentId",  data.contentId); // 임시 pk
+                      form.append( "userId",  self.userId);
+                      form.append( "title",  self.selectedItem.title)
+                      self.upload(form);  
                       
 
                       self.fninfo();                  
