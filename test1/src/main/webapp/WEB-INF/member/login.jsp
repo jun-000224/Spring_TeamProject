@@ -153,7 +153,7 @@
                     success: function (data) {
                         console.log(data);
                         if(data.result=="success"){
-                            alert(data.msg);
+                            // alert(data.msg);
                             location.href="/main-list.do";
                         } else{
                             alert(data.msg);
@@ -170,26 +170,24 @@
             fnJoin : function () {
                 location.href="/member/join.do";
             }
-            
             /*
             ,
 
-            fnLogout : function () {
+            fnBannedCheck : function (id) {
                 let self = this;
-
                 let param = {
+                    userId : id
                 };
                 $.ajax({
-                    url: "/member/logout.dox",
+                    url: "/member/bannedCheck.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        alert(data.msg);
-                        location.href="/main-list.do";
+                        console.log(data);
                     }
                 });
-            },
+            }
             */
 
             /*main 연결 시, fnKakao를 main으로 옮길 것----------------------

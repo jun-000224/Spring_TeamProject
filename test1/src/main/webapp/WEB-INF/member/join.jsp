@@ -179,6 +179,7 @@
                     <br>
                     <input type="radio" name="gender" value="M" v-model="gender"> 남자
                     <input type="radio" name="gender" value="F" v-model="gender"> 여자
+                    <input type="radio" name="gender" value="N" v-model="gender"> 미공개
                 </div>
                 
                 <div class="joinBlock">
