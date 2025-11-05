@@ -297,38 +297,21 @@
                     status: window.sessionData.status,
                     nickname: window.sessionData.nickname,
                     name: window.sessionData.name,
-                    showLogoutMenu: false,
                     point: window.sessionData.point,
 
                     
                     
-                    tempProperties : {}
+                    // tempProperties : {}
                     //------------------------------------------------------------------------------------------------------
                 };
             },
-            //새 페이지 개설 시, 복붙
-            //------------------------------------------------------------------------------------------------------
-            computed: {
-                isLoggedIn() {
-                    return this.nickname !== "";
-                },
-                gradeLabel() {
-                    switch (this.status) {
-                        case 'A': return '👑 ';
-                        case 'S': return '✨ ';
-                        case 'U': return '🙂 ';
-                        default: return '❓ 미지정';
-                    }
-                }
-            },
-            //------------------------------------------------------------------------------------------------------
             methods: {
                 
                 //복붙
                 //------------------------------------------------------------------------------------------------------
-                toggleLogoutMenu() {
-                    this.showLogoutMenu = !this.showLogoutMenu;
-                },
+                // toggleLogoutMenu() {
+                //     this.showLogoutMenu = !this.showLogoutMenu;
+                // },
                 //------------------------------------------------------------------------------------------------------
 
                 goToService() {

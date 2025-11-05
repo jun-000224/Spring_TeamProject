@@ -83,3 +83,43 @@ function goToLogin() {
 function goToMyPage() {
 	location.href = "/main-myPage.do";
 }
+
+function myPoint() {
+	location.href = "/point/myPoint.do";
+}
+
+
+const headerApp = Vue.createApp({
+	data() {
+		
+		return {
+			id : window.sessionData.id,
+			nickname : window.sessionData.nickname,
+			status : window.sessionData.status,
+		}
+	},
+	
+	computed:{
+		isLoggedIn() {
+            return this.nickname !== "";
+        },
+        gradeLabel() {
+            switch (this.status) {
+                case 'A': return '👑 ';
+                case 'S': return '✨ ';
+                case 'U': return '🙂 ';
+                default: return '❓ 미지정';
+            }
+        }
+	},
+	
+	methods : {
+		
+	},
+	
+	mounted() {
+		window.sessionData.gradeLabel = this.gradeLabel;
+	}
+});
+
+headerApp.mount('#app-header');
