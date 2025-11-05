@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.PointMapper">
+	<select id="recentPoint" parameterType="hashmap" resultType="com.example.test1.model.Point">
+		SELECT U.USER_ID, NAME, NICKNAME, PHONE, BIRTH, ADDR, STATUS, EMAIL, GENDER, NVL(POINT_TOTAL, 0) TOTALPOINT, NVL(MD, SYSDATE) TOTALDATE
+		FROM USERS U
+		LEFT JOIN (
+		    SELECT P.USER_ID,POINT_TOTAL, MD
+		    FROM POINT P
+		    INNER JOIN (
+		        SELECT USER_ID,MAX(POINT_DATE) MD
+		        FROM POINT
+		        GROUP BY USER_ID
+		    )M ON P.POINT_DATE = M.MD AND P.USER_ID = M.USER_ID
+		)T ON U.USER_ID = T.USER_ID
+		WHERE U.USER_ID = #{userId}
+	</select>
+	
+	<select id="incdecPoint" parameterType="hashmap" resultType="com.example.test1.model.Point">
+		SELECT *
+		FROM POINT
+		WHERE USER_ID = #{userId}
+		ORDER BY POINT_DATE DESC
+	</select>
+</mapper>
+
+
+
+
