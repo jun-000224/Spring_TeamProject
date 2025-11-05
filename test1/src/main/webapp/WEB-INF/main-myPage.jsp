@@ -141,7 +141,9 @@
                         <img src="/images/default-profile.png" alt="프로필 이미지 넣는곳" class="profile-img">
                         <div class="profile-info">
                             <h3>{{ nickname }} {{ gradeLabel }} 님</h3>
-                            <p>등급: {{ gradeLabel }} | 포인트: {{ point }}P</p>
+                            <p>
+                                등급: {{ gradeLabel }} | <a href="/point/myPoint.do">포인트: {{ point }}P</a>
+                            </p>
                         </div>
 
                     </div>
@@ -157,8 +159,8 @@
                             <i class="fas fa-comments"></i><br>내 커뮤니티
                         </a>
                         <!-- <a href="/changePassword.do" class="menu-item">
-          <i class="fas fa-key"></i><br>비밀번호 수정
-        </a> -->
+                            <i class="fas fa-key"></i><br>비밀번호 수정
+                            </a> -->
                         <a href="/wishlist.do" class="menu-item">
                             <i class="fas fa-heart"></i><br>찜 리스트
                         </a>
@@ -178,65 +180,75 @@
         const app = Vue.createApp({
             data() {
                 return {
-                    id: "${sessionId}",
-                    status: "${sessionStatus}",
-                    nickname: "${sessionNickname}",
-                    name: "${sessionName}",
-                    point: "${sessionPoint}",
-                    showLogoutMenu: false
+                    // id: "${sessionId}",
+                    // status: "${sessionStatus}",
+                    // nickname: "${sessionNickname}",
+                    // name: "${sessionName}",
+                    // point: "${sessionPoint}",
+                    // showLogoutMenu: false
+
+                    id: window.sessionData.id,
+                    status: window.sessionData.status,
+                    nickname: window.sessionData.nickname,
+                    name: window.sessionData.name,
+                    point: window.sessionData.point,
+
+                    gradeLabel : window.sessionData.gradeLabel
                 };
             },
-            computed: {
-                isLoggedIn() {
-                    return this.nickname !== "";
-                },
-                gradeLabel() {
-                    switch (this.status) {
-                        case 'A': return '👑 ';
-                        case 'S': return '✨ ';
-                        case 'U': return '🙂 ';
-                        default: return '❓ 미지정';
-                    }
-                }
-            },
+            // computed: {
+            //     isLoggedIn() {
+            //         return this.nickname !== "";
+            //     },
+            //     gradeLabel() {
+            //         switch (this.status) {
+            //             case 'A': return '👑 ';
+            //             case 'S': return '✨ ';
+            //             case 'U': return '🙂 ';
+            //             default: return '❓ 미지정';
+            //         }
+            //     }
+            // },
             methods: {
-                toggleLogoutMenu() {
-                    this.showLogoutMenu = !this.showLogoutMenu;
-                },
-                goToSettings() {
-                    location.href = "/myPoint.do";
-                },
-                goToWithdraw() {
-                    location.href = "/member/withdraw.do";
-                },
-                goToLogin() {
-                    location.href = "/member/login.do";
-                },
-                logout() {
-                    location.href = "/logout.do";
-                },
-                goToMyPage() {
-                    location.href = "/main-myPage.do";
-                }
+                // toggleLogoutMenu() {
+                //     this.showLogoutMenu = !this.showLogoutMenu;
+                // },
+                // goToSettings() {
+                //     location.href = "/myPoint.do";
+                // },
+                // goToWithdraw() {
+                //     location.href = "/member/withdraw.do";
+                // },
+                // goToLogin() {
+                //     location.href = "/member/login.do";
+                // },
+                // logout() {
+                //     location.href = "/logout.do";
+                // },
+                // goToMyPage() {
+                //     location.href = "/main-myPage.do";
+                // }
             },
 
             mounted() {
                 let self = this;
 
-                $.ajax({
-                    url: '/main-myPage/info.dox',
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (res) {
-                        const data = res.data;
-                        self.nickname = data.nickname;
-                        self.status = data.status;
-                        self.point = data.pointTotal;
-                    },
-                    error: function (err) {
-                        console.error('마이페이지 정보 조회 실패:', err);
-                    }
-                });
+                
+
+                // $.ajax({
+                //     url: '/main-myPage/info.dox',
+                //     type: 'POST',
+                //     dataType: 'json',
+                //     success: function (res) {
+                //         const data = res.data;
+                //         self.nickname = data.nickname;
+                //         self.status = data.status;
+                //         self.point = data.pointTotal;
+                //     },
+                //     error: function (err) {
+                //         console.error('마이페이지 정보 조회 실패:', err);
+                //     }
+                // });
             }
 
         });

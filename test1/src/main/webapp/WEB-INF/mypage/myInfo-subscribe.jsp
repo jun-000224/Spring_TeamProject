@@ -9,45 +9,98 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <style>
-        table, tr, td, th{
-            border : 1px solid black;
-            border-collapse: collapse;
-            padding : 5px 10px;
+        .field{
+            background-color: #0078FF;
+            height: 680px;
             text-align: center;
         }
-        th{
-            background-color: beige;
+        .subField{
+            width: 500px;
+            height: 630px;
+            margin: 0px auto;
+            padding-top: 10px;
+            background-color: white;
+            border-radius: 10px;
         }
-        tr:nth-child(even){
-            background-color: azure;
+        .subBtn{
+            width: 400px;
+            height: 35px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 1px solid #9ecbff;
+            background-color: #9ecbff;
+            font-weight: bold;
+        }
+        .subBtn:hover{
+            cursor: pointer;
+            background-color: #4a9efe;
+            color: white;
+        }
+        .headField{
+            height: 20px;
+        }
+        .title{
+            font-size: 30px;
+            font-weight: bold;
+            height: 120px;
+        }
+        .price{
+            margin-top: 20px;
+            font-size: 25px;
+            font-weight: bold;
+        }
+        .explainField{
+            background-color: rgb(237, 237, 237);
+            width: 400px;
+            margin: 30px auto;
+            border-radius: 10px;
+        }
+        .explainField div{
+            height: 80px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <div>
-            기본 일정 생성 가능
-            <br>
-            일정 저장 및 불러오기
-            <br>
-            경로 생성 기능 일일 최대 5번
+        <div class="field">
+            <div class="headField" style="background-color: #0078FF;">
+                <br>
+            </div>
+            <div class="subField">
+                
+                <div class="title">
+                    <div>
+                        월간 플랜
+                    </div>
+                    <div class="price">
+                        4,900원
+                    </div>
+                </div>
+                <div class="btnField">
+                    <button class="subBtn" @click="fnSub">구독하기</button>
+                
+                    <!-- <button @click="fnCancel">취소하기</button> -->
+                </div>
+                <div class="explainField">
+                    <br>
+                    <br>
+                    <div class="verticalMid">기본 일정 생성 가능</div>
+                    <div class="verticalMid">일정 저장 및 불러오기</div>
+                    <div class="verticalMid">경로 생성 기능 일일 최대 5번</div>
+                </div>
+            </div>
         </div>
-        <div>
-            {{userId}}
-        </div>
-        <div>
-            <button @click="fnSub">구독하기</button>
-            
-            <button @click="fnCancel">취소하기</button>
-        </div>
+
+        
         
     </div>
 </body>
 </html>
 
 <script>
-    const userCode = ""; 
+    // const userCode = ""; 
 	IMP.init("imp06808578");
 
     const app = Vue.createApp({

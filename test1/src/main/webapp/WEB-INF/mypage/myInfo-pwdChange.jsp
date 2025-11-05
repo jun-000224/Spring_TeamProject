@@ -78,9 +78,9 @@
             text-align: center;
         }
         .btnField button{
-            width: 400px;
-            height: 40px;
-            font-size: 22px;
+            width: 100px;
+            height: 30px;
+            font-size: 18px;
             border-radius: 10px;
             border-width: 1px;
             font-weight: bold;
@@ -181,7 +181,7 @@
                     <table>
                         <tr>
                             <td>
-                                <div><input type="text" placeholder="현재 비밀번호" v-model="nowPwd"></div>
+                                <div><input type="password" placeholder="현재 비밀번호" v-model="nowPwd"></div>
                             </td>
                         </tr>
                     </table>
@@ -191,12 +191,12 @@
                     <table>
                         <tr>
                             <td>
-                                <div><input type="text" placeholder="새 비밀번호" v-model="newPwd"></div>
+                                <div><input type="password" placeholder="새 비밀번호" v-model="newPwd"></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <div><input type="text" placeholder="새 비밀번호 확인" v-model="newPwd2"></div>
+                                <div><input type="password" placeholder="새 비밀번호 확인" v-model="newPwd2"></div>
                             </td>
                         </tr>
                     </table>
@@ -234,30 +234,11 @@
                 status: window.sessionData.status,
                 nickname: window.sessionData.nickname,
                 name: window.sessionData.name,
-                showLogoutMenu: false,
                 point: window.sessionData.point,
-
-                tempProperties : {}
             };
-        },
-        computed: {
-            isLoggedIn() {
-                return this.nickname !== "";
-            },
-            gradeLabel() {
-                switch (this.status) {
-                    case 'A': return '👑 ';
-                    case 'S': return '✨ ';
-                    case 'U': return '🙂 ';
-                    default: return '❓ 미지정';
-                }
-            }
         },
         methods: {
             // 함수(메소드) - (key : function())
-            toggleLogoutMenu() {
-                this.showLogoutMenu = !this.showLogoutMenu;
-            },
 
             fnPwdConfirm: function () {
                 let self = this;
@@ -287,7 +268,7 @@
             fnConfirm: function() {
                 let self = this;
                 // alert("yeah");
-                if(self.newPwd.length==0 || self.newPwd2.length==0){
+                if(self.newPwd.length==0 || self.newPwd2.length==0 || self.nowPwd.length==0){
                     alert("비밀번호를 입력해주세요.");
                     return;
                 }
@@ -323,11 +304,21 @@
             fnBack : function () {
                 let self = this;
                 location.href="/myInfo.do";
+            },
+
+            blockSpaceInput(event) {
+                if (event.key === " ") { // 공백 키가 눌렸을 때
+                    event.preventDefault(); // 공백 입력을 막음
+                }
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+
+            document.querySelectorAll('input[type="password"]').forEach(input => {
+                input.addEventListener('keydown', self.blockSpaceInput); // keydown 이벤트 사용
+            });
         }
     });
 
