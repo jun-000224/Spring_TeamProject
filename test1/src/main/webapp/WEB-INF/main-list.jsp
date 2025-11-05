@@ -230,6 +230,7 @@
                             border-radius: 5px;
                             cursor: pointer;
                             display: none;">나가기</button>
+
                             <div id="roadview" style="width:100%;height:400px;display:none;"></div>
 
                             <ul id="category">
@@ -289,16 +290,24 @@
                     contentNode: null,
                     markers: [],
                     currCategory: '',
-                    id: "${sessionId}",
-                    status: "${sessionStatus}",
-                    nickname: "${sessionNickname}",
-                    name: "${sessionName}",
-                    showLogoutMenu: false,
-                    point: "${sessionPoint}",
 
-                    code: ""
+                    //새 페이지 개설 시, 복붙
+                    //------------------------------------------------------------------------------------------------------
+                    id: window.sessionData.id,
+                    status: window.sessionData.status,
+                    nickname: window.sessionData.nickname,
+                    name: window.sessionData.name,
+                    showLogoutMenu: false,
+                    point: window.sessionData.point,
+
+                    
+                    
+                    tempProperties : {}
+                    //------------------------------------------------------------------------------------------------------
                 };
             },
+            //새 페이지 개설 시, 복붙
+            //------------------------------------------------------------------------------------------------------
             computed: {
                 isLoggedIn() {
                     return this.nickname !== "";
@@ -312,69 +321,30 @@
                     }
                 }
             },
+            //------------------------------------------------------------------------------------------------------
             methods: {
-
-                fnKakao: function () {
-                    let self = this;
-                    let param = {
-                        code: self.code
-                    };
-                    $.ajax({
-                        url: "/kakao.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            console.log(data);
-                            // self.sessionName = data.properties.nickname;
-                        }
-                    });
-                },
-
+                
+                //복붙
+                //------------------------------------------------------------------------------------------------------
                 toggleLogoutMenu() {
                     this.showLogoutMenu = !this.showLogoutMenu;
                 },
-                goToLogin() {
-                    location.href = "/member/login.do";
-                },
-                goToMyPage() {
-                    location.href = "/myPage.do";
-                },
+                //------------------------------------------------------------------------------------------------------
 
                 goToService() {
                     location.href = "/Service.do";
                 },
-                logout() {
-                    let self = this;
-                    let param = {
-                    };
-                    $.ajax({
-                        url: "/member/logout.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            alert(data.msg);
-                            self.searchPlaces(); // ✅ 마커 재검색
-                            location.href = "/main-list.do";
-                        }
-                    });
-                },
+                
+                
                 removeMarker() {
                     for (let i = 0; i < this.markers.length; i++) {
                         this.markers[i].setMap(null);
                     }
                     this.markers = [];
                 },
-                goToMyPage() {
-                    location.href = "/main-myPage.do";
-                },
-                goToSettings() {
-                    location.href = "/settings.do";
-                },
-                LogoutMenu() {
-                    this.showLogoutMenu = !this.showLogoutMenu;
-                },
+                // goToMyPage() {
+                //     location.href = "/main-myPage.do";
+                // },
 
                 onCategoryChange(event) {
                     this.currCategory = event.target.value;
@@ -418,7 +388,10 @@
                         const mapContainer = document.getElementById('map');
                         const roadviewContainer = document.getElementById('roadview');
                         const roadviewBtn = document.getElementById('roadviewBtn');
-                        const exitRoadviewBtn = document.getElementById('exitRoadviewBtn'); // ✅ 나가기 버튼 참조 추가
+                        exitRoadviewBtn.addEventListener('click', () => {
+                            location.href = "/main-list.do"; // ✅ 원하는 페이지로 이동
+                        });
+
 
                         if (!mapContainer) return;
 
@@ -519,9 +492,9 @@
                 let self = this;
 
                 const queryParams = new URLSearchParams(window.location.search);
-                self.code = queryParams.get('code') || '';
-                if (self.code != null) {
-                    self.fnKakao();
+                window.code = queryParams.get('code') || '';
+                if (window.code != null) {
+                    fnKakao();
                 }
 
                 if (this.nickname && this.nickname !== "${sessionNickname}") {
@@ -589,12 +562,8 @@
                         const roadviewClient = new kakao.maps.RoadviewClient();
                         let lastClickedLatLng = null;
 
-                        //  나가기 버튼 이벤트 연결
                         exitRoadviewBtn.addEventListener('click', () => {
-                            roadviewContainer.style.display = 'none';
-                            mapContainer.style.display = 'block';
-                            roadviewBtn.style.display = 'block';
-                            exitRoadviewBtn.style.display = 'none';
+                            location.href = "/main-list.do"; // ✅ 원하는 페이지로 이동
                         });
 
 
@@ -621,7 +590,7 @@
                                     mapContainer.style.display = 'none';
                                     roadviewContainer.style.display = 'block';
                                     roadviewBtn.style.display = 'none';
-
+                                    exitRoadviewBtn.style.display = 'block'; // ✅ 이 줄이 꼭 있어야 함
                                     roadview.setPanoId(panoId, lastClickedLatLng);
 
                                     kakao.maps.event.addListenerOnce(roadview, 'init', function () {

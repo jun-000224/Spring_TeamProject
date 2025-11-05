@@ -29,7 +29,7 @@
         <div style="display: flex; align-items: center; gap: 15px;">
             <!-- 로그인 전 -->
             <div class="login-btn" v-if="!isLoggedIn">
-                <button @click="goToLogin">로그인/회원가입</button>
+                <button onclick="goToLogin()">로그인/회원가입</button>
             </div>
     
             <!-- 로그인 후 -->
@@ -41,16 +41,16 @@
                 </span>
     
                 <ul v-if="showLogoutMenu" class="logout-dropdown">
-                    <li @click="goToMyPage">마이페이지</li>
+                    <li onclick="goToMyPage()">마이페이지</li>
                     <li >내 포인트 : {{ point }}</li>
-                    <li @click="logout">로그아웃</li>
+                    <li onclick="logout()">로그아웃</li>
                 </ul>
             </div>
         </div>
     
         <!-- <script src="https://unpkg.com/vue@3"></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script src="/js/header.js"></script> -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
+        
     
     </header>
 </div>
@@ -64,8 +64,6 @@
         // showLogoutMenu: true,
         point: "${sessionPoint}",
 
-        code:"",
-
         // isLoggedIn: this.nickname !== "",
         // gradeLabel: (function() { //작동 안함
         //     switch ("${sessionStatus}") {
@@ -77,3 +75,6 @@
         // })
     };
 </script>
+
+<script src="/js/header.js"></script>
+<script src="/js/kakao.js"></script>

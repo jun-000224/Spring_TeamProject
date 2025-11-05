@@ -59,4 +59,9 @@ public interface BoardMapper {
 	//11.02 코멘트 선택해서 불러오기
 	int selectComment(HashMap<String , Object> map);
 	
+	//답글 채택(포인트 주기)
+	int givePoint(HashMap<String , Object> map);
+	
+	//게시글 신고
+	int BoardReport(HashMap<String , Object> map);
 }

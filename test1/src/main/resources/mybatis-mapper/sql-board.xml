@@ -154,6 +154,16 @@
     FROM TBL_COMMENT
     WHERE COMMENTNO = #{commentNo}
 	</select>
+	
+	<insert id="givePoint" parameterType="hashmap">
+	INSERT INTO POINT
+	VALUES(#{userId}, 100, 100, NULL, SYSDATE)
+	</insert>
+	
+	<insert id="BoardReport" parameterType="hashmap">
+	INSERT INTO REPORT
+	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{userId}, #{reason}, #{boardNo} , NULL , 1)
+	</insert>
 </mapper>
 
 

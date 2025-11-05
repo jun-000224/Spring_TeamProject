@@ -21,5 +21,68 @@
         WHERE TYPE = 'SQ'
         ORDER BY CDATETIME DESC
     </select>
+    <!--문의 게시판 댓글-->
+    
+    <insert id="insertComment" parameterType="com.example.test1.model.MainBoard">
+    INSERT INTO TBL_COMMENT (
+        COMMENTNO, BOARDNO, USER_ID, ORG_CMTNO, CONTENTS, ADOPT, CDATETIME, UDATETIME, NICKNAME
+    ) VALUES (
+        COMMENT_SEQ.NEXTVAL,
+        #{boardNo},
+        #{userId},
+        NULL,
+        #{contents},
+        #{adopt},
+        SYSDATE,
+        SYSDATE,
+        #{nickname, jdbcType=VARCHAR}
+    )
+	</insert>
+	<!--댓글보기-->
+	<select id="selectCommentsByBoardNo" resultType="com.example.test1.model.MainBoard">
+	    SELECT 
+	        COMMENTNO,
+	        BOARDNO,
+	        USER_ID,
+	        ORG_CMTNO,
+	        CONTENTS,
+	        ADOPT,
+	        TO_CHAR(CDATETIME, 'YYYY-MM-DD HH24:MI') AS CDATETIME,  <!-- ✅ 날짜 포맷 -->
+	        TO_CHAR(UDATETIME, 'YYYY-MM-DD HH24:MI') AS UDATETIME,  <!-- ✅ 날짜 포맷 -->
+	        NICKNAME
+	    FROM TBL_COMMENT
+	    WHERE BOARDNO = #{boardNo}
+	    ORDER BY CDATETIME ASC
+	</select>
+
+
+	<delete id="deleteComment" parameterType="hashmap">
+	    DELETE FROM TBL_COMMENT
+	    WHERE COMMENTNO = #{commentNo}
+	</delete>
+	
+	<update id="updateUserStatus" parameterType="hashmap">
+	    UPDATE USERS
+	    SET STATUS = 'B',
+	        UDATETIME = SYSDATE
+	    WHERE USER_ID = #{userId}
+	</update>
+	
+	<select id="selectBadUsers" resultType="hashmap">
+	    SELECT USER_ID AS userId, NAME AS name, STATUS AS status
+	    FROM USERS
+	    WHERE STATUS = 'B'
+	</select>
+
+	<update id="changeUserStatus">
+	    UPDATE USERS
+	    SET STATUS = #{status}
+	    WHERE USER_ID = #{userId}
+	</update>
+
+
+
+
+
 
 </mapper>

@@ -204,4 +204,32 @@ try {
 	}
 	
 	
+	public HashMap<String, Object> pointGive(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        int info = boardMapper.givePoint(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("info", info);
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("msg", "포인트 지급 안됨");
+	    }
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> reportBoard(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        int info = boardMapper.BoardReport(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("info", info);
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("msg", "게시글 신고 오류");
+	    }
+	    return resultMap;
+	}
+	
+	
+	
 }
