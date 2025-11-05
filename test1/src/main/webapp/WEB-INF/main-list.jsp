@@ -230,6 +230,7 @@
                             border-radius: 5px;
                             cursor: pointer;
                             display: none;">나가기</button>
+
                             <div id="roadview" style="width:100%;height:400px;display:none;"></div>
 
                             <ul id="category">
@@ -387,7 +388,10 @@
                         const mapContainer = document.getElementById('map');
                         const roadviewContainer = document.getElementById('roadview');
                         const roadviewBtn = document.getElementById('roadviewBtn');
-                        const exitRoadviewBtn = document.getElementById('exitRoadviewBtn'); // ✅ 나가기 버튼 참조 추가
+                        exitRoadviewBtn.addEventListener('click', () => {
+                            location.href = "/main-list.do"; // ✅ 원하는 페이지로 이동
+                        });
+
 
                         if (!mapContainer) return;
 
@@ -558,12 +562,8 @@
                         const roadviewClient = new kakao.maps.RoadviewClient();
                         let lastClickedLatLng = null;
 
-                        //  나가기 버튼 이벤트 연결
                         exitRoadviewBtn.addEventListener('click', () => {
-                            roadviewContainer.style.display = 'none';
-                            mapContainer.style.display = 'block';
-                            roadviewBtn.style.display = 'block';
-                            exitRoadviewBtn.style.display = 'none';
+                            location.href = "/main-list.do"; // ✅ 원하는 페이지로 이동
                         });
 
 
@@ -590,7 +590,7 @@
                                     mapContainer.style.display = 'none';
                                     roadviewContainer.style.display = 'block';
                                     roadviewBtn.style.display = 'none';
-
+                                    exitRoadviewBtn.style.display = 'block'; // ✅ 이 줄이 꼭 있어야 함
                                     roadview.setPanoId(panoId, lastClickedLatLng);
 
                                     kakao.maps.event.addListenerOnce(roadview, 'init', function () {
