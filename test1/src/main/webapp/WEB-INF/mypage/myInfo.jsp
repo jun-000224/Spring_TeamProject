@@ -205,7 +205,11 @@
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-gift"></i>
-                    {{info.bdate}}
+                    {{info.bdate}} (
+                        <span v-if="info.gender === 'M'">남</span>
+                        <span v-else-if="info.gender === 'F'">여</span>
+                        <span v-else>미공개</span>
+                    )
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-house"></i>
@@ -232,7 +236,7 @@
                 <div class="infoBanner2">
                     <i class="fa-solid fa-key"></i>
                     비밀번호
-                    <button class="editBtn">수정</button>
+                    <button class="editBtn" @click="fnPwdCert">수정</button>
                 </div>
             </div>
             
@@ -361,6 +365,10 @@
             },
             goToMyPage() {
                 location.href = "/main-myPage.do";
+            },
+
+            fnPwdCert () { 
+                location.href = "/myInfo/pwdChange.do";
             }
         }, // methods
         mounted() {
