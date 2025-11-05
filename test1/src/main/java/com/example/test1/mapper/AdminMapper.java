@@ -32,7 +32,7 @@ public interface AdminMapper {
     //수정 삭제
 	void deletePost(String boardNo);
 
-    // ✅ 댓글 삭제
+    //  댓글 삭제
     void deleteCommentById(String commentNo);
 
 	void updateComment(Map<String, Object> map);

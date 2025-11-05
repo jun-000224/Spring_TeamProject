@@ -148,7 +148,7 @@
 	        UDATETIME = SYSDATE
 	    WHERE COMMENTNO = #{commentNo}
 	</update>
-
+ 
 	
 	<!-- 게시글 수정 -->
 	<update id="updatePost">

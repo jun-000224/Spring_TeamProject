@@ -22,5 +22,5 @@ public class MainBoard {
 	private String adopt;
 	private String nickname;
 	private String nickName; // ✅ 댓글용 닉네임 필드 추가
-	
+	 
 }
