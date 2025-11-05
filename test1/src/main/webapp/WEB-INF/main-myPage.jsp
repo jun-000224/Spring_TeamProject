@@ -165,6 +165,9 @@
                         <a href="/membership.do" class="menu-item">
                             <i class="fas fa-id-card"></i><br>멤버쉽 관리
                         </a>
+                        <a href="/myComments.do" class="menu-item">
+                            <i class="fas fa-comment-dots"></i><br>나의 작성글 / 댓글
+                        </a>
                     </div>
                 </div>
 

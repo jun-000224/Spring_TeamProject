@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AdminMapper {
@@ -22,6 +23,20 @@ public interface AdminMapper {
     
     void changeUserStatus(HashMap<String, Object> param);
 
+    List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param);
+    // 내 게시글 조회
+    List<HashMap<String, Object>> selectMyPosts(String userId);
+    // 내 댓글 조회
+	List<HashMap<String, Object>> selectMyComments(String userId);
+   
+    //수정 삭제
+	void deletePost(String boardNo);
 
+    // ✅ 댓글 삭제
+    void deleteCommentById(String commentNo);
+
+	void updateComment(Map<String, Object> map);
+
+	void updatePost(MainBoard post);
 
 }

@@ -5,8 +5,6 @@ import com.example.test1.model.Area;
 import com.example.test1.model.TourAreaEnvelope;
 import com.example.test1.model.TourPoiEnvelope;
 // TourMenuInfoEnvelope, TourRoomInfoEnvelope import는 더 이상 필요 없으나, 기존 코드 유지 위해 남겨둡니다.
-import com.example.test1.model.TourMenuInfoEnvelope;
-import com.example.test1.model.TourRoomInfoEnvelope;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

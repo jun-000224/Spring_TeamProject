@@ -98,7 +98,69 @@ public class AdminController {
         return new ObjectMapper().writeValueAsString(resultMap);
     }
 
+    // 신고 게시글
+    @RequestMapping(value = "/report-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getReportList(@RequestParam HashMap<String, Object> param) throws Exception {
+        List<HashMap<String, Object>> reportList = adminService.selectReportList(param);
 
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("reportList", reportList);
 
+        return new ObjectMapper().writeValueAsString(resultMap);
+    }
+    // 내게시글 / 내 댓글
+    @RequestMapping("/myActivity.do")
+    public String myActivityPage(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("sessionId");
+        model.addAttribute("sessionId", userId);
+        return "/main-myComments";
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMyPosts.dox")
+    public HashMap<String, Object> getMyPosts(@RequestParam String userId) {
+        List<HashMap<String, Object>> posts = adminService.getMyPosts(userId);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("posts", posts);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMyComments.dox")
+    public HashMap<String, Object> getMyComments(@RequestParam String userId) {
+        List<HashMap<String, Object>> comments = adminService.getMyComments(userId);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("comments", comments);
+        return result;
+    }
+
+    @PostMapping("/api/post/update")
+    @ResponseBody
+    public String updatePost(@RequestParam String boardNo,
+                             @RequestParam String title,
+                             @RequestParam String contents) {
+        MainBoard post = new MainBoard();
+        post.setBoardNo(boardNo);
+        post.setTitle(title);
+        post.setContents(contents);
+        adminService.updatePost(post);
+        return "success";
+    }
+    
+    @PostMapping("/api/comment/delete")
+    @ResponseBody
+    public String deleteComment(@RequestParam String commentNo) {
+    	adminService.deleteCommentById(commentNo);
+        return "success";
+    }
+    
+    @PostMapping("/api/comment/update")
+    @ResponseBody
+    public String updateComment(@RequestParam String commentNo,
+                                @RequestParam String contents) {
+        adminService.updateComment(commentNo, contents);
+        return "success";
+    }
 
 }
