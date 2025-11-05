@@ -290,16 +290,24 @@
                     contentNode: null,
                     markers: [],
                     currCategory: '',
-                    id: "${sessionId}",
-                    status: "${sessionStatus}",
-                    nickname: "${sessionNickname}",
-                    name: "${sessionName}",
-                    showLogoutMenu: false,
-                    point: "${sessionPoint}",
 
-                    code: ""
+                    //새 페이지 개설 시, 복붙
+                    //------------------------------------------------------------------------------------------------------
+                    id: window.sessionData.id,
+                    status: window.sessionData.status,
+                    nickname: window.sessionData.nickname,
+                    name: window.sessionData.name,
+                    showLogoutMenu: false,
+                    point: window.sessionData.point,
+
+                    
+                    
+                    tempProperties : {}
+                    //------------------------------------------------------------------------------------------------------
                 };
             },
+            //새 페이지 개설 시, 복붙
+            //------------------------------------------------------------------------------------------------------
             computed: {
                 isLoggedIn() {
                     return this.nickname !== "";
@@ -313,66 +321,30 @@
                     }
                 }
             },
+            //------------------------------------------------------------------------------------------------------
             methods: {
-
-                fnKakao: function () {
-                    let self = this;
-                    let param = {
-                        code: self.code
-                    };
-                    $.ajax({
-                        url: "/kakao.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            console.log(data);
-                            // self.sessionName = data.properties.nickname;
-                        }
-                    });
-                },
-
+                
+                //복붙
+                //------------------------------------------------------------------------------------------------------
                 toggleLogoutMenu() {
                     this.showLogoutMenu = !this.showLogoutMenu;
                 },
-                goToLogin() {
-                    location.href = "/member/login.do";
-                },
-                goToMyPage() {
-                    location.href = "/myPage.do";
-                },
+                //------------------------------------------------------------------------------------------------------
 
                 goToService() {
                     location.href = "/Service.do";
                 },
-                logout() {
-                    let self = this;
-                    let param = {
-                    };
-                    $.ajax({
-                        url: "/member/logout.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            alert(data.msg);
-                            self.searchPlaces(); // ✅ 마커 재검색
-                            location.href = "/main-list.do";
-                        }
-                    });
-                },
+                
+                
                 removeMarker() {
                     for (let i = 0; i < this.markers.length; i++) {
                         this.markers[i].setMap(null);
                     }
                     this.markers = [];
                 },
-                goToMyPage() {
-                    location.href = "/main-myPage.do";
-                },
-                goToSettings() {
-                    location.href = "/settings.do";
-                },
+                // goToMyPage() {
+                //     location.href = "/main-myPage.do";
+                // },
 
                 onCategoryChange(event) {
                     this.currCategory = event.target.value;
@@ -520,9 +492,9 @@
                 let self = this;
 
                 const queryParams = new URLSearchParams(window.location.search);
-                self.code = queryParams.get('code') || '';
-                if (self.code != null) {
-                    self.fnKakao();
+                window.code = queryParams.get('code') || '';
+                if (window.code != null) {
+                    fnKakao();
                 }
 
                 if (this.nickname && this.nickname !== "${sessionNickname}") {
