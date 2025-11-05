@@ -100,5 +100,32 @@ public class ReviewService{
 	public int selectMaxSortNo(int contentId) {
 	    return ReviewMapper.selectMaxSortNo(contentId);
 	}
+	
+	//조회수 업데이트
 
+	public HashMap<String, Object> updateReviewCnt(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		int cnt = ReviewMapper.reviewCnt(map);
+		return resultMap;
+	}
+	
+	//좋아요 기능
+	
+	public Boolean favorite(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		 List<Review> favList = ReviewMapper.selectFavorite(map);
+
+	        if (favList.isEmpty()) {
+	            // 좋아요 추가
+	        	ReviewMapper.favorite(map);
+	        	int cnt = ReviewMapper.reviewFavorite(map);
+	            return true; // 좋아요 추가됨
+	        } else {
+	            // 좋아요 삭제
+	        	ReviewMapper.deletefavorite(map);
+	        	int cnt = ReviewMapper.reviewFavorite(map);
+	            return false; // 좋아요 해제됨
+	        }
+	}
 }

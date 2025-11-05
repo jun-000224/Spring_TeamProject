@@ -128,16 +128,14 @@ public class ShareBoardViewService {
             String content = share.getContent();
             // dayNum별로 안전하게 map에 추가
             for (HashMap<String, Object> infoMap : infoList) {
-                if (infoMap.get("dayNum") != null) {
-                    dayNum = Integer.parseInt(String.valueOf(infoMap.get("dayNum")));
-                }
+                infoMap.put("dayNum", dayNum); // ✅ DB 기준 dayNum을 강제로 세팅
                 if (rating != null) {
                     infoMap.put("rating", rating);
                     infoMap.put("content", content);
                 } else {
-                    infoMap.put("rating", 0); // 기본값
+                    infoMap.put("rating", 0);
                 }
-                
+
                 dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
             }
         }

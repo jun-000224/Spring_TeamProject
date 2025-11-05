@@ -12,6 +12,10 @@
         ></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back"
+        />
         <script src="/js/page-change.js"></script>
 
         <style>
@@ -19,7 +23,6 @@
                 background: #f3f7ff;
                 font-family: "Pretendard", sans-serif;
                 margin: 0;
-                padding: 20px;
                 color: #333;
             }
 
@@ -30,6 +33,10 @@
                 margin: 0 auto;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
                 overflow: hidden;
+            }
+
+            .container > div > div > img {
+                width: 100%;
             }
 
             /* 관광지 이미지 */
@@ -117,6 +124,7 @@
             }
 
             .review-images img {
+                width: 100%;
                 height: 120px;
                 object-fit: cover;
                 border-radius: 10px;
@@ -182,12 +190,31 @@
                 font-size: 24px;
                 cursor: pointer;
             }
+            .back-btn {
+                margin-left: 20px;
+            }
+            .back {
+                background-color: transparent;
+                display: flex;
+                height: 50px;
+                width: 100px;
+                border: none;
+                font-weight: 700;
+                align-items: center;
+                cursor: pointer;
+            }
         </style>
     </head>
 
     <body>
         <div id="app">
             <div class="container">
+                <div class="back-btn">
+                    <button class="back" @click="fnbck">
+                        <span class="material-symbols-outlined"> arrow_back </span>
+                        뒤로가기
+                    </button>
+                </div>
                 <div>
                     <div>
                         <img :src="info.firstimage" alt="" />
@@ -217,19 +244,20 @@
                         <div class="review-content">{{ item.content }}</div>
 
                         <!-- 이미지 출력 -->
-                        <div class="review-images" v-if="getImages(item.resNum).length > 0">
-                            <template v-for="(img, index) in getImages(item.resNum).slice(0,3)" :key="img.sortNo">
-                                <!-- 클릭 시 해당 img만 넘김 -->
+                        <div class="review-images" v-if="getImages(item.resNum,item.userId).length > 0">
+                            <template
+                                v-for="(img, index) in getImages(item.resNum, item.userId).slice(0,3)"
+                                :key="img.sortNo"
+                            >
                                 <img :src="img.storUrl" :alt="img.title" @click="openModal(img)" />
                             </template>
 
-                            <!-- +n 버튼 -->
                             <div
-                                v-if="getImages(item.resNum).length > 3"
+                                v-if="getImages(item.resNum, item.userId).length > 3"
                                 class="more-overlay"
-                                @click="openModal(getImages(item.resNum))"
+                                @click="openModal(getImages(item.resNum, item.userId))"
                             >
-                                +{{ getImages(item.resNum).length - 3 }}
+                                +{{ getImages(item.resNum, item.userId).length - 3 }}
                             </div>
                         </div>
                     </div>
@@ -251,6 +279,7 @@
             data() {
                 return {
                     contentId: "${contentId}",
+                    userId: "${sessionId}",
                     info: {},
                     reviewList: [],
                     reviewImgList: [],
@@ -264,7 +293,10 @@
                     $.ajax({
                         url: "/review-detail.dox",
                         type: "GET",
-                        data: { contentId: self.contentId },
+                        data: {
+                            contentId: self.contentId,
+                            userId: self.userId,
+                        },
                         success: function (data) {
                             self.info = data[0];
                             self.reviewList = data[0].list;
@@ -282,13 +314,9 @@
                     else return "star_border";
                 },
                 // reviewNo별로 이미지 매칭
-                getImages(resNum) {
-                    let self = this;
-                    console.log(
-                        self.reviewImgList.filter((img) => img.resNum === resNum).sort((a, b) => a.sortNo - b.sortNo)
-                    );
-                    return self.reviewImgList
-                        .filter((img) => img.resNum === resNum)
+                getImages(resNum, userId) {
+                    return this.reviewImgList
+                        .filter((img) => img.resNum === resNum && img.userId === userId)
                         .sort((a, b) => a.sortNo - b.sortNo);
                 },
                 openModal(image) {
@@ -307,10 +335,21 @@
                     self.isModalOpen = false;
                     self.selectedImages = [];
                 },
+                fnbck() {
+                    history.back();
+                },
             },
             mounted() {
                 let self = this;
                 self.fninfo();
+                window.addEventListener("popstate", () => {
+                    self.fninfo();
+                });
+                window.addEventListener("pageshow", (event) => {
+                    if (event.persisted) {
+                        self.fninfo();
+                    }
+                });
             },
         });
         app.mount("#app");

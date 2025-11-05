@@ -26,8 +26,27 @@ public interface ReviewMapper {
 	
 	//평점 업데이트
 	int rating(HashMap<String , Object>map);
+	
+	//조회수 업데이트
+	int reviewCnt(HashMap<String , Object>map);
+	//좋아요 리스트
+	List<Review> selectFavorite(HashMap<String ,Object>map);
+	
+	//좋아요
+	int favorite(HashMap<String, Object>map);
+	
+	//좋아요 개수
+	int reviewFavorite(HashMap<String , Object>map);
+	
+	//좋아요 삭제
+	
+	int deletefavorite(HashMap<String , Object>map);
+	
 	//후기등록하기
 	int resInsert(HashMap<String , Object>map);
+	
+	
+	
 	//사진업로드
 	int fileUpload(HashMap<String , Object>map);
 	//사진 이름
