@@ -2,6 +2,7 @@ package com.example.test1.controller;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,11 @@ public class mainController {
         return "redirect:/main-list.do"; // 메인 페이지로 이동
     }
     
-    
+    @RequestMapping("/myComments.do")
+    public String myCommentsPage(HttpServletRequest request, Model model) {
+        // 로그인 세션 확인 등 필요한 처리
+        return "main-myComments"; // main-myComments.jsp로 이동
+    }
     
 
 }

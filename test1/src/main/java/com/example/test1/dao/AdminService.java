@@ -48,6 +48,45 @@ public class AdminService {
         adminMapper.changeUserStatus(param);
     }
 
+    public List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param) throws Exception {
+        return adminMapper.selectReportList(param);
+    }
+    
+    // ✅ 내 게시글 조회
+    public List<HashMap<String, Object>> getMyPosts(String userId) {
+        return adminMapper.selectMyPosts(userId);
+    }
 
+    // ✅ 내 댓글 조회
+    public List<HashMap<String, Object>> getMyComments(String userId) {
+        return adminMapper.selectMyComments(userId);
+    }
+
+    // 댓글 리스트 조회
+    public List<MainBoard> getCommentsByBoardNo1(String boardNo) {
+        return adminMapper.selectCommentsByBoardNo(boardNo);
+    }
+    
+    // 수정 삭제
+    public void deletePost(String boardNo) {
+        adminMapper.deletePost(boardNo);
+    }
+
+    // ✅ 댓글 삭제
+    public void deleteCommentById(String commentNo) {
+        adminMapper.deleteCommentById(commentNo);
+    }
+
+    public void updateComment(String commentNo, String contents) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("commentNo", commentNo);
+        map.put("contents", contents);
+        adminMapper.updateComment(map);
+    }
+
+    public void updatePost(MainBoard post) {
+        adminMapper.updatePost(post);
+    }
+    
 
 }
