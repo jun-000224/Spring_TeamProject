@@ -40,9 +40,11 @@ public class BoardService{
 			int cnt = boardMapper.updateCnt(map);
 			Board info = boardMapper.selectBoard(map);
 			List<Comment> commentList = boardMapper.selectCommentList(map);
+//			int checkReport = boardMapper.reportCheck(map);
 
 			resultMap.put("info", info); 
 			resultMap.put("commentList", commentList);
+//			resultMap.put("checkReport", checkReport);
 			resultMap.put("result", "success");
 			
 			
@@ -221,6 +223,19 @@ try {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
 	        int info = boardMapper.BoardReport(map);
+	        resultMap.put("result", "success");
+	        resultMap.put("info", info);
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	        resultMap.put("msg", "게시글 신고 오류");
+	    }
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> reportCom(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	        int info = boardMapper.comReport(map);
 	        resultMap.put("result", "success");
 	        resultMap.put("info", info);
 	    } catch (Exception e) {
