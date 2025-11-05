@@ -164,6 +164,26 @@
 	INSERT INTO REPORT
 	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{userId}, #{reason}, #{boardNo} , NULL , 1)
 	</insert>
+	
+	<select id="whishList" parameterType="hashmap" resultType="com.example.test1.model.Board">
+		SELECT * FROM FAV F
+		INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
+		INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
+		WHERE R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
+        <if test="tag !=null and tag !=''">
+        AND DESCRIPT LIKE '%' || #{tag} || '%'
+        </if>
+        OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY	
+		
+	</select>
+	
+	<select id="cntWhishList" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM FAV F
+		INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
+		INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
+		WHERE R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
+	
+	</select>
 </mapper>
 
 

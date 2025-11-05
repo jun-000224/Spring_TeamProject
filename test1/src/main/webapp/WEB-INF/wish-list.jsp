@@ -1,19 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="ko">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>게시글 목록</title>
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <link
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+     <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
         />
         <script src="/js/page-change.js"></script>
 
-        <style>
+    <style>
             body {
                 font-family: "Noto Sans KR", sans-serif;
                 background-color: #f6f7fb;
@@ -123,7 +123,7 @@
 
             /* 좋아요 / 조회수 아이콘 */
             .material-symbols-outlined {
-                font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+                font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
                 color: #777;
                 font-size: 24px;
                 cursor: pointer;
@@ -314,23 +314,49 @@
                 font-size: 32px;
                 vertical-align: middle;
             }
-        </style>
-    </head>
-    <body>
-        <div id="app">
+            /* ===============================
+   ✅ 좋아요 하러가기 (빈 목록일 때)
+=============================== */
+.favoriteEmp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #555;
+    font-size: 1.1em;
+    gap: 15px;
+}
 
-           <div class="page-title">
+.favoriteEmp button {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 8px rgba(25, 118, 210, 0.2);
+}
+
+.favoriteEmp button:hover {
+    background-color: #0d47a1;
+    transform: translateY(-2px);
+}
+        </style>
+</head>
+<body>
+    <div id="app">
+        <div class="page-title">
                 <div class="back-btn">
                     <button class="back" @click="fnbck">
                         <span class="material-symbols-outlined">arrow_back</span>
                         뒤로가기
                     </button>
                 </div>
-    
-    
-                <h2>📋 게시글 목록</h2>
+                <h2>📋 좋아요 한 게시글 목록</h2>
             </div>
-
             <div class="filter-box">
                 <label for="tag">태그 필터</label>
                 <select id="tag" v-model="tag" @change="fnList">
@@ -346,8 +372,8 @@
                     <option value="조용한">조용한</option>
                 </select>
             </div>
-
-            <div class="card-container">
+            
+            <div v-if="list.length != 0" class="card-container">
                 <div class="card" v-for="item in list" :key="item.packname" @click="fnDetail(item.resNum)">
                     <div class="card-inner">
                         <!-- 앞면 -->
@@ -371,7 +397,7 @@
                                     <div style="display: flex">
                                         <span
                                             class="material-symbols-outlined"
-                                            :class="{ liked: item.liked }"
+                                            :class="{ liked: true }"
                                             @click.stop="toggleLike(item)"
                                         >
                                             favorite
@@ -401,8 +427,10 @@
                         </div>
                     </div>
                 </div>
+            </div >
+            <div v-else class="favoriteEmp">
+                <button cl @click="fnReviewList">좋아요 하러가기</button>
             </div>
-
             <div class="pagination">
                 <a href="javascript:;" @click="fnMove(-1)">
                     <span v-if="page > 1">◀</span>
@@ -414,59 +442,61 @@
                     <span v-if="page != index">▶</span>
                 </a>
             </div>
-        </div>
-    </body>
+    </div>
+</body>
+</html>
 
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    userId: "${sessionId}",
-                    list: [],
-                    liked: false,
-                    thumbnailMap: {},
-                    pageSize: 6, // 한페이지에 출력할 개수
-                    page: 1, //현재페이지
-                    index: 0, //몇페이지까지 존재하는지
-                    tag: "",
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 변수 - (key : value)
+                userId:"${sessionId}",
+                list:[],
+                liked: false,
+                thumbnailMap: {},
+                pageSize: 6, // 한페이지에 출력할 개수
+                page: 1, //현재페이지
+                index: 0, //몇페이지까지 존재하는지
+                tag: "",
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnList: function () {
+                let self = this;
+                let param = {
+                    userId:self.userId,
+                    tag: self.tag,
+                    pageSize: self.pageSize,
+                    page: (self.page - 1) * self.pageSize
                 };
+                $.ajax({
+                    url: "whish-list.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        self.list=data.list,
+                        self.index = Math.ceil(data.cnt / self.pageSize);
+                    }
+                });
             },
-            methods: {
-                fnList() {
-                    let self = this;
-                    $.ajax({
-                        url: "/review-list.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: {
-                            userId: self.userId,
-                            tag: self.tag,
-                            pageSize: self.pageSize,
-                            page: (self.page - 1) * self.pageSize,
-                        },
-                        success: function (data) {
-                            self.list = data.list;
-                            self.index = Math.ceil(data.cnt / self.pageSize);
-                            console.log(data);
-                        },
-                    });
-                },
-                fnThumnail() {
+            fnThumnail() {
                     let self = this;
                     $.ajax({
                         url: "/thumbnail.dox",
                         dataType: "json",
                         type: "GET",
-                        data: {},
+                        data: {
+                            userId:self.userId
+                        },
                         success: function (data) {
-                            console.log(data);
                             self.thumbnailMap = data.list;
+                            console.log(self.thumbnailMap[1].firstimage);
                         },
                     });
-                },
-                fnDetail(item) {
-                    // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
-                    pageChange("review-view.do", { resNum: item });
                 },
                 toggleLike(item) {
                     let self = this;
@@ -487,6 +517,13 @@
                     });
                     console.log(item);
                 },
+                fnDetail(item) {
+                    // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
+                    pageChange("review-view.do", { resNum: item });
+                },
+                fnReviewList(){
+                    location.href="review-list.do"
+                },
                 fnchange(num) {
                     let self = this;
                     self.page = num;
@@ -502,25 +539,14 @@
                  fnbck() {
                         history.back();
                     },
-            },
-            mounted() {
-                let self = this;
+        }, // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
+            let self = this;
+            self.fnList();
+            self.fnThumnail();
+        }
+    });
 
-                self.fnList();
-                self.fnThumnail();
-                window.addEventListener("popstate", () => {
-                    self.fnList();
-                    self.fnThumnail();
-                });
-                window.addEventListener("pageshow", (event) => {
-                    if (event.persisted) {
-                        self.fnList();
-                        self.fnThumnail();
-                    }
-                });
-            },
-        });
-
-        app.mount("#app");
-    </script>
-</html>
+    app.mount('#app');
+</script>

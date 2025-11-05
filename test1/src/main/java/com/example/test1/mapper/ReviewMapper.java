@@ -21,6 +21,12 @@ public interface ReviewMapper {
 	
 	//사용자 후기 이미지 리스트
 	List<Review>  detailReviewImgList(HashMap<String , Object> map);
+	
+	//썸내일 사진용 content_id
+	List<Review> thumbnailWithResNum(HashMap<String , Object> map);
+	
+	//후기게시판리시트 수
+	int cntMemberList(HashMap<String , Object>map);
 	//sortNo 구하기
 	int selectMaxSortNo(@Param("contentId") int contentId);
 	

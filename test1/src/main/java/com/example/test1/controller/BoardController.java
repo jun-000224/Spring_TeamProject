@@ -69,6 +69,12 @@ public class BoardController {
         return "/board-report";
     }
 	
+	@RequestMapping("/wishlist.do") 
+    public String wishlistList(Model model) throws Exception{ 
+
+        return "/wish-list";
+    }
+	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String boardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -244,6 +250,11 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 	
-	
+	@RequestMapping(value = "/whish-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getWhishList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.getWhishList(map);
+	    return new Gson().toJson(resultMap);
+	}
 	
 }

@@ -22,6 +22,11 @@ public interface BoardMapper {
 	//댓글 목록
 	List<Comment> selectCommentList(HashMap<String , Object> map);
 	
+	//찜리스트
+	List<Board> whishList(HashMap<String , Object> map);
+	
+	//찜게시판리시트 수
+		int cntWhishList(HashMap<String , Object>map);
 	//댓글 등록
 	int insertComment(HashMap<String , Object> map);
 	

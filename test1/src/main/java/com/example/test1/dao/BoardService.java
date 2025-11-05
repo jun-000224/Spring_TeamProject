@@ -230,6 +230,19 @@ try {
 	    return resultMap;
 	}
 	
+	public HashMap<String, Object> getWhishList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	    	List<Board> list = boardMapper.whishList(map);
+	    	int cnt =boardMapper.cntWhishList(map);
+	        resultMap.put("list", list);
+	        resultMap.put("cnt", cnt);
+	    } catch (Exception e) {
+	        resultMap.put("result", "fail");
+	    }
+	    return resultMap;
+	}
+	
 	
 	
 }

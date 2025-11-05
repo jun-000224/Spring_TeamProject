@@ -27,5 +27,8 @@ public class Review {
 	private String nickname;
 	private int liked;
 	
+
+	
+	
 	
 }

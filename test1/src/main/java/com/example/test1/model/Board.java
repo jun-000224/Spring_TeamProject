@@ -23,5 +23,9 @@ public class Board {
 	private String filePath;
 	private String fileName;
 	
+	private String themNum;
+	private String descript;
 	
+	private String liked;
+	private int resNum;
 }

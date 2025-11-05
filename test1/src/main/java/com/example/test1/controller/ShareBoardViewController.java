@@ -50,5 +50,20 @@ public class ShareBoardViewController {
         List<HashMap<String, Object>> resultList = ShareBoardViewService.DetailInfo(contentId);
         return new Gson().toJson(resultList);
     }
+    
+    @GetMapping(value = "/thumbnail.dox", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Map<String, Object> thumbnail(@RequestParam HashMap<String, Object> param) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            Map<Integer, HashMap<String, Object>> result = ShareBoardViewService.thumbnailMap(param);
+            map.put("list", result);
+            map.put("status", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("status", "error");
+        }
+        return map;
+    }
    
 }
