@@ -1,9 +1,10 @@
 package com.example.test1.controller; 
 
 import com.example.test1.dao.RecommendationService;
-import com.example.test1.dao.TourAreaService; 
-import com.example.test1.model.PoiRecommendation;
-import com.example.test1.model.RecommendationRequest;
+import com.example.test1.dao.TourAreaService;
+import com.example.test1.model.reservation.PoiRecommendation;
+import com.example.test1.model.reservation.RecommendationRequest;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

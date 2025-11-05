@@ -1,24 +1,25 @@
-package com.example.test1.model;
+package com.example.test1.model.reservation; // (패키지명은 본인 것에 맞게 확인)
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import java.util.List;
 
-/** TourAPI /areaCode2 응답 구조: response → (header), (body → items → item[Area...]) */
+/**
+ * TourAPI /detailInfo (반복정보) 응답 (식당용, contentTypeId=39)
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TourAreaEnvelope {
+public class TourMenuInfoEnvelope {
+
     private Resp response;
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Resp {
-        //header 필드 추가
         private Header header;
         private Body body;
     }
 
-    // API 응답 코드를 받기 위한 Header 클래스
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Header {
@@ -35,6 +36,16 @@ public class TourAreaEnvelope {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Items {
-        private List<Area> item;
+        private List<MenuItem> item;
+    }
+
+    /**
+     * 식당 메뉴(Menu) 항목
+     */
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class MenuItem {
+        private String menuname;  // 메뉴 이름
+        private String menuprice; // 메뉴 가격
     }
 }

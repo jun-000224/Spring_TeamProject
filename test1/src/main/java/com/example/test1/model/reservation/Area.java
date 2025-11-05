@@ -1,4 +1,4 @@
-package com.example.test1.model;
+package com.example.test1.model.reservation;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

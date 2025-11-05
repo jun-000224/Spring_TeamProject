@@ -1,4 +1,4 @@
-package com.example.test1.model;
+package com.example.test1.model.reservation;
 
 import lombok.Data;
 import java.util.List;
