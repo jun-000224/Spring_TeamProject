@@ -299,13 +299,14 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
+                            if(confirm("정말 수정하시겠습니까?")){
                             if (data.result == "success") {
-                                alert("수정됨");
+                                alert("수정이 완료되었습니다!");
                                 location.href = "board-list.do"
                             } else {
                                 alert("오류발생");
                             }
-
+                            }
                         }
                     });
                 }
