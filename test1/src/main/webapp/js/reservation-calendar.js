@@ -152,6 +152,19 @@ window.ReservationCalendarMixin = {
       }
     },
     
+    /** [수정됨] 날짜 탭 클릭 시 (reservation.jsp의 dateTabs에서 호출됨) */
+    setActiveDate(date) {
+        // Uncaught TypeError: setActiveDate is not a function 오류 해결
+        this.activeDate = date; 
+        
+        // 탭을 바꾸면 현재 선택된 POI와 인포윈도우를 닫는 것이 일반적입니다.
+        // 이 두 속성(selectedPoi, infowindow)은 메인 Vue 인스턴스에 정의되어 있어야 합니다.
+        this.selectedPoi = null;
+        if (this.infowindow) {
+            this.infowindow.close();
+        }
+    },
+    
     /** 날짜 칸의 CSS 클래스 반환 */
     getDayClasses(day) {
       const classes = [];

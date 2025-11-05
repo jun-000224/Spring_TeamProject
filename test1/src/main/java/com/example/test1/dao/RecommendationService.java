@@ -1,9 +1,10 @@
 package com.example.test1.dao;
 
-import com.example.test1.model.Attr;
-import com.example.test1.model.PoiRecommendation;
-import com.example.test1.model.RecommendationRequest;
-import com.example.test1.model.TourPoiEnvelope;
+import com.example.test1.model.reservation.Attr;
+import com.example.test1.model.reservation.PoiRecommendation;
+import com.example.test1.model.reservation.RecommendationRequest;
+import com.example.test1.model.reservation.TourPoiEnvelope;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

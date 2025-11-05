@@ -1,7 +1,9 @@
 package com.example.test1.dao;
 
-import com.example.test1.model.Attr;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.test1.model.reservation.Attr;
+
 import java.util.List;
 
 public interface AttrRepository extends JpaRepository<Attr, Long> {
