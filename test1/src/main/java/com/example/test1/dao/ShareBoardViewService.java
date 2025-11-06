@@ -147,7 +147,7 @@ public class ShareBoardViewService {
     public List<HashMap<String, Object>> DetailInfo(String contentId)throws Exception {
 		// TODO Auto-generated method stub
 		List<HashMap<String, Object>> resultMap = new ArrayList<>();
-
+		
 		
 		
 			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
@@ -192,6 +192,63 @@ public class ShareBoardViewService {
        
         return resultMap;
     }
+    
+    public Map<Integer, HashMap<String, Object>> thumbnailMap(HashMap<String, Object> paramMap) {
+        Map<Integer, HashMap<String, Object>> resultMap = new HashMap<>();
+
+        List<Review> resList = reviewMapper.thumbnailWithResNum(paramMap);
+
+        for (Review r : resList) {
+            Integer resNum = r.getResNum();
+            String contentId = String.valueOf(r.getContentId());
+
+            if (contentId == null || contentId.isEmpty()) continue;
+
+            String firstImage;
+            try {
+                firstImage = getFirstImage(contentId);
+                if (firstImage == null || firstImage.isEmpty()) {
+                    firstImage = "/images/default.jpg";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                firstImage = "/images/default.jpg";
+            }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("contentId", contentId);
+            map.put("firstimage", firstImage);
+
+            resultMap.put(resNum, map);
+        }
+
+        return resultMap;
+    }
+
+    // API로 이미지 가져오기
+    public String getFirstImage(String contentId) throws Exception {
+        String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
+                + "?ServiceKey=" + apiKey
+                + "&MobileOS=ETC&MobileApp=AppTest"
+                + "&contentId=" + contentId;
+
+        RestTemplate restTemplate = new RestTemplate();
+        byte[] bytes = restTemplate.getForObject(url, byte[].class);
+        String xmlResponse = new String(bytes);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        InputSource is = new InputSource(new StringReader(xmlResponse));
+        Document doc = factory.newDocumentBuilder().parse(is);
+
+        NodeList items = doc.getElementsByTagName("item");
+        if (items.getLength() == 0) return null;
+
+        Element item = (Element) items.item(0);
+        return getTag(item, "firstimage");
+    }   
+
+   
+    
 
 	
 }

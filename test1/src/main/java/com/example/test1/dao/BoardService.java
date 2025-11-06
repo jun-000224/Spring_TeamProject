@@ -232,15 +232,15 @@ try {
 	    return resultMap;
 	}
 	
-	public HashMap<String, Object> reportCom(HashMap<String, Object> map) {
+	public HashMap<String, Object> getWhishList(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
 	    try {
-	        int info = boardMapper.comReport(map);
-	        resultMap.put("result", "success");
-	        resultMap.put("info", info);
+	    	List<Board> list = boardMapper.whishList(map);
+	    	int cnt =boardMapper.cntWhishList(map);
+	        resultMap.put("list", list);
+	        resultMap.put("cnt", cnt);
 	    } catch (Exception e) {
 	        resultMap.put("result", "fail");
-	        resultMap.put("msg", "게시글 신고 오류");
 	    }
 	    return resultMap;
 	}

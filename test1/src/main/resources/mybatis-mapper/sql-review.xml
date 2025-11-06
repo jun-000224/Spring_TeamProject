@@ -28,7 +28,27 @@
     LEFT JOIN FAV F 
         ON F.BOARDNO = R1.BOARDNO
         AND F.USER_ID = #{userId}
-    ORDER BY R1.BOARDNO DESC		
+        WHERE 1=1
+        <if test="tag !=null and tag !=''">
+        AND DESCRIPT LIKE '%' || #{tag} || '%'
+        </if>
+    ORDER BY R1.BOARDNO DESC
+    OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY		
+	</select>
+	
+	<select id="cntMemberList" parameterType="hashmap" resultType="int">
+		SELECT 
+			 COUNT(*) cnt
+		FROM TBL_REVIEW R1
+    INNER JOIN RESERVATION R2 
+        ON R1.RES_NUM = R2.RES_NUM
+    LEFT JOIN FAV F 
+        ON F.BOARDNO = R1.BOARDNO
+        AND F.USER_ID = #{userId}
+		WHERE 1=1
+        <if test="tag !=null and tag !=''">
+        AND DESCRIPT LIKE '%' || #{tag} || '%'
+        </if>
 	</select>
 	
 	<select id="detailReviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
@@ -52,6 +72,20 @@
       AND USER_ID = #{userId}
      
 	</select>
+	
+	<select id="thumbnailWithResNum" parameterType="hashmap" resultType="com.example.test1.model.Review">
+	SELECT R.RES_NUM, CONTENT_ID FROM FAV F
+	INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
+	INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
+	INNER JOIN (SELECT RES_NUM, MIN(CONTENT_ID) AS CONTENT_ID
+	    FROM POI
+	    GROUP BY RES_NUM) R3
+	    ON R3.RES_NUM = R2.RES_NUM
+	    WHERE 1=1
+	    <if test="userId !=null and userId !=''">
+	    AND R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
+    </if>
+    </select>
 	
 	<select id="selectFavorite" parameterType="hashmap" resultType="com.example.test1.model.Review">
 	

@@ -32,6 +32,7 @@
     }
      #map { 
         width: 70%;
+        height: 500px;
         border-radius: 20px;
      }
     .day-num{
@@ -123,6 +124,9 @@
         </div>
     </div>
 </div>
+</div>
+</body>
+</html>
 
 <script>
 const app = Vue.createApp({
@@ -134,7 +138,7 @@ const app = Vue.createApp({
             positionsByDay:{},
             container : "",
             options : {
-            center: new kakao.maps.LatLng(37.785, 128.92),
+            center: new kakao.maps.LatLng(35.1027993255, 128.9678872863),
             level: 8
             },
             map :"",
@@ -163,14 +167,18 @@ const app = Vue.createApp({
         },
        fninfo() {
         let self = this;
+        let param={
+            resNum:40
+        }
         $.ajax({
             url: '/share.dox',
             type: 'GET',
+            data:param,
             success: function(data) {
                 self.info = data;  // dayMap 전체
                 console.log(data);
                 
-            //키값 넣어주기
+          
             const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
             for (let i = 0; i < days.length; i++) {
                 const day = days[i];
@@ -253,16 +261,19 @@ addMarkersAndLinesByDay() {
         
     },
     mounted() {
-        const self = this;
-        // 지도 생성
+    const self = this;
+    self.$nextTick(() => {
         self.container = document.getElementById('map');
         self.map = new kakao.maps.Map(self.container, self.options);
         self.fninfo();
-      
-    }
+
+        // 혹시 창 크기 변경 시 지도 재정렬
+        window.addEventListener("resize", () => {
+            self.map.relayout();
+        });
+    });
+}
 });
 
 app.mount('#app');
 </script>
-</body>
-</html>
