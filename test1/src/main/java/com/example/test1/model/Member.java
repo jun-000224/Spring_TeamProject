@@ -16,4 +16,5 @@ public class Member {
 	private String subgrade;
 	private String gender;
 	private int cnt;
+	private String endSubs;
 }
