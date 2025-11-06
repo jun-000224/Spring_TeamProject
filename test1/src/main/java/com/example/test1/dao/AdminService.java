@@ -87,6 +87,15 @@ public class AdminService {
     public void updatePost(MainBoard post) {
         adminMapper.updatePost(post);
     }
+    // 신고된 게시글 번호
+    public HashMap<String, Object> getBoardDetail(String boardNo) {
+        return adminMapper.selectBoardDetail(boardNo);
+    }
+
+    public List<MainBoard> selectByBoardNo(String boardNo) {
+        return adminMapper.selectCommentsByBoardNo(boardNo);
+    }
+
     
 
 }

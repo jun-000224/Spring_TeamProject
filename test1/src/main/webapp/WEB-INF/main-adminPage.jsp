@@ -24,7 +24,7 @@
                 padding: 10px;
                 border-radius: 6px;
             }
- 
+
             .tab-buttons button {
                 margin-right: 10px;
                 padding: 8px 16px;
@@ -306,16 +306,15 @@
             }
 
             .report-detail {
-                margin-top: 20px;
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
+                margin: 20px auto;
+                padding: 20px;
+                max-width: 600px;
+                text-align: center;
                 background-color: #f9f9f9;
-                width: 80%;
-                margin-left: auto;
-                margin-right: auto;
-                text-align: left;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
+
 
             .filter-wrapper {
                 margin-bottom: 15px;
@@ -372,6 +371,52 @@
                 outline: none;
                 cursor: pointer;
                 accent-color: #007bff;
+            }
+
+            .no-comments {
+                color: #888;
+                font-style: italic;
+                margin-left: 10px;
+            }
+
+            .comment-list {
+                list-style: none;
+                padding: 16px;
+                margin: 0;
+                background-color: #fefefe;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .comment-item {
+                margin-bottom: 18px;
+            }
+
+            .comment-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .comment-nickname {
+                font-size: 17px;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 4px;
+            }
+
+            .comment-text {
+                font-size: 18px;
+                color: #333;
+                line-height: 1.6;
+                padding-left: 10px;
+            }
+
+            .no-comments {
+                padding: 12px;
+                font-size: 16px;
+                font-style: italic;
+                color: #888;
+                text-align: center;
             }
         </style>
     </head>
@@ -530,21 +575,50 @@
                             </tr>
                             <tr v-for="report in getFilteredReports()" :key="report.REPORTNUM">
                                 <td>{{ report.REPORTNUM }}</td>
-                                <td>{{ report.BOARDNO || '-' }}</td>
+                                <td>
+                                    <span class="clickable" @click="selectBoard(report.BOARDNO)">
+                                        {{ report.BOARDNO || '-' }}
+                                    </span>
+                                </td>
+
                                 <td>{{ convertReportType(report.REPORT_TYPE) }}</td>
                                 <td>
                                     <span class="clickable" @click="selectReport(report)">
-                                        {{ report.USER_ID }}
+                                        {{ report.reported_user_id }}
                                     </span>
                                 </td>
                                 <td>{{ report.COMMENTNO || '-' }}</td>
                             </tr>
                         </table>
+                        <div v-if="selectedBoard" class="board-detail">
+                            <h5>📝 게시글 상세 정보</h5>
+                            <p><strong>제목:</strong> {{ selectedBoard.TITLE }}</p>
+                            <p><strong>내용:</strong> {{ selectedBoard.CONTENTS }}</p>
 
-                        <!-- 클릭 시 상세 내용 표시 -->
+                            <h3>💬 댓글 목록</h3>
+                            <ul v-if="boardComments && boardComments.length > 0" class="comment-list">
+                                
+                                <li v-for="comment in boardComments" :key="comment.COMMENTNO" class="comment-item">
+                                    <div class="comment-content">
+                                        <div class="comment-nickname">{{ comment.userId }}</div>
+                                        <div class="comment-text">{{ comment.contents }}</div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <p v-else class="no-comments">댓글이 없습니다.</p>
+
+
+                            <button class="action-button" @click="selectedBoard = null; boardComments = []">닫기</button>
+                        </div>
+
+
+
+                        <!-- 신고내용 상세 내용 표시 -->
                         <div v-if="selectedReport" class="report-detail">
                             <h5>📌 신고 상세 정보</h5>
-                            <p><strong>신고자:</strong> {{ selectedReport.USER_ID }}</p>
+                            <p><strong>신고자 ID:</strong> {{ selectedReport.reported_user_id }}</p>
+                            <p><strong>닉네임:</strong> {{ selectedReport.reported_nickname }}</p>
+                            <p><strong>상태:</strong> {{ selectedReport.reported_status }}</p>
                             <p><strong>신고내용:</strong> {{ selectedReport.CONTENT }}</p>
                             <button class="action-button" @click="selectedReport = null">닫기</button>
                         </div>
@@ -616,13 +690,35 @@
                         reportTypeFilter: '', //신고 유형 필터
                         reportDisplayLimit: 5,  // 게시글 갯수 카운터
                         replyStatusFilter: '', // '완료', '미작성', ''(전체)
-                        inquiryDisplayLimit: 5 // 문의게시판 갯수 카운터
+                        inquiryDisplayLimit: 5, // 문의게시판 갯수 카운터
+                        selectedBoard: null,
+                        boardComments: [],
                     };
                 },
                 mounted() {
                     this.fetchInquiries();
                 },
                 methods: {
+
+                    selectBoard(boardNo) {
+                        $.ajax({
+                            url: "/board-detail.dox",
+                            type: "POST",
+                            dataType: "json",
+                            data: { boardNo: boardNo },
+                            success: (res) => {
+                                console.log("댓글 응답:", res.comments);
+                                this.selectedBoard = res.board;
+                                this.boardComments = res.comments || [];
+                                this.selectedReport = null; // 신고 상세 닫기
+                            },
+                            error: () => {
+                                alert("게시글 상세 정보를 불러오지 못했습니다.");
+                            }
+                        });
+
+                    },
+
                     switchTab(tabName) {
                         this.reportTab = tabName;
 
@@ -776,7 +872,7 @@
                     fetchBadUsers() {
                         let self = this;
                         $.ajax({
-                            url: "/bad-users.dox", 
+                            url: "/bad-users.dox",
                             type: "GET",
                             dataType: "json",
                             success: function (res) {
@@ -841,6 +937,9 @@
                             dataType: "json",
                             success: (res) => {
                                 this.reportList = res.reportList;
+                                this.reportList.forEach((r, i) => {
+                                    console.log(`신고 ${i}번 → 신고자:`, r.report_user_id || r.REPORT_USER_ID);
+                                });
                             },
                             error: () => {
                                 alert("신고 목록을 불러오지 못했습니다.");

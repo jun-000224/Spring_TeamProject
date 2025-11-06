@@ -47,8 +47,8 @@
 	        ORG_CMTNO,
 	        CONTENTS,
 	        ADOPT,
-	        TO_CHAR(CDATETIME, 'YYYY-MM-DD HH24:MI') AS CDATETIME,  <!-- ✅ 날짜 포맷 -->
-	        TO_CHAR(UDATETIME, 'YYYY-MM-DD HH24:MI') AS UDATETIME,  <!-- ✅ 날짜 포맷 -->
+	        TO_CHAR(CDATETIME, 'YYYY-MM-DD HH24:MI') AS CDATETIME,
+	        TO_CHAR(UDATETIME, 'YYYY-MM-DD HH24:MI') AS UDATETIME,  
 	        NICKNAME
 	    FROM TBL_COMMENT
 	    WHERE BOARDNO = #{boardNo}
@@ -80,18 +80,23 @@
 	    WHERE USER_ID = #{userId}
 	</update>
 
-
 	<select id="selectReportList" resultType="hashmap">
 	    SELECT 
-	        REPORTNUM,
-	        REPORT_TYPE,
-	        USER_ID,
-	        CONTENT,
-	        BOARDNO,
-	        COMMENTNO
-	    FROM REPORT
-	    ORDER BY REPORTNUM DESC
+	        R.REPORTNUM,
+	        R.REPORT_TYPE,
+	        R.REPORTED_USER_ID,
+	        R.CONTENT,
+	        R.BOARDNO,
+	        R.COMMENTNO,
+	        U.NICKNAME AS REPORTED_NICKNAME,  -- ✅ 유저 닉네임 추가
+	        U.STATUS AS REPORTED_STATUS       -- ✅ 유저 상태 추가 (선택)
+	    FROM REPORT R
+	    LEFT JOIN USERS U ON R.REPORTED_USER_ID = U.USER_ID
+	    ORDER BY R.REPORTNUM DESC
 	</select>
+
+
+
 
     <!-- 내 게시글 조회 -->
 	<select id="selectMyPosts" resultType="hashMap">
@@ -159,5 +164,35 @@
 	        UDATETIME = SYSDATE
 	    WHERE BOARDNO = #{boardNo}
 	</update>
+
+	<!--신고된 게시글 번호-->
+	<select id="selectBoardDetail" resultType="hashmap">
+	    SELECT 
+	        BOARDNO,
+	        TITLE,
+	        TO_CHAR(CONTENTS) AS CONTENTS, 
+	        USER_ID,
+	        CDATETIME,
+	        TYPE,
+	        CNT,
+	        FAV
+	    FROM TBL_BOARD
+	    WHERE BOARDNO = #{boardNo}
+	</select>
+
+	<select id="selectByBoardNo" resultType="com.example.test1.model.MainBoard">
+	    SELECT 
+	        C.COMMENTNO,
+	        C.BOARDNO,
+	        C.USER_ID,
+	        C.CONTENTS,
+	        C.CDATETIME,
+	        U.NICKNAME
+	    FROM TBL_COMMENT C
+	    LEFT JOIN USERS U ON C.USER_ID = U.USER_ID
+	    WHERE C.BOARDNO = #{boardNo}
+	    ORDER BY C.CDATETIME ASC
+	</select>
+
 
 </mapper>
