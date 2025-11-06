@@ -69,6 +69,12 @@ public class BoardController {
         return "/board-report";
     }
 	
+	@RequestMapping("/wishlist.do") 
+    public String wishlistList(Model model) throws Exception{ 
+
+        return "/wish-list";
+    }
+	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String boardList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
@@ -244,11 +250,24 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping(value = "/whish-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String getWhishList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.getWhishList(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
 	@RequestMapping(value = "/board-Creport-submit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String comReport(@RequestParam HashMap<String, Object> map) throws Exception {
 	    HashMap<String, Object> resultMap = boardService.reportCom(map);
 	    return new Gson().toJson(resultMap);
 	}
-	
+//	댓글 채택하기 (게시글당 1개)
+	@RequestMapping(value = "/adopt-comment.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String adoptComment(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.adoptComment(map);
+	    return new Gson().toJson(resultMap);
+	}
 }

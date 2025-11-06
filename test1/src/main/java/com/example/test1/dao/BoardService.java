@@ -32,27 +32,41 @@ public class BoardService{
 	}
 	
 	public HashMap<String, Object> getBoard(HashMap<String, Object> map) {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		try {
-			
-			
-			int cnt = boardMapper.updateCnt(map);
-			Board info = boardMapper.selectBoard(map);
-			List<Comment> commentList = boardMapper.selectCommentList(map);
-//			int checkReport = boardMapper.reportCheck(map);
+	    HashMap<String, Object> resultMap = new HashMap<>();
 
-			resultMap.put("info", info); 
-			resultMap.put("commentList", commentList);
-//			resultMap.put("checkReport", checkReport);
-			resultMap.put("result", "success");
-			
-			
-		}catch(Exception e) {
-			resultMap.put("result", "fail");
-			System.out.println(e.getMessage());
-		}
-	return resultMap;
+	    try {
+	        // 1️⃣ 게시글 조회수 증가
+	        boardMapper.updateCnt(map);
+
+	        // 2️⃣ 게시글 정보 + 댓글 목록
+	        Board info = boardMapper.selectBoard(map);
+	        List<Comment> commentList = boardMapper.selectCommentList(map);
+
+	        // 3️⃣ 게시글 신고 여부 확인
+	        int boardReportCheck = boardMapper.reportCheckBoard(map);
+
+	        // 4️⃣ 각 댓글별 신고 여부 확인
+	        for (Comment c : commentList) {
+	            HashMap<String, Object> param = new HashMap<>();
+	            param.put("userId", map.get("userId"));
+	            param.put("commentNo", c.getCommentNo());
+
+	            int commentReportCheck = boardMapper.reportCheckComment(param);
+	            c.setReported(commentReportCheck > 0); // Comment VO에 boolean 필드 reported 추가
+	        }
+
+	        // 5️⃣ 결과 반환
+	        resultMap.put("info", info);
+	        resultMap.put("commentList", commentList);
+	        resultMap.put("boardReportCheck", boardReportCheck > 0);
+	        resultMap.put("result", "success");
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	    }
+
+	    return resultMap;
 	}
 	
 	
@@ -226,6 +240,7 @@ try {
 	        resultMap.put("result", "success");
 	        resultMap.put("info", info);
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        resultMap.put("result", "fail");
 	        resultMap.put("msg", "게시글 신고 오류");
 	    }
@@ -234,17 +249,77 @@ try {
 	
 	public HashMap<String, Object> reportCom(HashMap<String, Object> map) {
 	    HashMap<String, Object> resultMap = new HashMap<>();
+	    System.out.println("댓글 신고 파라미터: " + map);
+
 	    try {
-	        int info = boardMapper.comReport(map);
+	        // 1️⃣ 이미 신고한 적 있는지 확인
+	        int exists = boardMapper.reportCheckComment(map);
+
+	        if (exists > 0) {
+	            // 이미 신고한 경우 → 신고 불가 처리
+	            resultMap.put("result", "fail");
+	            resultMap.put("msg", "이미 신고하신 댓글입니다.");
+	            return resultMap;
+	        }
+
+	        // 2️⃣ 처음 신고하는 경우 → INSERT
+	        boardMapper.comReport(map);
 	        resultMap.put("result", "success");
-	        resultMap.put("info", info);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("result", "fail");
+	        resultMap.put("msg", "댓글 신고 오류");
+	    }
+
+	    return resultMap;
+	}
+	
+	public HashMap<String, Object> getWhishList(HashMap<String, Object> map) {
+	    HashMap<String, Object> resultMap = new HashMap<>();
+	    try {
+	    	List<Board> list = boardMapper.whishList(map);
+	    	int cnt =boardMapper.cntWhishList(map);
+	        resultMap.put("list", list);
+	        resultMap.put("cnt", cnt);
 	    } catch (Exception e) {
 	        resultMap.put("result", "fail");
-	        resultMap.put("msg", "게시글 신고 오류");
 	    }
 	    return resultMap;
 	}
 	
-	
-	
+	public HashMap<String, Object> adoptComment(HashMap<String, Object> map) {
+	    HashMap<String, Object> result = new HashMap<>();
+
+	    try {
+	        // ✅ boardNo를 Integer로 변환 (예외 방지)
+	        if (map.get("boardNo") != null) {
+	            map.put("boardNo", Integer.parseInt(map.get("boardNo").toString()));
+	        }
+
+	        // ✅ 이미 채택된 댓글이 있는지 확인
+	        int alreadyAdopted = boardMapper.checkAlreadyAdopted(map);
+	        if (alreadyAdopted > 0) {
+	            result.put("result", "fail");
+	            result.put("msg", "이미 채택된 댓글이 있습니다.");
+	            return result;
+	        }
+
+	        // ✅ 댓글 채택 처리 (ADOPT = 'T')
+	        boardMapper.updateAdoptStatus(map);
+
+	        // ✅ 포인트 지급
+	        boardMapper.givePoint(map);
+
+	        result.put("result", "success");
+	        result.put("msg", "댓글이 성공적으로 채택되었습니다!");
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("result", "error");
+	        result.put("msg", "오류가 발생했습니다: " + e.getMessage());
+	    }
+
+	    return result;
+	}
 }

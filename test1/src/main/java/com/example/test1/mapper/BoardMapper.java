@@ -22,6 +22,11 @@ public interface BoardMapper {
 	//댓글 목록
 	List<Comment> selectCommentList(HashMap<String , Object> map);
 	
+	//찜리스트
+	List<Board> whishList(HashMap<String , Object> map);
+	
+	//찜게시판리시트 수
+		int cntWhishList(HashMap<String , Object>map);
 	//댓글 등록
 	int insertComment(HashMap<String , Object> map);
 	
@@ -61,13 +66,23 @@ public interface BoardMapper {
 	
 	//답글 채택(포인트 주기)
 	int givePoint(HashMap<String , Object> map);
+	//채택하기 업데이트
+	int updateAdoptStatus(HashMap<String , Object> map);
 	
+	int resetAdoptStatus(HashMap<String , Object> map);
 	//게시글 신고
 	int BoardReport(HashMap<String , Object> map);
 
 	//댓글 신고
 	int comReport(HashMap<String , Object> map);
+	int updateComReport(HashMap<String , Object> map);
+	//신고여부
+	int reportCheckBoard(HashMap<String, Object> map);
+	int reportCheckComment(HashMap<String, Object> map);
 	
 	//신고 버튼 플래그 
 	int reportCheck(HashMap<String , Object> map);
+	
+	//게시글 채택하기 수
+	int checkAlreadyAdopted(HashMap<String , Object>map);
 }

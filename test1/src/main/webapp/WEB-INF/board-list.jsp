@@ -15,73 +15,99 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
-            /* 🔹 전체 필터 영역 박스 */
+            /* 🔹 필터 영역 - 네이버/구글 스타일 */
             .board-filter {
-                width: 90%;
-                margin: 30px auto;
-                background: #f9fbff;
-                border: 1px solid #dbe5f0;
-                border-radius: 10px;
-                box-shadow: 0 4px 10px rgba(0, 120, 255, 0.05);
-                padding: 15px 25px;
+                width: 82.5%;
+                margin: 40px auto 0 auto;
+                /* background: #ffffff; */
+                /* border: 1px solid #e2e8f0; */
+                /* border-radius: 12px; */
+                padding: 20px 25px;
+                /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
                 display: flex;
                 flex-direction: column;
-                gap: 12px;
+                gap: 14px;
                 
             }
 
-            /* 🔹 각 행 정렬 */
-            .filter-row {
+            /* 🔹 검색바 상단 */
+            .filter-row:first-child {
                 display: flex;
-                flex-wrap: wrap;
                 align-items: center;
-                justify-content: flex-start;
                 gap: 10px;
-
+                position: relative;
             }
 
-            /* 🔹 공통 select/input/button 스타일 */
-            .board-filter select,
-            .board-filter input,
-            .board-filter button {
-                border: 1px solid #c9d6e3;
-                border-radius: 6px;
-                padding: 7px 10px;
-                font-size: 14px;
+            /* 🔹 검색 input */
+            .board-filter input {
+                width: 400px;
+                padding: 12px 45px 12px 16px;
+                border: 1px solid #d0d7e2;
+                border-radius: 50px;
+                background-color: #f9fafb;
+                font-size: 15px;
+                transition: all 0.25s ease;
+            }
+
+            .board-filter input:focus {
                 background-color: #fff;
+                border-color: #0078ff;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.3);
+                outline: none;
+            }
+
+            /* 🔹 돋보기 아이콘 효과 (가짜) */
+            .filter-row:first-child::before {
+                position: absolute;
+                right: 18px;
+                font-size: 18px;
+                color: #7a7a7a;
+            }
+
+            /* 🔹 셀렉트 및 버튼 */
+            .board-filter select,
+            .board-filter button {
+                border-radius: 8px;
+                border: 1px solid #d0d7e2;
+                background-color: #ffffff;
                 color: #333;
+                padding: 8px 12px;
+                font-size: 14px;
                 transition: all 0.2s ease;
             }
 
-            .board-filter select:focus,
-            .board-filter input:focus {
-                outline: none;
-                border-color: #0078FF;
-                box-shadow: 0 0 5px rgba(0, 120, 255, 0.2);
-            }
-
-            /* 🔹 검색창 크기 조절 */
-            .board-filter input {
-                width: 220px;
-                
+            .board-filter select:hover,
+            .board-filter button:hover {
+                border-color: #0078ff;
             }
 
             /* 🔹 검색 버튼 */
             .board-filter button {
-                background-color: #0078FF;
-                color: #fff;
-                border: none;
-                cursor: pointer;
-                padding: 7px 16px;
+                background-color: #0078ff;
+                color: white;
                 font-weight: 500;
+                padding: 8px 20px;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 18px;
             }
 
             .board-filter button:hover {
-                background-color: #005FCC;
-                transform: translateY(-1px);
+                background-color: #005fcc;
+                box-shadow: 0 2px 6px rgba(0, 120, 255, 0.2);
             }
 
-            /* 반응형: 모바일에서 자동 줄바꿈 */
+            /* 🔹 아래 필터 줄 */
+            .filter-row:last-child {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            /* 반응형 */
             @media (max-width: 768px) {
                 .board-filter {
                     width: 95%;
@@ -96,7 +122,12 @@
                 .board-filter input {
                     width: 100%;
                 }
+
+                .board-filter button {
+                    width: 100%;
+                }
             }
+
             /* 검색영역 */
             /* 📘 게시판 전체 영역 */
             #app>div {
@@ -138,13 +169,14 @@
                 margin: 50px 0 20px 20px;
                 /* 살짝 여백 추가 */
                 flex-wrap: wrap;
+                
             }
 
             /* 📙 셀렉트, 인풋, 버튼 스타일 */
             .board-top-controls select,
             .board-top-controls input,
             .board-top-controls button {
-                border: 1px solid #ccc;
+                border: 1px solid #ffffff;
                 border-radius: 6px;
                 padding: 7px 10px;
                 font-size: 14px;
@@ -183,6 +215,7 @@
                 text-align: center;
                 font-weight: bold;
                 margin: auto;
+
             }
 
             th {
@@ -190,13 +223,13 @@
                 color: white;
                 padding: 12px 10px;
                 font-weight: bold;
-                font-size: 15px;
+                font-size: 18px;
             }
 
             td {
                 padding: 12px 10px;
                 border-bottom: 1px solid #eee;
-                font-size: 14px;
+                font-size: 18px;
                 color: #333;
             }
 
@@ -254,6 +287,8 @@
                 color: #000000;
                 font-weight: bold;
                 padding: 5px 10px;
+                font-size: 18px;
+
             }
 
             a[href="javascript:;"]:hover {
@@ -266,8 +301,9 @@
                 /* 버튼을 오른쪽으로 정렬 */
                 margin-top: 25px;
                 /* 버튼과 테이블 사이의 간격 */
-                padding-right: 5%;
+                padding-left: 80%;
                 /* 전체 width 100% 기준으로 테이블과 같은 수준으로 오른쪽 여백 적용 (테이블이 90% width를 사용하는 경우 필요에 따라 조정) */
+               
             }
 
             /* 📗 글쓰기 버튼 스타일 (기존 스타일에서 가져옴) */
@@ -277,11 +313,12 @@
                 border: none;
                 border-radius: 8px;
                 padding: 10px 18px;
-                font-size: 14px;
+                font-size: 18px;
                 cursor: pointer;
                 transition: background-color 0.2s;
                 margin-right: 1300px;
-                margin-top: 10px;
+                margin-top: 20px;
+                
             }
 
             .write-button-area button:hover {
@@ -294,7 +331,7 @@
                 border: none;
                 border-radius: 8px;
                 padding: 10px 18px;
-                font-size: 14px;
+                font-size: 18px;
                 cursor: pointer;
                 transition: background-color 0.2s;
             }
@@ -302,8 +339,6 @@
             #app>div:last-of-type button:hover {
                 background-color: #008f5a;
             }
-            
-           
         </style>
     </head>
 
@@ -398,6 +433,9 @@
 
             </div>
 
+              <div class="write-button-area">
+                <a href="board-add.do"><button>글쓰기</button></a>
+            </div>
             <table>
                 <tr>
                     <th>번호</th>
@@ -414,7 +452,7 @@
                     <td>{{item.boardNo}}</td>
                     <td>{{item.userId}}</td>
                     <td>
-                        <a href="javascript:;" >{{item.title}}</a>
+                        <a href="javascript:;">{{item.title}}</a>
                         <span v-if="item.commentCnt != 0" style="color:red;"> [{{item.commentCnt}}]</span>
                     </td>
                     <td> {{item.fav}}</td>
@@ -425,9 +463,7 @@
                 </tr>
 
             </table>
-            <div class="write-button-area">
-                <a href="board-add.do"><button>글쓰기</button></a>
-            </div>
+          
 
 
             <div>
@@ -527,13 +563,15 @@
                         page: (self.page - 1) * self.pageSize,
 
                     };
+                    console.log(param);
+                    console.log("type 값 확인:", "'" + self.type + "'");
                     $.ajax({
                         url: "board-list.dox",
                         dataType: "json",
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            console.log(data);
+                            console.log(data.list); //자유,질문 게시판의 list가 안넘어옴
                             self.list = data.list;
                             self.index = Math.ceil(data.cnt / self.pageSize);
                         }
@@ -562,7 +600,7 @@
                     alert("로그인 후 이용해 주세요");
                     location.href = "/member/login.do";
                 }
-                
+
                 self.fnList();
             }
         });
