@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Comment {
 	private String commentNo;
-	private String boardNo;
+	private int boardNo;
 	private String userId;
 	private String orgCmtNo;
 	private String contents;
@@ -13,5 +13,5 @@ public class Comment {
 	private String cdateTime;
 	private String udateTime;
 	private String nickName;
-	
+	private boolean reported;
 }

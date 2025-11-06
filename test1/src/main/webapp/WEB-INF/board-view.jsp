@@ -15,348 +15,255 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
-            /* 📘 게시글 상세보기 테이블 */
-            table {
-                width: 80%;
-                margin: 30px auto;
-                border-collapse: collapse;
-                background: #fff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                border-radius: 10px;
-                overflow: hidden;
+            /* 🎨 기본 설정 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f8f9fb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
 
-            }
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 
-            /* 게시글 테이블 헤더 (제목, 작성자, 조회수, 내용) */
-            table:not(#comment):not(#input) th {
-                background-color: #0078FF;
-                /* 메인 색상 */
-                color: white;
-                font-weight: bold;
-                padding: 15px;
-                font-size: 16px;
-                text-align: center;
-                width: 15%;
-                /* 헤더 너비 조정 */
-                border: none;
-            }
+/* ===========================
+   📘 게시글 상세보기 테이블
+=========================== */
+table:not(#comment):not(#input) th {
+    background-color: #0078FF;
+    color: #fff;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    width: 15%;
+}
 
-            /* 게시글 테이블 데이터 */
-            table:not(#comment):not(#input) td {
-                padding: 15px 20px;
-                border-bottom: 1px solid #e0e0e0;
-                font-size: 15px;
-                text-align: center;
-                font-weight: bold;
-                vertical-align: top;
-                font-weight: auto;
+table:not(#comment):not(#input) td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 15px;
+    text-align: center;
+    vertical-align: top;
+}
 
-            }
+table:not(#comment):not(#input) td div {
+    min-height: 100px;
+    margin-top: 30px;
+    line-height: 1.6;
+}
 
-            /* 제목과 내용이 들어가는 두 번째 칸 센터 */
-            table:not(#comment):not(#input) tr:first-child td,
-            table:not(#comment):not(#input) tr:nth-last-child(2) td {
-                text-align: center;
-                font-weight: bold;
+/* 📎 게시글 수정/삭제 버튼 */
+.post-actions {
+    width: 80%;
+    margin: 0 auto 30px auto;
+    text-align: right;
+}
 
+/* ===========================
+   📗 버튼 공통 스타일
+=========================== */
+button {
+    background-color: #0078FF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 8px;
+}
 
-            }
+button:hover {
+    background-color: #005FCC;
+}
 
-            /* 내용 표시 영역 (v-html 사용) */
-            table:not(#comment):not(#input) td div {
-                min-height: 100px;
-                /* 내용 영역 최소 높이 확보 */
-                line-height: 1.6;
-                margin-top: 50px;
-            }
+/* 개별 버튼 색상 */
+button.delete-btn {
+    background-color: #d63b3b;
+}
 
-            /* 버튼 영역 감싸는 div (게시글 수정/삭제) */
-            .post-actions {
-                width: 80%;
-                margin: 0px auto 30px auto;
-                text-align: left;
-                /* 버튼을 오른쪽으로 배치 */
+button.edit-btn {
+    background-color: #00a769;
+}
 
-            }
-            
-            /* 버튼 스타일 통일 */
-            button {
-                background-color: #0078FF;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 10px 18px;
-                font-size: 14px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background-color 0.2s;
-                margin-left: 10px;
-                /* 버튼 간격 추가 */
-            }
+button.btn-success {
+    background-color: #28a745;
+}
 
-            button:hover {
-                background-color: #005FCC;
-            }
+button.btn-success:hover {
+    background-color: #218838;
+}
 
-            /* 📗 삭제, 수정 버튼 따로 색 지정 */
-            button.delete-btn {
-                background-color: #d63b3b;
-                margin-left: 1390px;
-            }
-            
+/* ===========================
+   📙 댓글 목록
+=========================== */
+#comment {
+    width: 80%;
+    max-width: 900px;
+    margin: 40px auto 20px;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
+#comment tr {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
 
+#comment tr:hover {
+    background-color: #f4f9ff;
+}
 
-            button.edit-btn {
-                background-color: #00a769;
-            }
+#comment th,
+#comment td {
+    padding: 12px;
+    font-size: 15px;
+    text-align: center;
+    color: #333;
+}
 
+#comment th:nth-child(1) {
+    width: 120px;
+    font-weight: bold;
+}
 
+#comment th:nth-child(2) {
+    flex-grow: 1;
+    text-align: left;
+    padding: 12px 20px;
+}
 
-            /* 📙 댓글 목록 (개선된 스타일) */
-            #comment {
-                width: 80%;
-                /* 게시글 테이블과 너비 통일 */
-                max-width: 900px;
-                /* 최대 너비 설정 */
-                margin: 40px auto 20px auto;
-                /* 중앙 정렬 */
-                border-collapse: collapse;
-                background: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-                overflow: hidden;
-            }
+#comment td button {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 13px;
+}
 
-            /* 댓글 목록의 행 (tr) - flex로 레이아웃 관리 */
-            #comment tr {
-                display: flex;
-                align-items: center;
-                /* 세로 중앙 정렬 */
-                border-bottom: 1px solid #eee;
-                transition: background-color 0.2s;
-            }
+/* 채택 표시 라벨 */
+.adopted-label {
+    color: #28a745;
+    font-weight: bold;
+}
 
-            #comment tr:last-child {
-                border-bottom: none;
-                /* 마지막 줄 하단 선 제거 */
-            }
+/* ===========================
+   📒 댓글 입력 영역
+=========================== */
+#input {
+    width: 80%;
+    background: #f4f9ff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin: 30px auto;
+}
 
-            /* 마우스 호버 효과 */
-            #comment tr:hover {
-                background-color: #f4f9ff;
-            }
+#input th {
+    background-color: #0078FF;
+    color: white;
+    padding: 15px;
+    width: 15%;
+    border-radius: 8px 0 0 8px;
+}
 
-            /* 댓글 셀 (th, td 통합 스타일) */
-            #comment tr th,
-            #comment tr td {
-                padding: 12px;
-                font-size: 18px;
-                color: #333;
-                vertical-align: middle;
-                font-weight: normal;
-                text-align: center;
-                box-sizing: border-box;
-            }
+#input textarea {
+    width: 100%;
+    height: 80px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    resize: none;
+    font-size: 14px;
+}
 
-            /* 1. 작성자 (TH) */
-            #comment tr th:nth-child(1) {
-                width: 150px;
-                /* 작성자 너비 고정 */
-                font-weight: bold;
-                /* 작성자 강조 */
-            }
+#input textarea:focus {
+    outline: none;
+    border-color: #0078FF;
+    box-shadow: 0 0 4px rgba(0, 120, 255, 0.3);
+}
 
-            /* 2. 내용 (TH) */
-            #comment tr th:nth-child(2) {
-                flex-grow: 1;
-                /* 남은 공간 모두 사용 */
-                text-align: left;
-                padding: 12px 20px;
-            }
+/* ===========================
+   📌 모달 (신고창)
+=========================== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-            /* 3. 삭제 버튼 (TD) */
-            #comment tr td:nth-child(1) {
-                width: 60px;
-                /* 버튼 공간 확보 */
-                padding: 12px 5px;
-            }
+.modal_body {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
 
-            /* 4. 수정 버튼 (TD) */
-            #comment tr td:nth-child(2) {
-                width: 60px;
-                /* 버튼 공간 확보 */
-                padding: 12px 5px;
-            }
+.modal textarea {
+    width: 100%;
+    height: 120px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    resize: none;
+}
 
+.modal select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
 
-            /* 댓글 버튼 공통 스타일 */
-            #comment tr button {
-                padding: 5px 8px;
-                font-size: 16px;
-                margin: 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
+/* ===========================
+   📱 반응형
+=========================== */
+@media (max-width: 768px) {
+    table, #comment, #input {
+        width: 95%;
+    }
 
-            /* --- 📱 모바일 환경 최적화 --- */
-            @media (max-width: 768px) {
-                #comment {
-                    width: 95%;
-                    /* 모바일에서 너비 확장 */
-                }
+    #comment tr {
+        flex-wrap: wrap;
+        padding: 10px 0;
+    }
 
-                #comment tr {
-                    flex-wrap: wrap;
-                    /* 요소들을 줄바꿈 허용 */
-                    padding: 10px 0;
-                }
+    #comment th:nth-child(1),
+    #comment td {
+        width: 100%;
+        text-align: left;
+    }
 
-                /* 작성자와 내용 세로 배치 */
-                #comment tr th:nth-child(1) {
-                    /* 작성자 */
-                    width: 30%;
-                    text-align: left;
-                    padding-left: 15px;
-                }
+    #comment button {
+        font-size: 12px;
+        padding: 5px;
+    }
 
-                #comment tr th:nth-child(2) {
-                    /* 내용 */
-                    flex-basis: 100%;
-                    /* 한 줄 전체 사용 */
-                    text-align: left;
-                    order: 3;
-                    /* 내용을 맨 아래로 이동 */
-                }
+    .modal_body {
+        width: 90%;
+    }
+}
 
-                /* 버튼들을 한 줄에 모아서 오른쪽으로 */
-                #comment tr td:nth-child(1),
-                #comment tr td:nth-child(2) {
-                    width: 35%;
-                    /* 버튼 영역을 좀 더 넓게 */
-                    order: 2;
-                    /* 작성자 옆에 배치 */
-                    padding: 5px;
-                }
-
-                #comment tr button {
-                    font-size: 10px;
-                    padding: 5px;
-                }
-            }
-
-            /* 📒 댓글 입력 영역 */
-            #input {
-                width: 30%;
-                margin: 30px 650px;
-                border-collapse: collapse;
-                background: #f4f9ff;
-                border-radius: 10px;
-                padding: 15px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-                display: flex;
-
-            }
-
-            #input th {
-                background-color: #0078FF;
-                color: white;
-                padding: 15px;
-                width: 100px;
-                vertical-align: middle;
-                border-radius: 8px 0 0 8px;
-            }
-
-            #input td:first-of-type {
-                flex-grow: 1;
-                padding: 15px;
-                vertical-align: top;
-            }
-
-            #input td:last-of-type {
-                width: 100px;
-                padding: 15px;
-                vertical-align: bottom;
-            }
-
-            #input textarea {
-                width: 100%;
-                height: 80px;
-                border-radius: 6px;
-                border: 1px solid #ccc;
-                padding: 10px;
-                resize: none;
-                font-family: 'Noto Sans KR', sans-serif;
-                font-size: 14px;
-            }
-
-            #input textarea:focus {
-                outline: none;
-                border-color: #0078FF;
-                box-shadow: 0 0 4px rgba(0, 120, 255, 0.3);
-            }
-
-            #input button {
-                background-color: #0078FF;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 10px 16px;
-                cursor: pointer;
-                height: 40px;
-            }
-
-            #input button:hover {
-                background-color: #005FCC;
-            }
-
-            /* 📌 수평선 */
-            hr {
-                width: 80%;
-                margin: 40px auto;
-                border: 0;
-                height: 1px;
-                background-color: #ddd;
-            }
-
-            footer {
-                margin-top: 30px;
-            }
-
-            .report {
-                margin-left: 1600px;
-                
-            }
-
-            /* 모달 css */
-            .modal {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .modal_body {
-                background: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                width: 300px;
-            }
-
-            .modal textarea {
-                width: 300px;
-                height: 300px;
-            }
-
-            .modal button {
-                margin-left: 60px;
-
-            }
            
         </style>
     </head>
@@ -437,8 +344,18 @@
 
                 <!-- 게시글 모달 -->
                 <div class="report">
-                    <button @click="fnReport(info.userId)">🚨신고하기</button> 
-                </div>
+  <button 
+    v-if="!boardReportCheck" 
+    @click="fnReport(info.userId)">
+    🚨신고하기
+  </button> 
+  <button 
+    v-else 
+    disabled 
+    style="color: gray; cursor: not-allowed;">
+    ✅ 신고완료
+  </button>
+</div>
 
 
                 <div v-if="reportFlg" class="modal">
@@ -477,69 +394,78 @@
 
             <!-- 댓글 코멘트 -->
             <table id="comment">
-                <tr v-for="item in commentList" :key="item.commentNo">
+            <tr v-for="(item, index) in commentList" :key="item.commentNo">
+                <th>{{ item.userId }}</th>
+                <th>
+                    <span v-if="editIndex !== index">
+                        {{ item.contents }}
+                    </span>
+                    <input v-else type="text" v-model="item.contents">
+                </th>
+                <!-- 삭제 버튼 -->
+                <td v-if="item.userId == userId || status == 'A'">
+                    <button @click="fncRemove(item.commentNo)">삭제</button>
+                </td>
 
+                <!-- 수정 버튼 -->
+                <td v-if="item.userId == userId || status =='A'" >
+                    <button v-if="editIndex !== index" @click="editIndex = index">수정</button>
+                    <button v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
+                </td>
 
+                <!-- 채택 버튼 -->
+                 <td>
+                <div v-if="item.adopt === 'T' && info.type == 'Q '" class="adopted-label">✅ 채택된 댓글</div>
+                <button
+                    v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
+                    @click="fnAdopt(item.commentNo, item.userId)"
+                    class="btn-success">
+                    채택하기
+                </button>
+            </td>
 
+                <!-- 🚨 신고 버튼 -->
+                <td v-if="item.userId != userId">
+  <button
+    v-if="!item.reported && !reportedUsers.includes(item.userId)"
+    @click="fnReport(item.userId, item.commentNo)">
+    🚨 신고하기
+  </button>
+  <button
+    v-else
+    disabled
+    style="color: gray; cursor: not-allowed;">
+    ✅ 신고완료
+  </button>
+</td>
+            </tr>
+        </table>
 
-                    <th>{{item.userId}}</th>
+<!-- ✅ 신고 모달 (테이블 밖으로 이동) -->
+<div v-if="CoReportFlg" class="modal">
+  <div class="modal_body">
+    <h2>신고하기</h2>
+    <p>신고 대상: {{ reportedUserId }}</p>
+    <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
 
-                    <th>
-                        <span v-if="!editFlg">
-                            {{item.contents}}
-                        </span>
-                        <input v-else type="text" v-model="item.contents">
-                    </th>
-
-
-                    <td v-if="item.userId == userId || status == 'A'">
-                        <button @click="fncRemove(item.commentNo)">삭제</button>
-                    </td>
-                    <td v-if="item.userId == userId || status =='A'">
-                        <button v-if="!editFlg" @click="fnflg">수정</button>
-                        <button v-else @click="fncUpdate(item.commentNo,item.contents)">완료</button>
-                    </td>
-
-                    <td v-if="item.userId != userId || status =='A'">
-                        <button @click="fnAdopt(item.commentNo, item.userId)">✅채택하기</button>
-                    </td>
-
-                    <!-- 코멘트 모달 -->
-                    <td v-if="item.userId != userId">
-                        <button @click="fnCReport(item.userId, item.commentNo)"
-                            :disabled="reportedUsers.includes(item.userId)">
-                            {{ reportedUsers.includes(item.userId) ? "신고완료" : "🚨신고하기" }}
-                        </button>
-                        
-                    </td>
-                    <div v-if="CoReportFlg" class="modal">
-                        <div class="modal_body">
-                            <h2>신고하기</h2>
-                            <p>신고 대상: {{ reportedUserId }}</p>
-                            <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
-
-                            <div>● 신고유형 선택</div>
-                            <div>
-                                <select v-model="CreportType">
-                                    <option value="E">오류제보</option>
-                                    <option value="I">불편사항</option>
-                                    <option value="S">사기신고</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button @click="CsubmitReport">제출</button>
-                                <button @click="CcloseReportModal">취소</button>
-                            </div>
-                        </div>
-                    </div>
-                </tr>
-
-
-            </table>
+    <div>● 신고유형 선택</div>
+    <div>
+      <select v-model="CreportType">
+        <option value="E">오류제보</option>
+        <option value="I">불편사항</option>
+        <option value="S">사기신고</option>
+      </select>
+    </div>
+    <div>
+      <button @click="CsubmitReport">제출</button>
+      <button @click="CcloseReportModal">취소</button>
+    </div>
+  </div>
+</div>
 
             <!-- 댓글 작성 -->
             <table id="input">
-                <th>댓글 입력</th>
+                <th>댓글</th>
                 <td>
                     <textarea cols="40" rows="4" v-model="contents" @keyup.enter="fnSave"></textarea>
                 </td>
@@ -614,6 +540,7 @@
                     boardNo: "${boardNo}",
                     userId: "${sessionId}",
                     contents: "",
+                    editIndex:-1,
                     commentList: [],
                     commentNo: "${commentNo}",
                     type: "",
@@ -632,7 +559,8 @@
                     comReason: "",          // 신고 사유,
                     CreportType: "E",
 
-                    
+                    adoptedExists: false,
+                    boardReportCheck: false,      // 게시글 신고 여부
                 };
             },
             methods: {
@@ -657,7 +585,12 @@
 
                             self.info = data.info;
                             self.commentList = data.commentList;
-
+                            self.commentList = data.commentList.map(c => ({
+                                ...c,
+                                reported: c.reported === true // boolean으로 변환
+                            }));
+                            self.adoptedExists = self.commentList.some(c => c.adopt === 'T')
+                             self.boardReportCheck = data.boardReportCheck;
                             console.log(self.commentList);
                         }
                     });
@@ -766,6 +699,7 @@
                         data: param,
                         success: function (data) {
                             self.fnInfo();
+                            self.editIndex = -1;
                             self.editFlg = false;
                         }
                     });
@@ -773,41 +707,29 @@
                 },
 
 
-                fnAdopt: function (commentNo, userId) {
-                    console.log("채택된 댓글 번호:", commentNo);
-                    console.log("채택 대상 userId:", userId);
-
-                    let self=this;
-                    let param = {
-                        userId: userId,  // 채택될 사람의 userId
-                    };
-
-                    $.ajax({
-                        url: "/board-adopt.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            console.log(data);
-
-                            if (confirm("정말로 채택하시겠습니까?")) {
-                                if (data.result === "success") {
-                                    alert("상대방에게 100pt가 지급되었습니다!");
-                                    self.fnInfo();
-                                } else {
-                                    alert("오류가 발생했습니다");
-                                }
-                            }
-                        }
-                    });
-                },
+                fnAdopt(commentNo, commentUserId) {
+  const self = this;
+  $.ajax({
+    url: "adopt-comment.dox",
+    type: "POST",
+    dataType: "json",
+    data: { boardNo: self.boardNo, commentNo, userId: commentUserId },
+    success(data) {
+      if (data.result === "success") {
+        alert("채택 완료!");
+        self.fnInfo(); // ✅ 목록 다시 불러와 adoptedExists 갱신
+      } else {
+        alert(data.msg || "오류 발생");
+      }
+    }
+  });
+},
 
                 //게시글 모달
-                fnReport(reportedUserId, currentUserId) {
+                fnReport(reportedUserId) {
                     let self=this;
                     self.reportedUserId = reportedUserId;   // 신고 대상 지정
                     self.reportFlg = true;  // 모달 열기
-                    self.currentUserId = self.sessionId;
                 },
                 closeReportModal() {
                     let self=this;
@@ -834,6 +756,7 @@
                             if (confirm("정말 신고하시겠습니까?")) {
                                 if (data.result == "success") {
                                     alert("신고가 접수되었습니다.");
+                                    self.fnInfo();
                                     self.closeReportModal();
                                 } else {
                                     alert("오류가 발생하였습니다.");
@@ -844,57 +767,69 @@
                 },
 
                 // 코멘트 모달
-                fnCReport(reportedUserId, commentNo, currentUserId) {
-                    let self=this;
-                    
-                    console.log(reportedUserId);
-                    self.reportedUserId = reportedUserId;   // 신고 대상 지정
-                    self.commentNo = commentNo;
-                    
-                    self.CoReportFlg = true;  // 모달 열기
-                    self.currentUserId = sessionId;
-                },
-                CcloseReportModal() {
-                    let self=this;
-                    self.CoReportFlg = false; // 모달 닫기
-                    self.comReason = "";       // 신고이유
-                },
-                CsubmitReport() {
-                    let self = this;
-                    const param = {
-                        CreportType: self.CreportType,
-                        reportedUserId: self.reportedUserId,
-                        comReason: self.comReason,
-                        commentNo: self.commentNo,
-                        currentUserId : self.currentUserId
-                    };
-                    // Ajax로 서버에 신고 정보 전송
-                    $.ajax({
-                        url: "/board-Creport-submit.dox",
-                        type: "POST",
-                        data: param,
-                        dataType: "json",
-                        success: (data) => {
-                            console.log(self.CreportType, self.reportedUserId, self.comReason, self.commentNo, self.currentUserId);
-                            if (confirm("정말 신고하시겠습니까?")) {
-                                //만약 reportedUsers에 해당하는 userId가 있으면 신고가 안되게 하고 만약 없으면 신고가 접수되게
-                                if (data.result == "success") {
-                                    alert("신고가 접수되었습니다.");
+                fnCReport(reportedUserId, commentNo) {
+    this.reportedUserId = reportedUserId; // 신고 대상
+    this.commentNo = commentNo;
+    this.CoReportFlg = true; // 모달 열기
+},
 
-                                    //신고한 유저 ID를 reportedUsers 배열에 추가
-                                    if (!self.reportedUsers.includes(self.reportedUserId)) {
-                                        self.reportedUsers.push(self.reportedUserId);
-                                        console.log(self.reportedUsers);
-                                    }
+CcloseReportModal() {
+    this.CoReportFlg = false;
+    this.comReason = "";
+},
 
-                                    self.CcloseReportModal();
-                                } else {
-                                    alert("오류가 발생하였습니다.");
-                                }
-                            }
-                        }
-                    });
-                }
+CsubmitReport() {
+    const self = this;
+
+    if (self.reportedUsers.includes(self.reportedUserId)) {
+        alert("이미 신고한 사용자입니다.");
+        self.CcloseReportModal();
+        return;
+    }
+
+    if (!self.comReason) {
+        alert("신고 사유를 입력해주세요.");
+        return;
+    }
+
+    if (!confirm("정말 신고하시겠습니까?")) return;
+
+    const param = {
+        CreportType: self.CreportType,
+        reportedUserId: self.reportedUserId,
+        comReason: self.comReason,
+        commentNo: self.commentNo,
+        userId: self.currentUserId
+    };
+
+    $.ajax({
+        url: "/board-Creport-submit.dox",
+        type: "POST",
+        data: param,
+        dataType: "json",
+        success: (data) => {
+            if (data.result === "success") {
+                alert("신고가 접수되었습니다.");
+
+                // 신고한 유저 ID를 reportedUsers 배열에 추가
+                self.reportedUsers.push(self.reportedUserId);
+
+                // 모달 닫기 및 목록 갱신
+                self.CcloseReportModal();
+                self.fnInfo();
+            } else if (data.result === "duplicate") {
+                alert("이미 신고하신 댓글입니다.");
+                self.reportedUsers.push(self.reportedUserId);
+                self.CcloseReportModal();
+            } else {
+                alert("오류가 발생하였습니다.");
+            }
+        },
+        error: () => {
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+    });
+}
 
 
             }, // methods

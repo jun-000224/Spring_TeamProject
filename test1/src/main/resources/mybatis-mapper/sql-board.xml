@@ -85,7 +85,7 @@
 		WHERE BOARDNO = #{boardNo}
 	</select>
 	
-	<select id="selectCommentList" parameterType="hashmap" resultType="com.example.test1.model.Board">
+	<select id="selectCommentList" parameterType="hashmap" resultType="com.example.test1.model.Comment">
 		SELECT C.*, C.NICKNAME
 		FROM TBL_BOARD B
 		INNER JOIN TBL_COMMENT C ON B.BOARDNO = C.BOARDNO
@@ -154,11 +154,33 @@
     FROM TBL_COMMENT
     WHERE COMMENTNO = #{commentNo}
 	</select>
-	
+	<!--채택하기-->
 	<insert id="givePoint" parameterType="hashmap">
 	INSERT INTO POINT
-	VALUES(#{userId}, 100, 100, NULL, SYSDATE)
+	VALUES(#{userId},NVL((
+        SELECT POINT_TOTAL + POINT_GET - NVL(POINT_OUT, 0)
+        FROM POINT
+        WHERE USER_ID = #{userId}
+          AND POINT_DATE = (
+              SELECT MAX(POINT_DATE)
+              FROM POINT
+              WHERE USER_ID = #{userId}
+          )
+    ), 0) + 100 , 100, NULL, SYSDATE)
 	</insert>
+	
+	<!-- 댓글 채택 상태 업데이트 -->
+<update id="updateAdoptStatus" parameterType="hashmap">
+    UPDATE TBL_COMMENT
+    SET ADOPT = 'T'
+    WHERE COMMENTNO = #{commentNo}
+</update>
+
+<update id="resetAdoptStatus" parameterType="hashmap">
+    UPDATE TBL_COMMENT
+    SET ADOPT = 'F'
+    WHERE COMMENTNO = #{commentNo}
+</update>
 	
 	<insert id="BoardReport" parameterType="hashmap">
 	INSERT INTO REPORT
@@ -184,6 +206,60 @@
 		WHERE R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
 	
 	</select>
+	
+	<!--신고여부-->
+	<select id="reportCheckBoard" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM REPORT
+    WHERE REPORT_USER_ID = #{userId}
+      AND BOARDNO = #{boardNo}
+</select>
+
+<!-- 댓글 신고 여부 확인 -->
+<select id="reportCheckComment" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM REPORT
+    WHERE COMMENTNO = #{commentNo}
+      AND REPORT_USER_ID = #{userId} 
+</select>
+
+<update id="updateComReport" parameterType="hashmap">
+   UPDATE REPORT
+    SET REPORT_CNT = NVL(REPORT_CNT, 0) + 1
+    WHERE COMMENTNO = #{commentNo}
+      AND REPORTED_USER_ID = #{reportedUserId}
+      AND REPORT_USER_ID = #{userId}
+</update>
+
+<insert id="comReport" parameterType="hashmap">
+    INSERT INTO REPORT
+        (REPORTNUM, REPORT_TYPE, REPORTED_USER_ID, CONTENT, BOARDNO, COMMENTNO, REPORT_CNT, REPORT_USER_ID)
+    SELECT REPORT_SEQ.NEXTVAL,
+           #{CreportType},
+           #{reportedUserId},
+           #{comReason},
+           NULL,
+           #{commentNo},
+           1,
+           #{userId}
+    FROM DUAL
+    WHERE NOT EXISTS (
+        SELECT 1 FROM REPORT
+        WHERE COMMENTNO = #{commentNo}
+          AND REPORTED_USER_ID = #{reportedUserId}
+          AND REPORT_USER_ID = #{userId}
+    )
+</insert>
+
+
+<!--게시글 채택하기 수 -->
+<select id="checkAlreadyAdopted" parameterType="int" resultType="int">
+    SELECT COUNT(*)
+    FROM TBL_COMMENT
+    WHERE BOARDNO = #{boardNo}
+      AND ADOPT = 'T'
+</select>
+
 </mapper>
 
 
