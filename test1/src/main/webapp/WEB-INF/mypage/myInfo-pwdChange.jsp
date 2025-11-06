@@ -274,7 +274,7 @@
                 }
 
                 if(self.newPwd != self.newPwd2){
-                    alert("비밀번호가 다릅니다.");
+                    alert("새 비밀번호가 다릅니다.");
                     return;
                 }
                 let param = {

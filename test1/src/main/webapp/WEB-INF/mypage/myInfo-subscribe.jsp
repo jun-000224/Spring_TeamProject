@@ -8,6 +8,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         .field{
             background-color: #0078FF;
@@ -72,7 +74,11 @@
                 
                 <div class="title">
                     <div>
-                        월간 플랜
+                        <span>
+                            월간 플랜
+                            
+                            <i class="fa-solid fa-paper-plane" style="color: skyblue;"></i>
+                        </span>
                     </div>
                     <div class="price">
                         4,900원
@@ -167,7 +173,11 @@
                     success: function (data) {
                         if(data.result=="success"){
                             alert(data.msg);
-                            location.href="/myInfo.do";
+                            if (window.opener && !window.opener.closed) {
+                                window.opener.location.reload();
+                            }
+                            // opener.location.reload();
+                            // location.href="/myInfo.do";
                             window.close();
                         } else {
                             alert(data.msg);

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.test1.mapper.MypageMapper;
 import com.example.test1.model.Mypage;
+import com.example.test1.model.MypageEditBirth;
+import com.example.test1.model.MypageEditEmail;
+import com.example.test1.model.MypageEditPhone;
 
 @Service
 public class MypageService {
@@ -21,8 +24,17 @@ public class MypageService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		
 		Mypage mypage = mypageMapper.mypageInfo(map);
+		
+		MypageEditBirth dataBirth = mypageMapper.editBirth(map);
+		MypageEditPhone dataPhone = mypageMapper.editPhone(map);
+		MypageEditEmail dataEmail = mypageMapper.editEmail(map);
 
 		resultMap.put("info", mypage);
+		
+		resultMap.put("dataBirth", dataBirth);
+		resultMap.put("dataPhone", dataPhone);
+		resultMap.put("dataEmail", dataEmail);
+		
 		resultMap.put("result", "success");
 		
 		return resultMap;
@@ -93,6 +105,7 @@ public class MypageService {
 		try {
 			mypageMapper.updateStatus(map);
 				//오류 나면 catch로 가니 int cnt = 를 생략
+			session.setAttribute("sessionStatus", "S");
 			resultMap.put("msg", "결제가 완료되었습니다.");
 			resultMap.put("result", "success");
 			

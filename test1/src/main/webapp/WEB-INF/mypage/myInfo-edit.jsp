@@ -195,12 +195,37 @@
                         관리자
                     </span>
                 </div>
-                <div class="infoBanner2">
+                <!-- <div class="infoBanner2">
                     생년월일
                     <br>
                     <i class="fa-solid fa-gift"></i>
                     {{info.bdate}}
+                </div> -->
+                <div class="infoBanner2">
+                    생년월일 
+                    <br>
+                    <i class="fa-solid fa-gift" style="margin-right: 5px;"></i>
+                    <select v-model="year">
+                        <option
+                            v-for="y in Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i)"
+                            :key="y"
+                            :value="y"
+                        >
+                            {{ y }}
+                        </option>
+                    </select>
+                    .
+                    <select v-model="month">
+                        <option :value="String(num).padStart(2, '0')" v-for="num in 12">{{ String(num).padStart(2, '0') }}</option>
+                    </select>
+                    .
+                    <select v-model="day">
+                        <option v-if="month%2 == 1" :value="String(num).padStart(2, '0')" v-for="num in 31">{{ String(num).padStart(2, '0') }}</option>
+                        <option v-else-if="month==2" :value="String(num).padStart(2, '0')" v-for="num in 29">{{ String(num).padStart(2, '0') }}</option>
+                        <option v-else :value="String(num).padStart(2, '0')" v-for="num in 30">{{ String(num).padStart(2, '0') }}</option>
+                    </select>
                 </div>
+
                 <div class="infoBanner2">
                     주소
                     <br>
@@ -249,17 +274,20 @@
         data() {
             return {
                 // 변수 - (key : value)
-                sessionId : "${sessionId}",
+                sessionId : window.sessionData.id,
                 info : {},
                 
                 name : "",
                 emailFront : "",
                 emailBack : "abc",
                 addr : "",
-                phone1 : "010",
+                phone1 : "",
                 phone2 : "",
                 phone3 : "",
-                nickname : ""
+                nickname : "",
+                year : "",
+                month : "",
+                day : ""
             };
         },
         methods: {
@@ -281,6 +309,17 @@
                         self.name = data.info.name;
                         self.nickname = data.info.nickname;
                         self.addr = data.info.addr;
+
+                        self.emailFront = data.dataEmail.username;
+                        self.emailBack = data.dataEmail.domain;
+
+                        self.year = data.dataBirth.year;
+                        self.month = data.dataBirth.month;
+                        self.day = data.dataBirth.day;
+
+                        self.phone1 = data.dataPhone.phoneFirst;
+                        self.phone2 = data.dataPhone.phoneSecond;
+                        self.phone3 = data.dataPhone.phoneLast;
                     }
                 });
             },
@@ -352,7 +391,8 @@
                     email : self.emailFront + '@' + self.emailBack,
                     addr : self.addr,
                     phone : self.phone1 + '-' + self.phone2 + '-' + self.phone3,
-                    nickname : self.nickname
+                    nickname : self.nickname,
+                    birth : self.year + self.month + self.day
                 }
                 // console.log(param);
 
@@ -365,7 +405,7 @@
                         console.log(data);
                         if(data.result == "success"){
                             alert(data.msg);
-                            // location.href="/myInfo/detail.do";            
+                            location.href="/myInfo.do";            
                         } else {
                             alert(data.msg);
                         }

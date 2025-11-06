@@ -19,8 +19,8 @@
 	</select>
 	
 	<select id="incdecPoint" parameterType="hashmap" resultType="com.example.test1.model.Point">
-		SELECT *
-		FROM POINT
+		SELECT P.*, TO_CHAR(POINT_DATE, 'YYYY-MM-DD') PDATE
+		FROM POINT P
 		WHERE USER_ID = #{userId}
 		ORDER BY POINT_DATE DESC
 	</select>

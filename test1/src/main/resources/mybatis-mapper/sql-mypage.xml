@@ -4,7 +4,7 @@
 
 <mapper namespace="com.example.test1.mapper.MypageMapper">
 	<select id="mypageInfo" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
-		SELECT U.*, TO_CHAR(BIRTH,'YYYY-MM-DD') BDATE, TO_CHAR(CDATETIME,'YYYY-MM-DD') CDATE, TO_CHAR(UDATETIME,'YYYY-MM-DD') UDATE, TRUNC(SYSDATE - CDATETIME) CDATE2 
+		SELECT U.*, TO_CHAR(BIRTH,'YYYY-MM-DD') BDATE, TO_CHAR(CDATETIME,'YYYY-MM-DD') CDATE, TO_CHAR(UDATETIME,'YYYY-MM-DD') UDATE, TRUNC(SYSDATE - CDATETIME) CDATE2, TRUNC(END_SUBS - SYSDATE, 10) SUBSLEFT 
 		FROM USERS U
 		WHERE USER_ID = #{userId}
 	</select>
@@ -15,6 +15,7 @@
 			NAME = #{name},
 			NICKNAME = #{nickname},
 			PHONE = #{phone},
+			BIRTH = #{birth},
 			ADDR = #{addr},
 			EMAIL = #{email},
 			UDATETIME = SYSDATE
@@ -36,10 +37,59 @@
 	<update id="updateStatus" parameterType="hashmap">
 		UPDATE USERS
 		SET
-			STATUS = 'S'
+			STATUS = 'S',
+			END_SUBS = SYSDATE + 30
 		WHERE USER_ID = #{userId}
 	</update>
 	
+	<select  id="editBirth" parameterType="hashmap" resultType="com.example.test1.model.MypageEditBirth">
+		SELECT 
+			USER_ID,
+		    BIRTH,
+		    TO_CHAR(birth, 'YYYY') AS YEAR,
+		    TO_CHAR(birth, 'MM') AS MONTH,
+		    TO_CHAR(birth, 'DD') AS DAY
+		FROM 
+		    USERS
+	    WHERE USER_ID = #{userId}
+	</select>
+	
+	<select  id="editPhone" parameterType="hashmap" resultType="com.example.test1.model.MypageEditPhone">
+		SELECT 
+			USER_ID,
+		    PHONE,
+		    CASE 
+		        WHEN REGEXP_LIKE(phone, '^\d{3}-\d{4}-\d{4}$') THEN REGEXP_SUBSTR(phone, '^\d{3}')
+		        ELSE '' 
+		    END AS PHONEFIRST,
+		    CASE 
+		        WHEN REGEXP_LIKE(phone, '^\d{3}-\d{4}-\d{4}$') THEN REGEXP_SUBSTR(phone, '-(\d{4})-', 1, 1, NULL, 1) 
+		        ELSE ''
+		    END AS PHONESECOND,
+		    CASE 
+		        WHEN REGEXP_LIKE(phone, '^\d{3}-\d{4}-\d{4}$') THEN REGEXP_SUBSTR(phone, '\d{4}$') 
+		        ELSE ''
+		    END AS PHONELAST
+		FROM USERS
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<select  id="editEmail" parameterType="hashmap" resultType="com.example.test1.model.MypageEditEmail">
+		SELECT 
+			USER_ID,
+		    EMAIL,
+		    CASE 
+		        WHEN REGEXP_LIKE(email, '^[^@]+@[^@]+$') THEN REGEXP_SUBSTR(email, '^[^@]+') 
+		        ELSE ''
+		    END AS USERNAME,
+		    CASE 
+		        WHEN REGEXP_LIKE(email, '^[^@]+@[^@]+$') THEN REGEXP_SUBSTR(email, '[^@]+$') 
+		        ELSE ''
+		    END AS DOMAIN
+		FROM 
+		    USERS
+	    WHERE USER_ID = #{userId}
+	</select>
 </mapper>
 
 
