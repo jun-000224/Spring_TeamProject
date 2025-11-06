@@ -198,11 +198,15 @@
                         <i class="fa-solid fa-user-secret"></i>
                         관리자
                     </span>
+                     {{gradeLabel}}
 
                     <span class="buyBtn" v-if="info.status === 'U'" >
                         <button @click="fnSub">구독하기</button>
                     </span>
-                     {{gradeLabel}}
+                    <span class="buyBtn" v-else>
+                        남은 기간 : 
+                        {{leftTime}}
+                    </span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-gift"></i>
@@ -229,7 +233,7 @@
                 </div>
                 
             </div>
-
+            
             <div class="infoField">
                 <div class="infoBanner">
                     보안설정
@@ -256,6 +260,8 @@
                 // 변수 - (key : value)
                 sessionId : "${sessionId}",
                 info : {},
+                endSub : "",
+                leftTime : "",
 
                 infoFlg : false,
 
@@ -264,7 +270,7 @@
                 nickname: window.sessionData.nickname,
                 name: window.sessionData.name,
                 point: window.sessionData.point,
-                gradeLabel: window.sessionData.gradeLabel,
+                gradeLabel: window.sessionData.gradeLabel
             };
         },
         
@@ -283,6 +289,8 @@
                     success: function (data) {
                         console.log(data);
                         self.info = data.info;
+                        self.endSub = data.info.subsleft
+                        self.fnSubTimeLeft();
                     }
                 });
             },
@@ -333,6 +341,33 @@
                 }, 500);
             },
 
+            fnSubTimeLeft : function () {
+                let self = this;
+                if (!self.endSub) return;
+
+                // console.log(self.endSub);
+
+                let day = Math.floor(self.endSub);
+                // console.log(day);
+                let hour = Math.floor((self.endSub - day)*24);
+                // console.log(hour);
+                let min = Math.floor(((self.endSub - day) * 24 - hour) * 60);
+                // console.log(min);
+                
+
+                if(day<=0){
+                    if(hour<=0){
+                        self.leftTime= Math.max(min,0) + "분";
+                    } else {
+                        self.leftTime=hour + "시간";
+                    }
+                } else {
+                    self.leftTime=day + "일";
+                }
+
+                //추가 보완할 것 : 남은 구독 시간이 0이 됐을 때, sessionStatus 조정되도록 하기
+            },
+
             toggleMenu() {
                 this.infoFlg = !this.infoFlg;
             },
@@ -340,21 +375,21 @@
             toggleLogoutMenu() {
                 this.showLogoutMenu = !this.showLogoutMenu;
             },
-            goToSettings() {
-                location.href = "/myPoint.do";
-            },
+            // goToSettings() {
+            //     location.href = "/myPoint.do";
+            // },
             goToWithdraw() {
                 location.href = "/member/withdraw.do";
             },
-            goToLogin() {
-                location.href = "/member/login.do";
-            },
-            logout() {
-                location.href = "/logout.do";
-            },
-            goToMyPage() {
-                location.href = "/main-myPage.do";
-            },
+            // goToLogin() {
+            //     location.href = "/member/login.do";
+            // },
+            // logout() {
+            //     location.href = "/logout.do";
+            // },
+            // goToMyPage() {
+            //     location.href = "/main-myPage.do";
+            // },
 
             fnPwdCert () { 
                 location.href = "/myInfo/pwdChange.do";

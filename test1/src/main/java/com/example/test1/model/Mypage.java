@@ -19,5 +19,7 @@ public class Mypage {
 	private String udate;
 	
 	private String cdate2;
-	
+
+	private String endSubs;
+	private String subsleft;
 }
