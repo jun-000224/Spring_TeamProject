@@ -16,111 +16,189 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
-            table {
-                width: 80%;
-                margin: 30px auto;
-                border-collapse: collapse;
-                background: #fff;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-                border-radius: 10px;
-                overflow: hidden;
-                text-align: center;
-                font-family: 'Noto Sans KR', sans-serif;
+           /* =========================
+📘 게시글 기본 스타일
+========================= */
+table {
+    width: 80%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    font-family: 'Noto Sans KR', sans-serif;
+}
 
-            }
+th {
+    background-color: #0078FF;
+    color: white;
+    font-weight: 600;
+    padding: 14px;
+    font-size: 16px;
+    width: 140px;
+}
 
-            th {
-                background-color: #0078FF;
-                color: white;
-                font-weight: 600;
-                padding: 14px;
-                font-size: 15px;
-                width: 120px;
-            }
+td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    color: #333;
+    text-align: left;
+}
 
-            td {
-                padding: 15px;
-                border-bottom: 1px solid #eee;
-                font-size: 20px;
-                text-align: center;
-                font-weight: bold;
-            }
+/* 제목 입력 */
+.input-title {
+    font-size: 17px;
+    padding: 8px 12px;
+    width: 95%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
 
-            /* input, textarea 스타일 */
-            input[type="text"],
-            textarea {
-                width: 100%;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-                padding: 10px;
-                font-size: 14px;
-                resize: vertical;
-                font-family: 'Noto Sans KR', sans-serif;
-            }
+/* =========================
+📗 버튼 스타일
+========================= */
+button {
+    background-color: #0078FF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
 
-            input[type="text"]:focus,
-            textarea:focus {
-                outline: none;
-                border-color: #0078FF;
-                box-shadow: 0 0 5px rgba(0, 120, 255, 0.3);
-            }
+button:hover {
+    background-color: #005FCC;
+    transform: translateY(-1px);
+}
 
-            /* 버튼 위치 중앙 정렬 */
-            table+div {
-                text-align: center;
-                margin: 20px auto 40px;
-            }
+.cancel-btn {
+    background-color: #aaa;
+}
 
-            /* 수정 버튼 스타일 */
-            button {
-                background-color: #0078FF;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 10px 30px;
-                font-size: 15px;
-                cursor: pointer;
-                transition: background-color 0.25s ease;
-                margin: 0 5px;
-            }
+.cancel-btn:hover {
+    background-color: #888;
+}
 
-            button:hover {
-                background-color: #005FCC;
-            }
+.button-container {
+    text-align: center;
+    margin: 25px auto 40px;
+}
 
-            /* -------------------- 이전 버튼 스타일 (추가) -------------------- */
-            /* 취소/이전 버튼에 다른 색상 적용 */
-            button.cancel-btn {
-                background-color: #95a5a6;
-                /* 회색 계열 */
-            }
+/* =========================
+💬 댓글 영역
+========================= */
+.comment-section {
+    width: 80%;
+    margin: 60px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    padding: 25px 30px;
+}
 
-            button.cancel-btn:hover {
-                background-color: #7f8c8d;
-            }
+.comment-section h3 {
+    font-size: 22px;
+    color: #0078FF;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #0078FF;
+    display: inline-block;
+    padding-bottom: 5px;
+}
 
-            .button-container {
-                margin-left: 170px;
-            }
+/* 댓글 리스트 */
+#comment-list {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+}
 
+#comment-list tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
 
-            /* ... 기존 스타일 유지 ... */
+#comment-list tr:hover {
+    background: #f9fbff;
+}
 
-            /* 제목 입력 필드 전용 스타일 */
-            .input-title {
-                font-size: 18px;
-                margin-right: 200px;
-                /* 글꼴 크기 키우기 */
+#comment-list td {
+    padding: 12px 10px;
+    font-size: 15px;
+}
 
-                /* 약간 굵게 */
-                color: #333;
-                /* 글꼴 색상 진하게 */
-                height: 20px;
-                width: 96%;
-                /* 높이 설정 */
-                padding: 8px 15px;
-                /* 상하 패딩 조정 */
-            }
+#comment-list .writer {
+    width: 150px;
+    font-weight: 600;
+    color: #0078FF;
+}
+
+#comment-list .content {
+    flex: 1;
+}
+
+#comment-list .date {
+    width: 160px;
+    font-size: 13px;
+    color: #888;
+}
+
+#comment-list .action {
+    width: 80px;
+    text-align: center;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* 댓글 입력 */
+#input-comment {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+#input-comment textarea {
+    flex-grow: 1;
+    height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    resize: none;
+    transition: all 0.2s;
+}
+
+#input-comment textarea:focus {
+    border-color: #0078FF;
+    box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
+}
+
+#input-comment button {
+    background-color: #0078FF;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#input-comment button:hover {
+    background-color: #005FCC;
+}
         </style>
     </head>
 

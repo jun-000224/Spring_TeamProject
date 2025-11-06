@@ -251,7 +251,6 @@
     )
 </insert>
 
-
 <!--게시글 채택하기 수 -->
 <select id="checkAlreadyAdopted" parameterType="int" resultType="int">
     SELECT COUNT(*)
@@ -261,7 +260,3 @@
 </select>
 
 </mapper>
-
-
-
-

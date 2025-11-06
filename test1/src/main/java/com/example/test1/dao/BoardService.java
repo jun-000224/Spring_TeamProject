@@ -322,7 +322,5 @@ try {
 
 	    return result;
 	}
-
-
-	
 }
+

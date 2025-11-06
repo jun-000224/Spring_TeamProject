@@ -85,4 +85,6 @@ public interface BoardMapper {
 	
 	//게시글 채택하기 수
 	int checkAlreadyAdopted(HashMap<String , Object>map);
+
 }
+
