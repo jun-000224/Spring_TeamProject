@@ -24,8 +24,6 @@ public class Attr {
     @Column(name = "FAMILY")    private double family;
     @Column(name = "LUXURY")    private double luxury;
     
-    // 'UNIQUE'는 Oracle 예약어라 컬럼명으로 사용 불가
-    // 'MOOD_UNIQUE'로 변경
     @Column(name = "MOOD_UNIQUE") private double unique;
 
     @Column(name = "ADVENTURE") private double adventure;
@@ -34,6 +32,13 @@ public class Attr {
     @Column(name = "COUPLE")    private double couple;
     @Column(name = "HEALING")   private double healing;
     @Column(name = "QUIET")     private double quiet;
+
+    
+    @Column(name = "MAPX")
+    private Double mapx;
+
+    @Column(name = "MAPY")
+    private Double mapy;
 
     
     public Attr(Long contentId, Integer typeId) {
@@ -51,6 +56,7 @@ public class Attr {
         this.couple = randomScore(rand);
         this.healing = randomScore(rand);
         this.quiet = randomScore(rand);
+        
     }
     
     private double randomScore(Random rand) {

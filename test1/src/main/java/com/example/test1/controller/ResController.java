@@ -4,7 +4,10 @@ import com.example.test1.model.reservation.Poi;
 import com.example.test1.model.reservation.ReservationList;
 import com.example.test1.model.reservation.ReservationRequest; 
 import com.example.test1.dao.ResService;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -23,45 +27,85 @@ public class ResController {
 
     @Autowired
     private ResService resService;
+    
+    private final ObjectMapper objectMapper = new ObjectMapper(); 
+
+    @Value("${kakao_javascript_key}")
+    private String kakaoAppKey; 
+
+    // --- Public Mapping Methods ---
 
     @PostMapping("/api/reservation/save")
     @ResponseBody
     public ResponseEntity<?> saveReservation(@RequestBody ReservationRequest request) {
         try {
-            // 1. DTO에서 DB 저장을 위한 객체로 변환
             ReservationList reservation = createReservationList(request);
             
-            // 🛑 [필수 필드 설정] 모든 NULL 오류 해결 (userId, price, areaNum, themNum)
             reservation.setUserId("999"); 
-            
             Long calculatedPrice = calculateTotalPrice(request); 
             reservation.setPrice(calculatedPrice); 
-            
             setAreaNumFromRequest(reservation, request);
-
             setThemNumFromRequest(reservation, request);
             
-            // DB NOT NULL 제약을 우회하기 위해 packName에 임시 값 설정
             if (reservation.getPackName() == null) {
                 reservation.setPackName("임시 패키지명");
             }
             
-            // 2. POI 목록 준비 (RATING/CONTENT 기본값 설정 포함)
             List<Poi> pois = createPoiList(request);
             
-            // 3. Service 호출 및 저장
             Long resNum = resService.saveNewReservation(reservation, pois);
             
-            // 4. 성공 응답
             return ResponseEntity.ok(Map.of("resNum", resNum, "message", "일정 저장 성공"));
 
         } catch (Exception e) {
-            // 5. 실패 응답
             System.err.println("예약 저장 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
         }
     }
+    
+    /**
+     * 🛑 [수정] 이 AJAX 엔드포인트는 이제 DB에서 모든 정보를 가져오므로 필요 없습니다.
+     * (호환성을 위해 남겨두거나 삭제)
+     */
+    /*
+    @GetMapping("/api/reservation/poi-details") 
+    @ResponseBody
+    public Poi getPoiDetailsForView(@RequestParam("contentId") String contentId) {
+        Poi details = resService.getPoiDetailsByContentId(contentId);
+        if (details != null) {
+            return details;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "POI 상세 정보를 찾을 수 없습니다.");
+        }
+    }
+    */
+
+    /**
+     * 🛑 [수정] 오타 수정: getPoiDetailsByResNum -> getPoisByResNum
+     * 이제 이 메서드는 좌표와 이름을 모두 포함한 poiList를 전달합니다.
+     */
+    @GetMapping("/reservation-view.do")
+    public String reservationView(@RequestParam("resNum") Long resNum, Model model) {
+        
+        List<Poi> pois = resService.getPoisByResNum(resNum); // 🎯 오타 수정
+        ReservationList reservationDetails = resService.getReservationDetails(resNum);
+
+        model.addAttribute("reservation", reservationDetails); 
+        model.addAttribute("kakaoAppKey", kakaoAppKey); 
+        
+        try {
+            String poisJson = objectMapper.writeValueAsString(pois);
+            model.addAttribute("poiListJson", poisJson);
+        } catch (Exception e) {
+            System.err.println("POI 리스트 JSON 변환 실패: " + e.getMessage());
+            model.addAttribute("poiListJson", "[]");
+        }
+        
+        return "reservation-view"; 
+    }
+
+    // --- Private Helper Methods (전체 구현부) ---
 
     private Long calculateTotalPrice(ReservationRequest request) {
         return request.getItinerary().values().stream()
@@ -94,16 +138,11 @@ public class ResController {
 
     private ReservationList createReservationList(ReservationRequest request) {
         ReservationList list = new ReservationList();
-        
         list.setStartDate(request.getStartDate());
         list.setEndDate(request.getEndDate());
-        
         return list;
     }
 
-    /**
-     * POI 객체 생성 시 RATING/CONTENT 필드에 기본값을 설정합니다.
-     */
     private List<Poi> createPoiList(ReservationRequest request) {
         return request.getItinerary().entrySet().stream()
                 .flatMap(entry -> {
@@ -117,8 +156,8 @@ public class ResController {
                             poi.setContentId(dto.getContentId());
                             poi.setTypeId(dto.getTypeId());
                             poi.setReservDate(date); 
+                            poi.setPlaceName(dto.getTitle()); // 🛑 placeName 저장
                             
-                            // 🛑 RATING/CONTENT NULL 오류 방지 및 CLOB 타입 대비 기본값 설정
                             poi.setRating(0);       
                             poi.setContent("");     
                             
@@ -126,17 +165,5 @@ public class ResController {
                         });
                 })
                 .collect(Collectors.toList());
-    }
-
-    @GetMapping("/reservation-view")
-    public String reservationView(@RequestParam("resNum") Long resNum, Model model) {
-        
-        List<Poi> pois = resService.getPoisByResNum(resNum);
-        ReservationList reservationDetails = resService.getReservationDetails(resNum);
-
-        model.addAttribute("reservation", reservationDetails); 
-        model.addAttribute("poiList", pois); 
-        
-        return "reservation-view"; 
     }
 }
