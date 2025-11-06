@@ -38,5 +38,11 @@ public interface AdminMapper {
 	void updateComment(Map<String, Object> map);
 
 	void updatePost(MainBoard post);
+	
+	HashMap<String, Object> selectBoardDetail(String boardNo);
+	List<MainBoard> selectByBoardNo(String boardNo);
+
+	
+
 
 }

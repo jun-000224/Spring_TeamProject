@@ -170,12 +170,6 @@ main {
   box-sizing: border-box;
 }
 
-/* 내부 요소는 너비 100%로 유지 */
-.map-banner-slider,
-.hero-section,
-.map_wrap {
-  width: 100%;
-}
 
 
 

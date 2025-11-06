@@ -12,6 +12,11 @@
         <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
         <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a777d1f63779cfdaa66c4a1d36cc578d&libraries=services"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <link rel="stylesheet" href="/css/main-style.css">
         <link rel="stylesheet" href="/css/common-style.css">
@@ -192,13 +197,18 @@
                 <div class="content-wrapper">
                     <!-- 배너 슬라이더 -->
                     <div class="map-banner-slider">
-                        <div class="slider-track" id="sliderTrack">
-                            <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
-                            <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
-                            <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
-                            <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
-                            <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
+                        <div class="slider-mask">
+                            <div class="slider-track" id="sliderTrack">
+                                <a href="main-list.do" target="_blank"><img src="/images/banner1.jpg" alt="배너1"></a>
+                                <a href="main-list.do" target="_blank"><img src="/images/banner2.jpg" alt="배너2"></a>
+                                <a href="main-list.do" target="_blank"><img src="/images/banner3.jpg" alt="배너3"></a>
+                                <a href="main-list.do" target="_blank"><img src="/images/banner4.jpg" alt="배너4"></a>
+                                <a href="main-list.do" target="_blank"><img src="/images/banner5.jpg" alt="배너5"></a>
+                            </div>
+                            <div id="sliderClone"></div>
                         </div>
+                        <button class="slider-arrow left"><i class="fas fa-angle-left"></i></button>
+                        <button class="slider-arrow right"><i class="fas fa-angle-right"></i></button>
                     </div>
 
                     <div class="hero-section">
@@ -245,26 +255,204 @@
                         </div>
                     </div>
                     <!-- 지도 아래에 POI 순위 테이블 추가 -->
-                    <div class="poi-card-section">
-                        <h2>📍 관심지점 예약 순위</h2>
-                        <div class="poi-card-container">
-                            <%-- 나중에 DB에서 받아온 리스트로 반복 처리 예정 --%>
-                                <div class="poi-card">
-                                    <div class="poi-rank">1위</div>
-                                    <div class="poi-name">서울역점</div>
-                                    <div class="poi-address">서울 중구 한강대로 405</div>
-                                    <div class="poi-reservation">예약 수: 128건</div>
-                                </div>
+                    <!-- 지역 선택 탭 -->
 
-                                <div class="poi-card">
-                                    <div class="poi-rank">2위</div>
-                                    <div class="poi-name">강남점</div>
-                                    <div class="poi-address">서울 강남구 테헤란로 152</div>
-                                    <div class="poi-reservation">예약 수: 97건</div>
-                                </div>
-                                <%-- ... --%>
+
+                    <div class="region-tabs">
+                        <h2 class="region-title">인기 호텔 및 숙소</h2>
+                        <div class="region-buttons">
+                            <button class="region-btn active" data-region="jeju">제주</button>
+                            <button class="region-btn" data-region="busan">부산</button>
+                            <button class="region-btn" data-region="gyeonggi">경기</button>
+                            <button class="region-btn" data-region="daegu">대구</button>
+                            <button class="region-btn" data-region="cheongju">청주</button>
+                            <button class="region-btn" data-region="yeosu">여수</button>
                         </div>
                     </div>
+
+                    <!-- 지역별 호텔 리스트 -->
+                    <div class="region-hotels">
+
+                        <!-- 제주 -->
+                        <div class="hotel-list active" id="jeju">
+                            <div class="hotel-card">
+                                <img src="/images/jeju.jpg" alt="맹그로브 제주시티">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">맹그로브 제주시티</div>
+                                    <div class="hotel-rating">⭐ 9.2 <span>(313명 리뷰)</span></div>
+                                    <div class="hotel-price">₩92,710 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/jeju2.jpg" alt="라마다 제주시티호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">라마다 제주시티호텔</div>
+                                    <div class="hotel-rating">⭐ 8.6 <span>(943명 리뷰)</span></div>
+                                    <div class="hotel-price">₩148,506 / 1박</div>
+                                </div>
+                            </div>
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- 부산 -->
+                        <div class="hotel-list" id="busan">
+                            <div class="hotel-card">
+                                <img src="/images/busan.jpg" alt="부산 오션뷰 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">부산 오션뷰 호텔</div>
+                                    <div class="hotel-rating">⭐ 8.9 <span>(512명 리뷰)</span></div>
+                                    <div class="hotel-price">₩132,000 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/busan2.jpg" alt="부산 센텀호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">부산 센텀호텔</div>
+                                    <div class="hotel-rating">⭐ 8.4 <span>(678명 리뷰)</span></div>
+                                    <div class="hotel-price">₩119,000 / 1박</div>
+                                </div>
+                            </div>
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 경기 -->
+                        <div class="hotel-list" id="gyeonggi">
+                            <div class="hotel-card">
+                                <img src="/images/suwon.jpg" alt="수원 노보텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">수원 노보텔</div>
+                                    <div class="hotel-rating">⭐ 8.7 <span>(421명 리뷰)</span></div>
+                                    <div class="hotel-price">₩110,000 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/suwon2.jpg" alt="더블트리 바이 힐튼 서울 판교">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">더블트리 바이 힐튼 서울 판교</div>
+                                    <div class="hotel-rating">⭐ 9.1 <span>(1,200명 리뷰)</span></div>
+                                    <div class="hotel-price">₩165,000 / 1박</div>
+                                </div>
+                            </div>
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 대구 -->
+                        <div class="hotel-list" id="daegu">
+                            <div class="hotel-card">
+                                <img src="/images/daegu1.jpg" alt="대구 인터불고 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">대구 인터불고 호텔</div>
+                                    <div class="hotel-rating">⭐ 8.5 <span>(389명 리뷰)</span></div>
+                                    <div class="hotel-price">₩105,000 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/daegu2.jpg" alt="토요코인 대구 동성로">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">토요코인 대구 동성로</div>
+                                    <div class="hotel-rating">⭐ 9.0 <span>(1,050명 리뷰)</span></div>
+                                    <div class="hotel-price">₩89,000 / 1박</div>
+                                </div>
+                            </div>
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 청주 -->
+                        <div class="hotel-list" id="cheongju">
+                            <div class="hotel-card">
+                                <img src="/images/cheongju1.jpg" alt="청주 그랜드호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">청주 그랜드호텔</div>
+                                    <div class="hotel-rating">⭐ 8.3 <span>(274명 리뷰)</span></div>
+                                    <div class="hotel-price">₩98,000 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/cheongju2.jpg" alt="글로스터호텔 청주">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">글로스터호텔 청주</div>
+                                    <div class="hotel-rating">⭐ 8.9 <span>(504명 리뷰)</span></div>
+                                    <div class="hotel-price">₩109,000 / 1박</div>
+                                </div>
+                            </div>
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 여수 -->
+                        <div class="hotel-list" id="yeosu">
+                            <div class="hotel-card">
+                                <img src="/images/yeosu1.jpg" alt="여수 라마다호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">여수 라마다호텔</div>
+                                    <div class="hotel-rating">⭐ 9.0 <span>(502명 리뷰)</span></div>
+                                    <div class="hotel-price">₩125,000 / 1박</div>
+                                </div>
+                            </div>
+                            <div class="hotel-card">
+                                <img src="/images/yeosu2.jpg" alt="라마다프라자 바이 윈덤 여수">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">라마다프라자 바이 윈덤 여수</div>
+                                    <div class="hotel-rating">⭐ 9.2 <span>(4,097명 리뷰)</span></div>
+                                    <div class="hotel-price">₩158,000 / 1박</div>
+                                </div>
+                            </div>
+
+                            <!-- 초특가 호텔 카드 -->
+                            <div class="hotel-card">
+                                <img src="/images/global.jpg" alt="전 세계 초특가 호텔">
+                                <div class="hotel-details">
+                                    <div class="hotel-name">🌍 전 세계 초특가 호텔</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 70% 할인!</div>
+                                    <a href="/global-deals" class="deal-btn">지금 예약하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
                     <br>
                     <main>
                         <div class="table-wrapper">
@@ -299,14 +487,14 @@
                     name: window.sessionData.name,
                     point: window.sessionData.point,
 
-                    
-                    
+
+
                     // tempProperties : {}
                     //------------------------------------------------------------------------------------------------------
                 };
             },
             methods: {
-                
+
                 //복붙
                 //------------------------------------------------------------------------------------------------------
                 // toggleLogoutMenu() {
@@ -317,8 +505,8 @@
                 goToService() {
                     location.href = "/Service.do";
                 },
-                
-                
+
+
                 removeMarker() {
                     for (let i = 0; i < this.markers.length; i++) {
                         this.markers[i].setMap(null);
@@ -451,7 +639,25 @@
             },
             mounted() {
 
+                const regionButtons = document.querySelectorAll('.region-btn');
+                const hotelLists = document.querySelectorAll('.hotel-list');
 
+                regionButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // 버튼 활성화 처리
+                        regionButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        // 호텔 리스트 전환
+                        const selectedRegion = button.getAttribute('data-region');
+                        hotelLists.forEach(list => {
+                            list.classList.remove('active');
+                            if (list.id === selectedRegion) {
+                                list.classList.add('active');
+                            }
+                        });
+                    });
+                });
                 this.$nextTick(() => {
 
                     this.initMap();
@@ -616,10 +822,11 @@
             if (images.length === 0) return;
 
             const imageWidth = images[0].offsetWidth;
-            const gap = 5;
-            const spacerGap = 40; // ✅ 간격 크기 조절 가능
+            const gap = 10;
+            const spacerGap = 1; // ✅ 간격 크기 조절 가능
             const imageCount = images.length;
             const totalWidth = imageCount * imageWidth + (imageCount - 1) * gap;
+
 
             track.style.width = totalWidth + 'px';
 
@@ -647,13 +854,23 @@
             track.parentNode.appendChild(spacer);
             track.parentNode.appendChild(clone);
 
+            // ✅ 복제 트랙에도 동일한 스타일 적용
+            clone.style.display = 'flex';
+            clone.style.gap = '10px';
+            clone.querySelectorAll('a').forEach(anchor => {
+                anchor.style.borderRadius = '12px';
+                anchor.style.overflow = 'hidden';
+            });
+
             const cloneOffset = totalWidth + gap + spacerGap;
             clone.style.left = cloneOffset + 'px';
             track.style.left = '0px';
             track.style.position = 'absolute';
 
+            let sliderAnimationId = null;
             let position = 0;
-            const speed = 3;
+            const speed = 1;
+
 
             function animateSlider() {
                 position -= speed;
@@ -670,10 +887,45 @@
                     position = 0;
                 }
 
-                requestAnimationFrame(animateSlider);
+                sliderAnimationId = requestAnimationFrame(animateSlider);
             }
 
+            function stopSlider() {
+                if (sliderAnimationId) {
+                    cancelAnimationFrame(sliderAnimationId);
+                    sliderAnimationId = null;
+                }
+            }
+
+
             animateSlider();
+
+            document.querySelector('.slider-arrow.left').addEventListener('click', () => {
+                stopSlider();
+                position += 410;
+
+                // 무한 반복 처리: 왼쪽 끝을 넘었을 때 리셋
+                if (position > 0) {
+                    position = -cloneOffset + 410;
+                }
+
+                track.style.left = position + 'px';
+                clone.style.left = (position + cloneOffset) + 'px';
+            });
+
+            document.querySelector('.slider-arrow.right').addEventListener('click', () => {
+                stopSlider();
+                position -= 410;
+
+                // 무한 반복 처리: 오른쪽 끝을 넘었을 때 리셋
+                if (Math.abs(position) > cloneOffset) {
+                    position = 0;
+                }
+
+                track.style.left = position + 'px';
+                clone.style.left = (position + cloneOffset) + 'px';
+            });
+
         }
 
 

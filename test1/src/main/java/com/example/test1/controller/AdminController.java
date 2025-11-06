@@ -104,11 +104,32 @@ public class AdminController {
     public String getReportList(@RequestParam HashMap<String, Object> param) throws Exception {
         List<HashMap<String, Object>> reportList = adminService.selectReportList(param);
 
+        for (HashMap<String, Object> report : reportList) {
+            Object userId = report.get("REPORTED_USER_ID");
+            if (userId != null) {
+                report.put("reported_user_id", userId);
+            }
+
+            Object nickname = report.get("REPORTED_NICKNAME");
+            if (nickname != null) {
+                report.put("reported_nickname", nickname);
+            }
+
+            Object status = report.get("REPORTED_STATUS");
+            if (status != null) {
+                report.put("reported_status", status);
+            } // ✅ 이 중괄호가 꼭 필요합니다!
+        }
+
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("reportList", reportList);
 
         return new ObjectMapper().writeValueAsString(resultMap);
     }
+    
+
+    
+
     // 내게시글 / 내 댓글
     @RequestMapping("/myActivity.do")
     public String myActivityPage(HttpSession session, Model model) {
@@ -162,5 +183,29 @@ public class AdminController {
         adminService.updateComment(commentNo, contents);
         return "success";
     }
+    
+    
+    // 신고된 게시글 번호
+    @RequestMapping(value = "/board-detail.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getBoardDetail(@RequestParam HashMap<String, Object> param) throws Exception {
+        String boardNo = (String) param.get("boardNo");
+        System.out.println("boardNo = " + boardNo); // 디버깅용
+
+        if (boardNo == null || boardNo.isEmpty()) {
+            throw new IllegalArgumentException("boardNo 파라미터가 없습니다.");
+        }
+
+        HashMap<String, Object> board = adminService.getBoardDetail(boardNo);
+        List<MainBoard> comments = adminService.getCommentsByBoardNo(boardNo);
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("board", board);
+        resultMap.put("comments", comments);
+
+        return new ObjectMapper().writeValueAsString(resultMap);
+    }
+
+
 
 }
