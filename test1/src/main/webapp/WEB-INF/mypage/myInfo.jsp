@@ -202,6 +202,7 @@
                     <span class="buyBtn" v-if="info.status === 'U'" >
                         <button @click="fnSub">구독하기</button>
                     </span>
+                     {{gradeLabel}}
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-gift"></i>
@@ -258,27 +259,15 @@
 
                 infoFlg : false,
 
-                id: "${sessionId}",
-                status: "${sessionStatus}",
-                nickname: "${sessionNickname}",
-                name: "${sessionName}",
-                point: "${sessionPoint}",
-                showLogoutMenu: false
+                id: window.sessionData.id,
+                status: window.sessionData.status,
+                nickname: window.sessionData.nickname,
+                name: window.sessionData.name,
+                point: window.sessionData.point,
+                gradeLabel: window.sessionData.gradeLabel,
             };
         },
-        computed: {
-            isLoggedIn() {
-                return this.nickname !== "";
-            },
-            gradeLabel() {
-                switch (this.status) {
-                    case 'A': return '👑 ';
-                    case 'S': return '✨ ';
-                    case 'U': return '🙂 ';
-                    default: return '❓ 미지정';
-                }
-            }
-        },
+        
         methods: {
             // 함수(메소드) - (key : function())
             fnMyInfo: function () {

@@ -40,9 +40,11 @@ public class BoardService{
 			int cnt = boardMapper.updateCnt(map);
 			Board info = boardMapper.selectBoard(map);
 			List<Comment> commentList = boardMapper.selectCommentList(map);
+//			int checkReport = boardMapper.reportCheck(map);
 
 			resultMap.put("info", info); 
 			resultMap.put("commentList", commentList);
+//			resultMap.put("checkReport", checkReport);
 			resultMap.put("result", "success");
 			
 			

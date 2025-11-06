@@ -78,7 +78,7 @@
                 /* 버튼을 오른쪽으로 배치 */
 
             }
-
+            
             /* 버튼 스타일 통일 */
             button {
                 background-color: #0078FF;
@@ -103,6 +103,7 @@
                 background-color: #d63b3b;
                 margin-left: 1390px;
             }
+            
 
 
 
@@ -324,7 +325,9 @@
 
             .report {
                 margin-left: 1600px;
+                
             }
+
             /* 모달 css */
             .modal {
                 position: fixed;
@@ -345,15 +348,16 @@
                 width: 300px;
             }
 
-            .modal textarea{
+            .modal textarea {
                 width: 300px;
                 height: 300px;
             }
 
-            .modal button{
+            .modal button {
                 margin-left: 60px;
-                
+
             }
+           
         </style>
     </head>
 
@@ -433,23 +437,23 @@
 
                 <!-- 게시글 모달 -->
                 <div class="report">
-                    <button @click="fnReport(info.userId)">신고하기</button> <!-- userId 전달 -->
+                    <button @click="fnReport(info.userId)">🚨신고하기</button> 
                 </div>
 
 
                 <div v-if="reportFlg" class="modal">
                     <div class="modal_body">
-                        <h2>신고하기</h2>
-                        <p>신고 대상: {{ userId }}</p>
+                        <h2>🚨신고하기</h2>
+                        <p>신고 대상: {{ reportedUserId }}</p>
                         <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
-                        
+
                         <div>● 신고유형 선택</div>
                         <div>
                             <select v-model="reportType">
-                            <option value="E">오류제보</option>
-                            <option value="I">불편사항</option>
-                            <option value="S">사기신고</option>
-                        </select>
+                                <option value="E">오류제보</option>
+                                <option value="I">불편사항</option>
+                                <option value="S">사기신고</option>
+                            </select>
                         </div>
                         <div>
                             <button @click="submitReport">제출</button>
@@ -497,33 +501,37 @@
                     </td>
 
                     <td v-if="item.userId != userId || status =='A'">
-                        <button @click="fnAdopt(item.commentNo, item.userId)">채택하기</button>
+                        <button @click="fnAdopt(item.commentNo, item.userId)">✅채택하기</button>
                     </td>
 
                     <!-- 코멘트 모달 -->
                     <td v-if="item.userId != userId">
-                        <button @click="fnCReport(item.useId)">신고하기</button>
-                    </td>
-                     <div v-if="CoReportFlg" class="modal">
-                    <div class="modal_body">
-                        <h2>신고하기</h2>
-                        <p>신고 대상: {{ userId }}</p>
-                        <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
+                        <button @click="fnCReport(item.userId, item.commentNo)"
+                            :disabled="reportedUsers.includes(item.userId)">
+                            {{ reportedUsers.includes(item.userId) ? "신고완료" : "🚨신고하기" }}
+                        </button>
                         
-                        <div>● 신고유형 선택</div>
-                        <div>
-                            <select v-model="CoReportTyle">
-                            <option value="E">오류제보</option>
-                            <option value="I">불편사항</option>
-                            <option value="S">사기신고</option>
-                        </select>
-                        </div>
-                        <div>
-                            <button @click="CsubmitReport">제출</button>
-                            <button @click="CcloseReportModal">취소</button>
+                    </td>
+                    <div v-if="CoReportFlg" class="modal">
+                        <div class="modal_body">
+                            <h2>신고하기</h2>
+                            <p>신고 대상: {{ reportedUserId }}</p>
+                            <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
+
+                            <div>● 신고유형 선택</div>
+                            <div>
+                                <select v-model="CreportType">
+                                    <option value="E">오류제보</option>
+                                    <option value="I">불편사항</option>
+                                    <option value="S">사기신고</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button @click="CsubmitReport">제출</button>
+                                <button @click="CcloseReportModal">취소</button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </tr>
 
 
@@ -610,18 +618,21 @@
                     commentNo: "${commentNo}",
                     type: "",
                     editFlg: false,
+
+
+                    reportedUsers: [], //이미 신고한 사용자들의 ID저장용
                     reportFlg: false,   // 모달 표시 여부
-                    userId: "",         // 신고 대상
+                    reportedUserId: "",         // 신고 대상
                     reason: "",          // 신고 사유,
-                    reportType : "E",
-
-
+                    reportType: "E",
+                    currentUserId: "${sessionId}", 
 
                     CoReportFlg: false,   // 모달 표시 여부
-                    CoReportTyle: "",         // 신고 유형
+                    CReportTyle: "",         // 신고 유형
                     comReason: "",          // 신고 사유,
-                    CreportType : "E",
+                    CreportType: "E",
 
+                    
                 };
             },
             methods: {
@@ -631,7 +642,9 @@
                     let self = this;
                     let param = {
                         boardNo: self.boardNo,
-                        type: self.type
+                        type: self.type,
+                        userId:self.userId,
+                        
 
                     };
                     $.ajax({
@@ -662,6 +675,7 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
+                            console.log(self.boardNo, self.userId, self.contents);
                             self.contents = "";
                             self.editFlg = false;
                             self.fnInfo();
@@ -715,7 +729,7 @@
                 fncRemove: function (commentNo) {
                     let self = this;
                     if (!confirm("정말로 삭제하시겠습니까?")) {
-                        return; 
+                        return;
                     }
                     let param = {
                         commentNo: commentNo,
@@ -728,7 +742,7 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            
+
                             if (data.result == "success") {
                                 alert("삭제되었습니다!");
                                 self.fnInfo();
@@ -763,10 +777,9 @@
                     console.log("채택된 댓글 번호:", commentNo);
                     console.log("채택 대상 userId:", userId);
 
-                    let self = this;
+                    let self=this;
                     let param = {
                         userId: userId,  // 채택될 사람의 userId
-                        commentNo: commentNo
                     };
 
                     $.ajax({
@@ -784,27 +797,31 @@
                                 } else {
                                     alert("오류가 발생했습니다");
                                 }
-                            } 
+                            }
                         }
                     });
                 },
 
                 //게시글 모달
-                fnReport(userId) {
-                    this.userId = userId;   // 신고 대상 지정
-                    this.reportFlg = true;  // 모달 열기
+                fnReport(reportedUserId, currentUserId) {
+                    let self=this;
+                    self.reportedUserId = reportedUserId;   // 신고 대상 지정
+                    self.reportFlg = true;  // 모달 열기
+                    self.currentUserId = self.sessionId;
                 },
                 closeReportModal() {
-                    this.reportFlg = false; // 모달 닫기
-                    this.reason = "";       // 신고이유
+                    let self=this;
+                    self.reportFlg = false; // 모달 닫기
+                    self.reason = "";       // 신고이유
                 },
                 submitReport() {
-                    let self = this;
+                    let self=this;
                     const param = {
-                        reportType : self.reportType,
-                        userId: self.userId,
+                        reportType: self.reportType,
+                        reportedUserId: self.reportedUserId,
                         reason: self.reason,
-                        boardNo : self.boardNo
+                        boardNo: self.boardNo,
+                        currentUserId : self.userId
                     };
                     // Ajax로 서버에 신고 정보 전송
                     $.ajax({
@@ -813,34 +830,43 @@
                         data: param,
                         dataType: "json",
                         success: (data) => {
-                            console.log(self.reportType,self.userId,  self.reason,self.boardNo);
-                            if(confirm("정말 신고하시겠습니까?")){
-                            if(data.result == "success"){
-                            alert("신고가 접수되었습니다.");
-                            this.closeReportModal();
-                        }else{
-                            alert("오류가 발생하였습니다.");
-                        }
-                    }
+                            console.log(self.reportType, self.reportedUserId, self.reason, self.boardNo, self.currentUserId);
+                            if (confirm("정말 신고하시겠습니까?")) {
+                                if (data.result == "success") {
+                                    alert("신고가 접수되었습니다.");
+                                    self.closeReportModal();
+                                } else {
+                                    alert("오류가 발생하였습니다.");
+                                }
+                            }
                         }
                     });
                 },
 
                 // 코멘트 모달
-                fnCReport(userId) {
-                    console.log(userId);
-                    this.userId = userId;   // 신고 대상 지정
-                    this.CoReportFlg = true;  // 모달 열기
+                fnCReport(reportedUserId, commentNo, currentUserId) {
+                    let self=this;
+                    
+                    console.log(reportedUserId);
+                    self.reportedUserId = reportedUserId;   // 신고 대상 지정
+                    self.commentNo = commentNo;
+                    
+                    self.CoReportFlg = true;  // 모달 열기
+                    self.currentUserId = sessionId;
                 },
                 CcloseReportModal() {
-                    this.CoReportFlg = false; // 모달 닫기
-                    this.comReason = "";       // 신고이유
+                    let self=this;
+                    self.CoReportFlg = false; // 모달 닫기
+                    self.comReason = "";       // 신고이유
                 },
                 CsubmitReport() {
+                    let self = this;
                     const param = {
-                        CreprotType : self.CreportType,
-                        userId: self.userId,
-                        comReason: self.comReason
+                        CreportType: self.CreportType,
+                        reportedUserId: self.reportedUserId,
+                        comReason: self.comReason,
+                        commentNo: self.commentNo,
+                        currentUserId : self.currentUserId
                     };
                     // Ajax로 서버에 신고 정보 전송
                     $.ajax({
@@ -849,14 +875,23 @@
                         data: param,
                         dataType: "json",
                         success: (data) => {
-                            if(confirm("정말 신고하시겠습니까?")){
-                            if(data.result == "success"){
-                            alert("신고가 접수되었습니다.");
-                            this.CcloseReportModal();
-                        }else{
-                            alert("오류가 발생하였습니다.");
-                        }
-                    }
+                            console.log(self.CreportType, self.reportedUserId, self.comReason, self.commentNo, self.currentUserId);
+                            if (confirm("정말 신고하시겠습니까?")) {
+                                //만약 reportedUsers에 해당하는 userId가 있으면 신고가 안되게 하고 만약 없으면 신고가 접수되게
+                                if (data.result == "success") {
+                                    alert("신고가 접수되었습니다.");
+
+                                    //신고한 유저 ID를 reportedUsers 배열에 추가
+                                    if (!self.reportedUsers.includes(self.reportedUserId)) {
+                                        self.reportedUsers.push(self.reportedUserId);
+                                        console.log(self.reportedUsers);
+                                    }
+
+                                    self.CcloseReportModal();
+                                } else {
+                                    alert("오류가 발생하였습니다.");
+                                }
+                            }
                         }
                     });
                 }
@@ -866,7 +901,6 @@
             mounted() {
                 // 처음 시작할 때 실행되는 부분
                 let self = this;
-               
                 self.fnInfo();
             }
         });

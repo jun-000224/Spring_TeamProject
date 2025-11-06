@@ -24,7 +24,7 @@
                 padding: 10px;
                 border-radius: 6px;
             }
-
+ 
             .tab-buttons button {
                 margin-right: 10px;
                 padding: 8px 16px;
@@ -298,6 +298,81 @@
             .action-button:hover {
                 background-color: #0056b3;
             }
+
+            .clickable {
+                color: #007bff;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+
+            .report-detail {
+                margin-top: 20px;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+                width: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: left;
+            }
+
+            .filter-wrapper {
+                margin-bottom: 15px;
+                text-align: right;
+                width: 90%;
+                max-width: 1000px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .report-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .slider-control {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 14px;
+            }
+
+            #limitSlider {
+                width: 120px;
+            }
+
+            .inquiry-controls {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 10px;
+            }
+
+            .inquiry-controls label {
+                font-weight: bold;
+                font-size: 14px;
+            }
+
+            .inquiry-controls select {
+                padding: 4px 8px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .inquiry-controls input[type="range"] {
+                width: 140px;
+                height: 6px;
+                background: #ddd;
+                border-radius: 4px;
+                outline: none;
+                cursor: pointer;
+                accent-color: #007bff;
+            }
         </style>
     </head>
 
@@ -320,6 +395,21 @@
                 <div v-if="activeTab === 'inquiry'" class="panel">
                     <h3>🎀 문의사항 답변</h3>
 
+                    <!--  필터 & 슬라이더  -->
+                    <div v-if="!selectedInquiry" class="inquiry-controls">
+                        <div class="filter-group">
+                            <label>답변여부 : </label>
+                            <select v-model="replyStatusFilter">
+                                <option value="">전체</option>
+                                <option value="완료">답변완료</option>
+                                <option value="미작성">답변미작성</option>
+                            </select>
+                        </div>
+                        <div class="slider-group">
+                            <label>표시 개수 : {{ inquiryDisplayLimit }}개</label>
+                            <input type="range" min="5" max="15" step="5" v-model="inquiryDisplayLimit" />
+                        </div>
+                    </div>
                     <!-- 문의 리스트 -->
                     <table v-if="!selectedInquiry">
                         <tr>
@@ -329,7 +419,7 @@
                             <th style="text-align: center;">답변</th>
                             <th style="text-align: center;">답변여부</th>
                         </tr>
-                        <tr v-for="item in inquiries" :key="item.boardNo">
+                        <tr v-for="item in getFilteredInquiries()" :key="item.boardNo">
                             <td style="text-align: center;">
                                 <button class="link-button" @click="selectInquiry(item)">
                                     {{ item.title }}
@@ -411,34 +501,54 @@
                         <button @click="switchTab('badUsers')">불량 유저</button>
                         <button @click="switchTab('block')">유저 제한</button>
                         <button @click="switchTab('unblock')">제한 해제</button>
-
                     </div>
-
                     <!-- 신고 게시글 -->
                     <div v-if="reportTab === 'posts'" class="unblock-section">
                         <h4>📢 신고 목록</h4>
+                        <div class="slider-control">
+                            <label for="limitSlider">표시 개수: {{ reportDisplayLimit }}개</label>
+                            <input id="limitSlider" type="range" min="5" max="15" step="5"
+                                v-model="reportDisplayLimit" />
+                        </div>
+                        <div class="filter-wrapper">
+                            <label for="reportTypeFilter">신고유형 필터 : </label>
+                            <select v-model="reportTypeFilter" id="reportTypeFilter" class="custom-select">
+                                <option value="">전체</option>
+                                <option value="E">오류 제보</option>
+                                <option value="I">불편 사항</option>
+                                <option value="S">사기 신고</option>
+                            </select>
+
+                        </div>
                         <table class="styled-table">
                             <tr>
                                 <th>신고번호</th>
+                                <th>게시글번호</th>
                                 <th>신고유형</th>
                                 <th>신고자</th>
-                                <th>신고내용</th>
-                                <th>게시글번호</th>
                                 <th>댓글번호</th>
                             </tr>
-                            <tr v-for="report in reportList" :key="report.REPORTNUM">
+                            <tr v-for="report in getFilteredReports()" :key="report.REPORTNUM">
                                 <td>{{ report.REPORTNUM }}</td>
-                                <td>{{ report.REPORT_TYPE }}</td>
-                                <td>{{ report.USER_ID }}</td>
-                                <td>{{ report.CONTENT }}</td>
                                 <td>{{ report.BOARDNO || '-' }}</td>
+                                <td>{{ convertReportType(report.REPORT_TYPE) }}</td>
+                                <td>
+                                    <span class="clickable" @click="selectReport(report)">
+                                        {{ report.USER_ID }}
+                                    </span>
+                                </td>
                                 <td>{{ report.COMMENTNO || '-' }}</td>
                             </tr>
                         </table>
+
+                        <!-- 클릭 시 상세 내용 표시 -->
+                        <div v-if="selectedReport" class="report-detail">
+                            <h5>📌 신고 상세 정보</h5>
+                            <p><strong>신고자:</strong> {{ selectedReport.USER_ID }}</p>
+                            <p><strong>신고내용:</strong> {{ selectedReport.CONTENT }}</p>
+                            <button class="action-button" @click="selectedReport = null">닫기</button>
+                        </div>
                     </div>
-
-
-
                     <div v-if="reportTab === 'badUsers'" style="text-align: center;">
                         <h4>불량 유저</h4>
                         <table style="margin: 0 auto;">
@@ -455,19 +565,12 @@
 
                         </table>
                     </div>
-
-
-
-
-
                     <!-- 유저 제한 -->
                     <div v-if="reportTab === 'block'" class="unblock-section">
                         <h4>유저 제한</h4>
                         <input v-model="targetUserId" placeholder="유저 ID 입력" class="input-box" />
                         <button @click="blockUser" class="action-button">제한하기</button>
                     </div>
-
-
                     <!-- 제한 해제 -->
                     <div v-if="reportTab === 'unblock'" class="unblock-section">
                         <h4>제한 해제</h4>
@@ -486,48 +589,82 @@
                     </div>
 
                 </div>
-
                 <%@ include file="components/footer.jsp" %>
         </div>
-
         <script>
             const adminApp = Vue.createApp({
 
                 data() {
                     return {
-                        id: "${sessionId}",
-                        status: "${sessionStatus}",
-                        nickname: "${sessionNickname}",
-                        name: "${sessionName}",
-                        point: "${sessionPoint}",
+                        id: "${sessionId}", // 아이디
+                        status: "${sessionStatus}", // 등급
+                        nickname: "${sessionNickname}", // 닉네임
+                        name: "${sessionName}", // 이름
+                        point: "${sessionPoint}", //포인트
                         activeTab: 'inquiry',
                         reportTab: 'posts',
                         inquiries: [],
                         selectedInquiry: null,
-                        reportedPosts: [],
+                        reportList: [],
                         badUsers: [],
                         targetUserId: '',
                         replyTarget: null,
                         replyContent: '',
-                        comments: [],
-                        selectedStatus: '',
-
+                        comments: [], // 게시글
+                        selectedStatus: '', // 유저 status 
+                        selectedReport: null, // 상세내용
+                        reportTypeFilter: '', //신고 유형 필터
+                        reportDisplayLimit: 5,  // 게시글 갯수 카운터
+                        replyStatusFilter: '', // '완료', '미작성', ''(전체)
+                        inquiryDisplayLimit: 5 // 문의게시판 갯수 카운터
                     };
                 },
                 mounted() {
-
                     this.fetchInquiries();
-
                 },
                 methods: {
                     switchTab(tabName) {
                         this.reportTab = tabName;
+
                         if (tabName === 'badUsers') {
                             this.fetchBadUsers();
+                        } else if (tabName === 'posts') {
+                            this.fetchReportList(); // ✅ 신고 게시글 불러오기
                         }
+                    },
+                    selectReport(report) {
+                        this.selectedReport = report;
+                    },
+                    convertReportType(type) {
+                        switch (type) {
+                            case 'E': return '오류 제보';
+                            case 'I': return '불편 사항';
+                            case 'S': return '사기 신고';
+                            default: return type;
+                        }
+                    },
+                    getFilteredReports() {
+                        let filtered = this.reportList;
+
+                        if (this.reportTypeFilter) {
+                            filtered = filtered.filter(r => r.REPORT_TYPE === this.reportTypeFilter);
+                        }
+
+                        return filtered.slice(0, this.reportDisplayLimit);
                     },
 
                     //---------------------문의사항 댓글 -------------------------
+                    getFilteredInquiries() {
+                        let filtered = this.inquiries;
+
+                        if (this.replyStatusFilter === '완료') {
+                            filtered = filtered.filter(i => i.hasAdminReply);
+                        } else if (this.replyStatusFilter === '미작성') {
+                            filtered = filtered.filter(i => !i.hasAdminReply);
+                        }
+
+                        return filtered.slice(0, this.inquiryDisplayLimit);
+                    },
                     hasAdminReply(boardNo) {
                         const inquiry = this.inquiries.find(i => i.boardNo === boardNo);
                         if (!inquiry || !inquiry.comments) return false;
@@ -542,8 +679,10 @@
                         this.replyContent = '';
                     },
                     submitReply() {
+                        const target = this.replyTarget;
+
                         const payload = {
-                            boardNo: this.replyTarget.boardNo,
+                            boardNo: target?.boardNo,
                             userId: this.id,
                             nickname: this.nickname,
                             contents: this.replyContent
@@ -551,9 +690,20 @@
 
                         $.post("/api/comment/write", payload, () => {
                             alert("댓글이 등록되었습니다.");
-                            this.cancelReply();
+
+                            if (target) {
+                                $.get("/api/comment/list", { boardNo: target.boardNo }, commentRes => {
+                                    target.comments = commentRes;
+                                    target.hasAdminReply = commentRes.some(c => c.userId === 'admin01');
+                                    this.cancelReply();
+                                });
+                            } else {
+                                this.cancelReply();
+                            }
                         });
-                    },
+                    }
+
+                    ,
                     //-----------------------------------------------------------
 
                     fetchInquiries() {
@@ -583,13 +733,13 @@
                             type: "GET",
                             data: param,
                             success: function (data) {
-                                // ✅ 댓글 저장
+                                //  댓글 저장
                                 item.comments = data;
 
-                                // ✅ 관리자 댓글 여부 저장
+                                //  관리자 댓글 여부 저장
                                 item.hasAdminReply = data.some(c => c.userId === 'admin01');
 
-                                // ✅ 선택된 문의글에도 댓글 저장
+                                // 선택된 문의글에도 댓글 저장
                                 self.selectedInquiry.comments = data;
 
                             },
@@ -626,11 +776,11 @@
                     fetchBadUsers() {
                         let self = this;
                         $.ajax({
-                            url: "/bad-users.dox", // 엔드에서 불량 유저 목록을 반환하는 경로
+                            url: "/bad-users.dox", 
                             type: "GET",
                             dataType: "json",
                             success: function (res) {
-                                console.log("불량 유저 응답:", res); // ✅ 콘솔에서 확인
+                                console.log("불량 유저 응답:", res);
                                 self.badUsers = res.badUsers || [];
                             },
                             error: function () {
@@ -684,7 +834,19 @@
                             }
                         });
                     },
-
+                    fetchReportList() {
+                        $.ajax({
+                            url: "/report-list.dox",
+                            type: "POST",
+                            dataType: "json",
+                            success: (res) => {
+                                this.reportList = res.reportList;
+                            },
+                            error: () => {
+                                alert("신고 목록을 불러오지 못했습니다.");
+                            }
+                        });
+                    },
                 }
 
             });

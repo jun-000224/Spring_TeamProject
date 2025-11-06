@@ -69,4 +69,10 @@ public interface BoardMapper {
 	
 	//게시글 신고
 	int BoardReport(HashMap<String , Object> map);
+
+	//댓글 신고
+	int comReport(HashMap<String , Object> map);
+	
+	//신고 버튼 플래그 
+	int reportCheck(HashMap<String , Object> map);
 }

@@ -385,6 +385,7 @@
                         <option value="N">::공지사항::</option>
                         <option value="F">::자유게시판::</option>
                         <option value="Q">::질문게시판::</option>
+                        <option value="SQ">::문의게시판</option>
                     </select>
 
                     <select v-model="order" @change="fnList">
@@ -561,6 +562,7 @@
                     alert("로그인 후 이용해 주세요");
                     location.href = "/member/login.do";
                 }
+                
                 self.fnList();
             }
         });

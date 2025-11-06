@@ -162,7 +162,7 @@
 	
 	<insert id="BoardReport" parameterType="hashmap">
 	INSERT INTO REPORT
-	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{userId}, #{reason}, #{boardNo} , NULL , 1)
+	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{reportedUserId}, #{reason}, #{boardNo} , NULL , 1, #{currentUserId})
 	</insert>
 	
 	<select id="whishList" parameterType="hashmap" resultType="com.example.test1.model.Board">
