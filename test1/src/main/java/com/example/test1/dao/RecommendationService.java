@@ -4,6 +4,7 @@ import com.example.test1.model.reservation.Attr;
 import com.example.test1.model.reservation.PoiRecommendation;
 import com.example.test1.model.reservation.RecommendationRequest;
 import com.example.test1.model.reservation.TourPoiEnvelope;
+import com.example.test1.dao.AttrRepository; // 🛑 AttrRepository 임포트 가정
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RecommendationService {
 
-    private final AttrRepository attrRepository;
+    private final AttrRepository attrRepository; // 🛑 AttrRepository 사용 (JPA Repository 가정)
     private final TourAreaService tourAreaService; 
 
     @Transactional
@@ -50,20 +51,38 @@ public class RecommendationService {
 
         // [ 2. ATTR 조회 및 생성 ]
         List<Long> requestedContentIds = allPois.stream()
-                                        .map(TourPoiEnvelope.PoiItem::getContentid)
-                                        .distinct()
-                                        .collect(Collectors.toList());
+                                             .map(TourPoiEnvelope.PoiItem::getContentid)
+                                             .distinct()
+                                             .collect(Collectors.toList());
         
         log.info("TourAPI에서 총 {}개의 고유 POI 목록을 받았습니다.", requestedContentIds.size());
         
         List<Attr> existingAttrs = attrRepository.findByContentIdIn(requestedContentIds);
         Map<Long, Attr> attrMap = existingAttrs.stream()
-                                             .collect(Collectors.toMap(Attr::getContentId, Function.identity()));
+                                            .collect(Collectors.toMap(Attr::getContentId, Function.identity()));
         
         List<Attr> newAttrsToSave = new ArrayList<>();
         for (TourPoiEnvelope.PoiItem poi : allPois) { 
             if (!attrMap.containsKey(poi.getContentid())) {
                 Attr newAttr = new Attr(poi.getContentid(), poi.getContenttypeid()); 
+                
+                // 🛑 [수정] ATTR 테이블에 MAPX, MAPY 좌표 저장 로직 추가
+                try {
+                    // 🛑 [로그 추가] API가 반환하는 좌표 값을 로그로 찍습니다.
+                    log.debug("[ATTR Generation] POI: {}, MAPX: {}, MAPY: {}", 
+                        poi.getContentid(), poi.getMapx(), poi.getMapy());
+
+                    if (poi.getMapx() != null && !poi.getMapx().isBlank()) {
+                        newAttr.setMapx(Double.parseDouble(poi.getMapx()));
+                    }
+                    if (poi.getMapy() != null && !poi.getMapy().isBlank()) {
+                        newAttr.setMapy(Double.parseDouble(poi.getMapy()));
+                    }
+                } catch (NumberFormatException e) {
+                    log.warn("[ATTR Generation] 좌표 파싱 실패 (Content ID: {}): mapx={}, mapy={}", 
+                        poi.getContentid(), poi.getMapx(), poi.getMapy());
+                }
+                
                 newAttrsToSave.add(newAttr);
                 attrMap.put(newAttr.getContentId(), newAttr);
             }
@@ -117,7 +136,7 @@ public class RecommendationService {
         switch (themeCode) {
             case "FAMILY":    return attr.getFamily();
             case "LUXURY":    return attr.getLuxury();
-            case "UNIQUE":    return attr.getUnique();
+            case "UNIQUE":    return attr.getUnique(); 
             case "ADVENTURE": return attr.getAdventure();
             case "BUDGET":    return attr.getBudget();
             case "FRIEND":    return attr.getFriend();

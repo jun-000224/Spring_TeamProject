@@ -5,6 +5,7 @@ import com.example.test1.model.reservation.Area;
 import com.example.test1.model.reservation.TourAreaEnvelope;
 import com.example.test1.model.reservation.TourMenuInfoEnvelope;
 import com.example.test1.model.reservation.TourPoiEnvelope;
+import com.example.test1.model.reservation.TourPoiEnvelope.PoiItem;
 import com.example.test1.model.reservation.TourRoomInfoEnvelope;
 
 import lombok.RequiredArgsConstructor;
@@ -25,15 +26,14 @@ import java.util.stream.Collectors;
 public class TourAreaService {
 
     private final RestTemplate restTemplate;
-    // 가격 파싱 유틸 주입 (더미 가격 생성에도 사용)
     private final TourParsingUtil tourParsingUtil;
 
-    @Value("${tourapi.base-url}")          private String baseUrl;
-    @Value("${tourapi_key}")               private String serviceKey;
-    @Value("${tourapi.mobile-os:ETC}")     private String mobileOs;
-    @Value("${tourapi.mobile-app:READY}")  private String mobileApp;
-    @Value("${tourapi.type:json}")         private String respType;
-    @Value("${tourapi.rows:1000}")         private int rows;
+    @Value("${tourapi.base-url}") private String baseUrl;
+    @Value("${tourapi_key}") private String serviceKey;
+    @Value("${tourapi.mobile-os:ETC}") private String mobileOs;
+    @Value("${tourapi.mobile-app:READY}") private String mobileApp;
+    @Value("${tourapi.type:json}") private String respType;
+    @Value("${tourapi.rows:1000}") private int rows;
 
     /** [ 1. 시/도, 시/군/구용 ] - areaCode2 */
     private URI buildAreaUri(String areaCode) {
@@ -74,11 +74,27 @@ public class TourAreaService {
         return uri;
     }
     
-    // 이 메소드는 더미 가격 로직에서 사용되지 않으므로, API 호출 기능을 완전히 제거하려면 삭제해야 합니다.
-    // 현재는 경고 방지를 위해 남겨둡니다.
-    private URI buildDetailInfoUri(String contentId, String contentTypeId) { 
-        // 기존 API 호출 로직은 더미 가격 생성 시 사용하지 않음
-        return null; 
+    /** Content ID 기반 상세 조회 URI 빌더 (detailCommon2 사용) */
+    private URI buildDetailCommonUri(String contentId) {
+        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(baseUrl)
+                .pathSegment("detailCommon2")
+                .queryParam("ServiceKey", serviceKey) 
+                .queryParam("MobileOS", mobileOs)
+                .queryParam("MobileApp", mobileApp)
+                .queryParam("_type", respType)
+                .queryParam("contentId", contentId)
+                .queryParam("defaultYN", "Y") 
+                .queryParam("firstImageYN", "Y") 
+                .queryParam("addrinfoYN", "Y") 
+                .queryParam("mapinfoYN", "Y"); 
+
+        URI uri = b.build(true).toUri(); 
+        logApiCall(uri, "DetailCommon");
+        return uri;
+    }
+
+    private URI buildDetailInfoUri(String contentId, String contentTypeId) {
+        return null;
     }
 
     private void logApiCall(URI uri, String apiName) {
@@ -107,6 +123,15 @@ public class TourAreaService {
         return items.stream()
                 .filter(it -> it.getContentid() != null && it.getContenttypeid() != null)
                 .collect(Collectors.toList());
+    }
+    
+    private List<PoiItem> extractSinglePoiItem(TourPoiEnvelope env) {
+        if (env == null || env.getResponse() == null || env.getResponse().getBody() == null
+            || env.getResponse().getBody().getItems() == null) { 
+            log.warn("[TourAPI::DetailCommon] Response Body or Items is null.");
+            return Collections.emptyList();
+        }
+        return env.getResponse().getBody().getItems().getItem();
     }
 
     // ===== Public APIs (지역 목록 및 POI 목록 조회) =====
@@ -179,13 +204,39 @@ public class TourAreaService {
         return all;
     }
 
+    /** 🛑 [신규 추가] Content ID 기반으로 단일 POI 상세 정보(좌표, 이름)를 조회합니다. */
+    public Optional<PoiItem> getSinglePoiDetails(String contentId) {
+        if (contentId == null || contentId.isBlank() || "null".equalsIgnoreCase(contentId)) {
+            log.warn("[TourAPI::DetailCommon] Content ID가 유효하지 않아 호출 중단: {}", contentId);
+            return Optional.empty();
+        }
+        URI uri = buildDetailCommonUri(contentId);
+        try {
+            ResponseEntity<TourPoiEnvelope> res = restTemplate.getForEntity(uri, TourPoiEnvelope.class); 
+            
+            if (!res.getStatusCode().is2xxSuccessful()) {
+                log.error("[TourAPI::DetailCommon] 응답 실패: {}", res.getStatusCode());
+                return Optional.empty();
+            }
+
+            TourPoiEnvelope env = res.getBody();
+            if (env == null || env.getResponse() == null || env.getResponse().getHeader() == null || !"0000".equals(env.getResponse().getHeader().getResultCode())) {
+                log.warn("[TourAPI::DetailCommon] API 호출 실패 또는 결과 없음");
+                return Optional.empty();
+            }
+
+            List<PoiItem> items = extractSinglePoiItem(env);
+            
+            return items.stream().findFirst();
+
+        } catch (Exception e) {
+            log.error("[TourAPI::DetailCommon] RestTemplate 예외 발생: {}", e.getMessage(), e); 
+            return Optional.empty();
+        }
+    }
+
+
     // ===== 가격 조회 메소드 (더미 데이터 최종 적용) =====
-    /**
-     * 가격 조회: API 호출 로직 대신, contentId 기반 더미 가격 생성 로직으로 대체되었습니다.
-     * 숙박(32): 50,000원 ~ 150,000원
-     * 식당(39): 15,000원 ~ 40,000원
-     * 관광(12): 0원
-     */
     public int getPoiPrice(String contentId, Integer contentTypeId, boolean isWeekend) {
         if (contentTypeId == null || contentId == null) return 0;
 
@@ -202,20 +253,17 @@ public class TourAreaService {
         if (contentTypeId == 12) { // 관광지: 0원
             finalPrice = 0;
         } else if (contentTypeId == 32) { // 숙박: 더미 가격
-            // 숙박 POI는 1박 가격 (50,000원 ~ 150,000원)
             finalPrice = (int) tourParsingUtil.generateDummyPrice(id, 50000, 150000);
         } else if (contentTypeId == 39) { // 식당: 더미 가격
-            // 식당 POI는 평균 가격 (15,000원 ~ 40,000원)
             finalPrice = (int) tourParsingUtil.generateDummyPrice(id, 15000, 40000);
         } else {
             finalPrice = 0;
         }
 
-        // 로그를 INFO 레벨로 출력하여 가격이 정상적으로 생성됨을 확인
-        log.info("[DummyPrice::{} ({})] contentId={}, 최종 가격: {}원", 
-            contentTypeId, 
+        log.info("[DummyPrice::{} ({})] contentId={}, 최종 가격: {}원",
+            contentTypeId,
             (contentTypeId == 32) ? "숙박" : (contentTypeId == 39 ? "식당" : "기타"),
-            id, 
+            id,
             finalPrice);
 
         return finalPrice;

@@ -1,105 +1,324 @@
-<%-- /WEB-INF/reservation-view.jsp --%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
-    <title>${reservation.packName} - 예약 상세</title>
-    
-    <%-- 카카오맵 SDK 로딩 --%>
-    <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a777d1f63779cfdaa66c4a1d36cc578d&libraries=services"></script>
-        
-    <%-- Vue 및 jQuery 로딩 --%>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 상세 확인</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
     
+    <%-- 🛑 [수정] reservation.jsp와 동일한 CSS 파일 링크 추가 --%>
+    <link rel="stylesheet" href="/css/main-style.css">
+    <link rel="stylesheet" href="/css/common-style.css">
+    <link rel="stylesheet" href="/css/header-style.css">
+    <link rel="stylesheet" href="/css/main-images.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/reservation.css" />
+
+
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; }
-        #map-display { width: 100%; height: 500px; margin-top: 20px; border: 1px solid #ccc; }
-        .data-check { background: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-        .poi-item { border-bottom: 1px dashed #dee2e6; padding: 10px 0; font-size: 0.95em; }
-        .poi-item:last-child { border-bottom: none; }
+        table,
+        tr,
+        td,
+        th {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: beige;
+        }
+
+        tr:nth-child(even) {
+            background-color: azure;
+        }
+
+        .poi-item {
+            border-bottom: 1px dashed #eee;
+            padding: 5px 0;
+        }
+
+        .budget-status-wrap {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .budget-status-item {
+            flex: 1;
+        }
+
+        .budget-status-item .label {
+            font-size: 0.9em;
+            color: #555;
+            display: block;
+        }
+
+        .budget-status-item .amount {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .budget-status-item .amount .current {
+            color: #d9480f;
+        }
+
+        .budget-status-item .amount .total {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .packname-form-wrap {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .packname-form-wrap input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .packname-form-wrap button {
+            padding: 9px 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        #btn-toggle-packname {
+            font-size: 10px;
+            margin-left: 5px;
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 2px 4px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
     </style>
 </head>
+
 <body>
+    <%-- 🛑 [수정] header.jsp는 wrap 밖으로 이동 --%>
+    <%@ include file="components/header.jsp" %>
 
-<div id="app" class="container">
-    <h1>✅ 예약 상세 확인 (${reservation.packName})</h1>
+    <%-- 🛑 [수정] <div class="wrap">이 #app을 감싸도록 수정 --%>
+    <div class="wrap">
+        <div id="app">
+
+            <h1>예약 상세 확인</h1>
+
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+                <h3>기본 예약 정보 확인</h3>
+                <ul>
+                    <li>
+                        여행 코스 이름 : <input v-model='reservation.packname'></span>
+                    </li>
+                    <li><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</li>
+                    <li><strong>여행 기간:</strong> {{ reservation.startDate }} ~ {{ reservation.endDate }}</li>
+                    <li><strong>방문 예정 지점 :</strong> 총 {{ reservation.pois ? reservation.pois.length : 0 }}개
+                    </li>
+                    <li><strong>테마:</strong> {{ reservation.themNum }}</li>
+                </ul>
+            </div>
+
+            <div class="budget-status-wrap">
+                <div class="budget-status-item">
+                    <span class="label">기타 예산 (할당량)</span>
+                    <span class="amount" id="budget-etc">0원</span>
+                </div>
+                <div class="budget-status-item">
+                    <span class="label">관광지 예산 (할당량)</span>
+                    <span class="amount" id="budget-activity">0원</span>
+                </div>
+                <div class="budget-status-item">
+                    <span class="label">숙박 예산 (사용/할당량)</span>
+                    <span class="amount" id="budget-accom">
+                        <span class="current">0원</span> / <span class="total">0원</span>
+                    </span>
+                </div>
+                <div class="budget-status-item">
+                    <span class="label">식당 예산 (사용/할당량)</span>
+                    <span class="amount" id="budget-food">
+                        <span class="current">0원</span> / <span class="total">0원</span>
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2>🗺️ 여행 경로 지도</h2>
+            <div id="map-container" style="width:100%; height:400px; border: 1px solid #ddd;">지도 로딩 중...
+            </div>
+
+            <hr>
+
+            <h2>📋 상세 일정 목록</h2>
+            <div id="detail-schedule-list">
+                <p v-if="poiList.length === 0">유효한 POI 일정이 없습니다.</p>
+                <div v-else v-for="(poi, index) in poiList" :key="poi.poiId" class="poi-item">
+                    <p>[{{ index + 1 }}] <strong>{{ poi.placeName }}</strong></p>
+                    <p>방문 예정일: {{ poi.reservDate }} </p>
+                </div>
+            </div>
+            
+        </div> <%-- #app 닫는 태그 --%>
+    </div> <%-- .wrap 닫는 태그 --%>
     
-    <div class="data-check">
-        <h3>기본 예약 정보 확인</h3>
-        <ul>
-            <li>**예약 번호 (RES_NUM):** ${reservation.resNum}</li>
-            <li>**패키지 명:** ${reservation.packName}</li>
-            <li>**여행 기간:** ${reservation.startDate} ~ ${reservation.endDate}</li>
-            <%-- fn:length 함수를 사용하여 안전하게 리스트 크기 확인 --%>
-            <li>**총 POI 개수:** ${fn:length(reservation.pois)}개</li>
-        </ul>
-    </div>
+    <%-- 🛑 [수정] footer.jsp는 wrap 밖으로 이동 --%>
+    <%@ include file="components/footer.jsp" %>
+</body>
 
-    <h2>🗺️ 여행 경로 지도</h2>
-    <div id="map-display"></div>
-    
-    <h2>📋 상세 일정 목록</h2>
-    <div class="itinerary-list-view">
-        <c:choose>
-            <c:when test="${reservation.pois != null and not empty reservation.pois}">
-                <c:forEach var="poi" items="${reservation.pois}" varStatus="status">
-                    <div class="poi-item">
-                        **[# ${status.count}]** ${poi.placeName} (Content ID: ${poi.contentId})
-                        <br>
-                        <span style="color: #6c757d;">
-                            날짜: ${poi.reservDate} | 좌표 (Y/X): ${poi.mapY} / ${poi.mapX}
-                        </span>
-                    </div>
-                </c:forEach>
-            </c:when>
-            <c:otherwise>
-                <p>일정 목록이 비어있습니다. POI 저장 로직을 확인해주세요.</p>
-            </c:otherwise>
-        </c:choose>
-    </div>
-</div>
-
-<%-- 1. JSTL을 사용하여 POI 목록을 JSON 문자열로 변환하여 변수에 저장 --%>
-<c:set var="poiJsonString" value="${reservation.pois}" scope="request"/>
-
-<%-- [필수] reservation-view-map.js 파일은 반드시 이 위치에 로드되어야 합니다. --%>
-<script src="js/reservation-view-map.js"></script>
+</html>
 
 <script>
-    // 2. JSP 변수를 JavaScript 변수로 안전하게 가져옵니다.
-    // NOTE: Spring MVC가 객체를 자동으로 JSON으로 변환하여 문자열로 출력합니다.
-    const poiItems = ${poiJsonString};
-    
-    // 3. Vue 인스턴스 생성 및 마운트
     const app = Vue.createApp({
+
         data() {
             return {
-                poiItems: poiItems || [], // POI 목록을 Vue 데이터로 저장
-                mapInstance: null,
-                kakao: window.kakao 
+                reservation: {
+                    resNum: 0,
+                    packName: "로딩 중...",
+                    price: 0,
+                    startDate: "",
+                    endDate: "",
+                    pois: [],
+                    themNum: "",
+                    packname: "" 
+                },
+                poiList: [],
+                kakaoAppKey: '${kakaoAppKey}',
+
+                map: null,
+                newPackName: "",
+                showPacknameForm: false
+            };
+        },
+        methods: {
+            fnUpdatePackname() {
+                let self = this;
+                if (!self.newPackName || self.newPackName.trim() === "") {
+                    alert("별칭을 입력해주세요.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/reservation/update/packname',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        resNum: self.reservation.resNum,
+                        packName: self.newPackName
+                    }),
+                    success: function (response) {
+                        alert('별칭이 저장되었습니다.');
+                        self.reservation.packName = self.newPackName;
+                        self.showPacknameForm = false;
+                    },
+                    error: function (jqXHR) {
+                        alert(`저장 실패 (${jqXHR.status}): 백엔드 API 수정이 필요합니다.`);
+                    }
+                });
+            },
+
+            togglePacknameForm() {
+                this.showPacknameForm = !this.showPacknameForm;
+            },
+
+            formatPrice(value) {
+                return value ? value.toLocaleString() : '0';
+            },
+
+            initializeMap(markerData) {
+                if (typeof kakao === 'undefined' || typeof kakao.maps === 'undefined') {
+                    console.error("Kakao Map API 로드 실패.");
+                    document.getElementById('map-container').innerText = 'Kakao Map API 로드 실패.';
+                    return;
+                }
+
+                const container = document.getElementById('map-container');
+                const options = {
+                    center: new kakao.maps.LatLng(markerData[0].mapY, markerData[0].mapX),
+                    level: 7
+                };
+
+                this.map = new kakao.maps.Map(container, options);
+
+                const bounds = new kakao.maps.LatLngBounds();
+
+                markerData.forEach((poi) => {
+                    const markerPosition = new kakao.maps.LatLng(poi.mapY, poi.mapX);
+                    const marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+                    marker.setMap(this.map);
+
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: `<div style="padding:5px;">${poi.placeName || poi.contentId}</div>`
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseover', () => {
+                        infowindow.open(this.map, marker);
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseout', () => {
+                        infowindow.close();
+                    });
+
+                    bounds.extend(markerPosition);
+                });
+
+                this.map.setBounds(bounds);
             }
         },
         mounted() {
-            if (this.poiItems.length > 0) {
-                // 4. 지도 초기화 및 마커 표시 (reservation-view-map.js의 믹스인 함수 호출)
-                this.initMapAndDrawMarkers();
+            let self = this;
+
+            self.reservation = JSON.parse('<c:out value="${reservationJson}" escapeXml="false"/>');
+            self.newPackName = self.reservation.packName;
+            self.reservation.packname = self.reservation.packName; 
+
+            const rawPoiList = JSON.parse('<c:out value="${poiListJson}" escapeXml="false"/>');
+
+            self.poiList = rawPoiList.filter(poi =>
+                poi.contentId && !isNaN(poi.contentId) && poi.contentId > 0
+            );
+
+            // 3. 지도 초기화
+            const validMapPois = self.poiList.filter(poi =>
+                poi.mapY != null && poi.mapX != null &&
+                !isNaN(poi.mapY) && !isNaN(poi.mapX)
+            );
+
+            if (validMapPois.length > 0) {
+                self.initializeMap(validMapPois);
             } else {
-                console.warn("지도에 표시할 POI 데이터가 없습니다.");
+                document.getElementById('map-container').innerText = 'DB에 저장된 좌표 정보가 없습니다.';
             }
         }
     });
 
-    // 맵 믹스인 주입 (reservation-view-map.js에서 정의된 믹스인 객체)
-    app.mixin(window.ReservationViewMapMixin); 
-
     app.mount('#app');
 </script>
-
 </body>
+
 </html>
