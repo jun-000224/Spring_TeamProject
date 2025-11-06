@@ -34,17 +34,27 @@
     
             <!-- 로그인 후 -->
             <div class="user-info" v-else style="position: relative;">
-                <span @click="toggleLogoutMenu" class="nickname">
+                <span onclick="toggleLogoutMenu()" class="nickname">
                     {{ nickname }}님 {{ gradeLabel }}
                     <br>
                     환영합니다!
                 </span>
-    
-                <ul v-if="showLogoutMenu" class="logout-dropdown">
+                
+                <ul id="logoutMenu" class="logout-dropdown" style="display: none;">
                     <li onclick="goToMyPage()">마이페이지</li>
-                    <li >내 포인트 : {{ point }}</li>
+                    <li>
+                        <span onclick="myPoint()">
+                            내 포인트 : ${sessionScope.sessionPoint} P
+                        </span>
+                    </li>
                     <li onclick="logout()">로그아웃</li>
                 </ul>
+
+                <!-- <ul v-if="showLogoutMenu" class="logout-dropdown">
+                    <li @click="goToMyPage">마이페이지</li>
+                    <li >내 포인트 : {{ point }}</li>
+                    <li @click="logout">로그아웃</li>
+                </ul> -->
             </div>
         </div>
     
@@ -55,26 +65,75 @@
     </header>
 </div>
 
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
 <script>
     window.sessionData = {
         id: "${sessionId}",
         status: "${sessionStatus}",
         nickname: "${sessionNickname}",
         name: "${sessionName}",
-        // showLogoutMenu: true,
-        point: "${sessionPoint}",
-
-        // isLoggedIn: this.nickname !== "",
-        // gradeLabel: (function() { //작동 안함
-        //     switch ("${sessionStatus}") {
-        //         case 'A': return '👑';
-        //         case 'S': return '✨';
-        //         case 'U': return '🙂';
-        //         default:  return '❓ 미지정';
-        //     }
-        // })
+        point: "${sessionPoint}"  // 이 부분에서 sessionPoint를 잘 넘기고 있는지 확인
     };
+    
+    let showLogoutMenu = false;  // 조건을 true/false로 변경
+
+    function toggleLogoutMenu() {
+        console.log(showLogoutMenu);
+        // console.log(point);
+        showLogoutMenu = !showLogoutMenu;
+        const logoutMenu = document.getElementById('logoutMenu');
+        if (showLogoutMenu) {
+            logoutMenu.style.display = 'block';  // 메뉴 보이기
+        } else {
+            logoutMenu.style.display = 'none';  // 메뉴 숨기기
+        }
+    }
+
+    
+
+    
+        // const headerApp = Vue.createApp({
+        //     data() {
+        //         // const initialShowMenu = window.sessionData.showLogoutMenu === 'true' 
+        //         //                     ? true
+        //         //                     : window.sessionData.showLogoutMenu === 'false'
+        //         //                         ? false
+        //         //                         : !!window.sessionData.showLogoutMenu;
+                
+        //         return {
+        //             id : window.sessionData.id,
+        //             nickname : window.sessionData.nickname,
+        //             showLogoutMenu : initialShowMenu,
+        //             status : window.sessionData.status,
+        //             point : window.sessionData.point,
+        //             showLogoutMenu: false,
+        //         }
+        //     },
+            
+        //     computed:{
+        //         isLoggedIn() {
+        //             return this.nickname !== "";
+        //         },
+        //         gradeLabel() {
+        //             switch (this.status) {
+        //                 case 'A': return '👑 ';
+        //                 case 'S': return '✨ ';
+        //                 case 'U': return '🙂 ';
+        //                 default: return '❓ 미지정';
+        //             }
+        //         }
+        //     },
+            
+        //     methods : {
+                
+        //     }
+        // });
+
+        // headerApp.mount('#app-header');    
 </script>
+
 
 <script src="/js/header.js"></script>
 <script src="/js/kakao.js"></script>

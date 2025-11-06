@@ -10,12 +10,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.test1.mapper.MemberMapper;
+import com.example.test1.mapper.PointMapper;
 import com.example.test1.model.Member;
+import com.example.test1.model.Point;
 
 @Service
 public class MemberService {
 	@Autowired
 	MemberMapper memberMapper;
+	@Autowired
+	PointMapper pointMapper;
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	@Autowired
@@ -77,7 +81,6 @@ public class MemberService {
 			
 			if(loginFlg) {
 				
-				
 				if(member.getCnt() >= 5) {
 					message = "로그인 불가(비밀번호를 5회 이상 잘못 입력하셨습니다.)";
 					result = "fail";
@@ -88,6 +91,8 @@ public class MemberService {
 					} else {
 						int cntReset = memberMapper.loginCntReset(map);
 						
+						Point point = pointMapper.recentPoint(map);
+						
 						message = "로그인되었습니다.";
 						result = "success";
 						
@@ -95,8 +100,12 @@ public class MemberService {
 						session.setAttribute("sessionName", member.getName());
 						session.setAttribute("sessionNickname", member.getNickname());
 						session.setAttribute("sessionStatus", member.getStatus());
+						
+						session.setAttribute("sessionPoint", point.getTotalPoint());
+						
+						System.out.println(point.getTotalPoint());
+						
 					}
-					
 					
 				}
 				

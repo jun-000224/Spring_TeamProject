@@ -8,6 +8,15 @@ public class Point {
 	private int pointTotal;
 	private int pointGet;
 	private int pointOut;
-	private int pointDate;
+	private String pointDate;
 	
+	private String name;
+	private String nickname;
+	private String phone;
+	private String birth;
+	private String addr;
+	private String email;
+	private String gender;
+	private int totalPoint;
+	private String totalDate;
 }
