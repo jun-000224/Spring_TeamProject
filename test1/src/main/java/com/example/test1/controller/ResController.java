@@ -63,10 +63,9 @@ public class ResController {
             return ResponseEntity.internalServerError().body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
         }
     }
-    
+
     /**
      * 🛑 [수정] 이 AJAX 엔드포인트는 이제 DB에서 모든 정보를 가져오므로 필요 없습니다.
-     * (호환성을 위해 남겨두거나 삭제)
      */
     /*
     @GetMapping("/api/reservation/poi-details") 
@@ -81,25 +80,29 @@ public class ResController {
     }
     */
 
-    /**
-     * 🛑 [수정] 오타 수정: getPoiDetailsByResNum -> getPoisByResNum
-     * 이제 이 메서드는 좌표와 이름을 모두 포함한 poiList를 전달합니다.
-     */
     @GetMapping("/reservation-view.do")
     public String reservationView(@RequestParam("resNum") Long resNum, Model model) {
         
-        List<Poi> pois = resService.getPoisByResNum(resNum); // 🎯 오타 수정
+        List<Poi> pois = resService.getPoisByResNum(resNum);
         ReservationList reservationDetails = resService.getReservationDetails(resNum);
 
-        model.addAttribute("reservation", reservationDetails); 
         model.addAttribute("kakaoAppKey", kakaoAppKey); 
         
         try {
+            // 🛑 [수정] JSP(EL)가 아닌 Vue가 객체를 사용하도록 JSON 문자열 2개 전달
+            
+            // 1. POI 목록 (지도/리스트용)
             String poisJson = objectMapper.writeValueAsString(pois);
             model.addAttribute("poiListJson", poisJson);
+            
+            // 2. 예약 정보 (기본 정보 표시용)
+            String reservationJson = objectMapper.writeValueAsString(reservationDetails);
+            model.addAttribute("reservationJson", reservationJson);
+
         } catch (Exception e) {
-            System.err.println("POI 리스트 JSON 변환 실패: " + e.getMessage());
+            System.err.println("JSON 변환 실패: " + e.getMessage());
             model.addAttribute("poiListJson", "[]");
+            model.addAttribute("reservationJson", "{}");
         }
         
         return "reservation-view"; 
@@ -156,7 +159,7 @@ public class ResController {
                             poi.setContentId(dto.getContentId());
                             poi.setTypeId(dto.getTypeId());
                             poi.setReservDate(date); 
-                            poi.setPlaceName(dto.getTitle()); // 🛑 placeName 저장
+                            poi.setPlaceName(dto.getTitle()); 
                             
                             poi.setRating(0);       
                             poi.setContent("");     

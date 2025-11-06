@@ -3,12 +3,28 @@
 
 <mapper namespace="com.example.test1.mapper.ResMapper">
 
+    <select id="selectReservationByResNum" parameterType="Long" resultType="com.example.test1.model.reservation.ReservationList">
+        SELECT 
+            RES_NUM,
+            USER_ID,
+            PACKNAME,
+            PRICE,
+            AREANUM,
+            THEMNUM,
+            DESCRIPT,
+            RDATETIME,
+            STATUS,
+            DEADLINE,
+            START_DATE,
+            END_DATE
+        FROM ADMIN.RESERVATION
+        WHERE RES_NUM = #{resNum}
+    </select>
+
     <insert id="insertReservation" parameterType="com.example.test1.model.reservation.ReservationList">
-        
         <selectKey keyProperty="resNum" resultType="Long" order="BEFORE">
             SELECT RES_SEQ.NEXTVAL FROM DUAL
         </selectKey>
-        
         INSERT INTO ADMIN.RESERVATION (
             RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, START_DATE, END_DATE
         )
@@ -35,7 +51,7 @@
     <select id="selectPoisByResNum" parameterType="Long" resultType="com.example.test1.model.reservation.Poi">
         SELECT
             T.POI_ID, T.CONTENT_ID, T.TYPE_ID, T.RES_NUM, T.RESERV_DATE, T.RATING, T.CONTENT,
-            T.PLACE_NAME AS placeName, A.MAPY AS mapY,
+            T.PLACE_NAME AS placeName, A.MAPY AS mapY,  
             A.MAPX AS mapX
         FROM ADMIN.POI T
         LEFT JOIN ADMIN.ATTR A
@@ -43,8 +59,5 @@
         WHERE T.RES_NUM = #{resNum}
         ORDER BY T.RESERV_DATE ASC, T.POI_ID ASC
     </select>
-
-    <select id="selectPoiDetailsByApi" parameterType="java.lang.String" resultType="com.example.test1.model.reservation.Poi">
-        </select>
-
-</mapper>
+    
+    </mapper>
