@@ -72,11 +72,11 @@ public class AdminService {
         adminMapper.deletePost(boardNo);
     }
 
-    // ✅ 댓글 삭제
+    //  댓글 삭제
     public void deleteCommentById(String commentNo) {
         adminMapper.deleteCommentById(commentNo);
     }
-
+ 
     public void updateComment(String commentNo, String contents) {
         Map<String, Object> map = new HashMap<>();
         map.put("commentNo", commentNo);

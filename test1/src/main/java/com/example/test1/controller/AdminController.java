@@ -147,7 +147,7 @@ public class AdminController {
         adminService.updatePost(post);
         return "success";
     }
-    
+     
     @PostMapping("/api/comment/delete")
     @ResponseBody
     public String deleteComment(@RequestParam String commentNo) {

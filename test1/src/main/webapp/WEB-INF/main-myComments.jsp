@@ -18,7 +18,7 @@
                 gap: 10px;
                 margin-bottom: 20px;
             }
-
+ 
             .tab-buttons button {
                 padding: 8px 16px;
                 border: 1px solid #ccc;

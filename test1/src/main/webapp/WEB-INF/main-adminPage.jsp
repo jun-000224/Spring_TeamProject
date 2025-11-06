@@ -24,7 +24,7 @@
                 padding: 10px;
                 border-radius: 6px;
             }
-
+ 
             .tab-buttons button {
                 margin-right: 10px;
                 padding: 8px 16px;
