@@ -1,8 +1,10 @@
 package com.example.test1.mapper;
 
-import com.example.test1.model.Area;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.example.test1.model.reservation.Area;
+
 import java.util.List;
 
 @Mapper

@@ -18,7 +18,7 @@
             /* 🔹 필터 영역 - 네이버/구글 스타일 */
             .board-filter {
                 width: 82.5%;
-                margin: 40px auto 0 auto;
+                margin: 40px auto 500px auto;
                 /* background: #ffffff; */
                 /* border: 1px solid #e2e8f0; */
                 /* border-radius: 12px; */
@@ -27,6 +27,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 14px;
+                
                 
             }
 
@@ -62,6 +63,7 @@
                 right: 18px;
                 font-size: 18px;
                 color: #7a7a7a;
+                
             }
 
             /* 🔹 셀렉트 및 버튼 */
@@ -117,6 +119,7 @@
                 .filter-row {
                     flex-direction: column;
                     align-items: stretch;
+                    
                 }
 
                 .board-filter input {
@@ -215,6 +218,7 @@
                 text-align: center;
                 font-weight: bold;
                 margin: auto;
+                margin-bottom: 20px;
 
             }
 
@@ -296,13 +300,8 @@
             }
 
             /* 📗 글쓰기 버튼 영역 (수정) */
-            .write-button-area {
-                text-align: right;
-                /* 버튼을 오른쪽으로 정렬 */
-                margin-top: 25px;
-                /* 버튼과 테이블 사이의 간격 */
-                padding-left: 80%;
-                /* 전체 width 100% 기준으로 테이블과 같은 수준으로 오른쪽 여백 적용 (테이블이 90% width를 사용하는 경우 필요에 따라 조정) */
+            .board-filter-write-button {
+               margin-left: 200px;
                
             }
 
@@ -316,8 +315,8 @@
                 font-size: 18px;
                 cursor: pointer;
                 transition: background-color 0.2s;
-                margin-right: 1300px;
-                margin-top: 20px;
+                /* margin-right: 1300px; */
+               
                 
             }
 
@@ -397,6 +396,7 @@
             </header>
             <!-- 🔹 필터 영역 -->
             <div class="board-filter">
+                
                 <div class="filter-row">
                     <select v-model="searchOption">
                         <option value="all">::전체::</option>
@@ -428,14 +428,14 @@
                         <option value="title">::제목순::</option>
                         <option value="cnt">::조회수::</option>
                     </select>
-
+                      <div>
+                <a href="board-add.do" style="margin-left: 1200px;" class="write-button-area button"><button>글쓰기</button></a>
+            </div>
                 </div>
 
             </div>
 
-              <div class="write-button-area">
-                <a href="board-add.do"><button>글쓰기</button></a>
-            </div>
+             
             <table>
                 <tr>
                     <th>번호</th>

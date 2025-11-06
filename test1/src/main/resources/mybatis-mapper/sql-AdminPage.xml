@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.AdminMapper">
+
+    <!-- 문의 게시판 글 조회 -->
+    <select id="selectInquiryBoards" resultType="com.example.test1.model.MainBoard">
+        SELECT 
+            BOARDNO, 
+            USER_ID, 
+            TITLE, 
+            CONTENTS, 
+            FAV, 
+            CNT, 
+            CDATETIME, 
+            UDATETIME, 
+            TYPE, 
+            REPORT_CNT
+        FROM TBL_BOARD
+        WHERE TYPE = 'SQ'
+        ORDER BY CDATETIME DESC
+    </select>
+    <!--문의 게시판 댓글-->
+    
+    <insert id="insertComment" parameterType="com.example.test1.model.MainBoard">
+    INSERT INTO TBL_COMMENT (
+        COMMENTNO, BOARDNO, USER_ID, ORG_CMTNO, CONTENTS, ADOPT, CDATETIME, UDATETIME, NICKNAME
+    ) VALUES (
+        COMMENT_SEQ.NEXTVAL,
+        #{boardNo},
+        #{userId},
+        NULL,
+        #{contents},
+        #{adopt},
+        SYSDATE,
+        SYSDATE,
+        #{nickname, jdbcType=VARCHAR}
+    )
+	</insert>
+	<!--댓글보기-->
+	<select id="selectCommentsByBoardNo" resultType="com.example.test1.model.MainBoard">
+	    SELECT 
+	        COMMENTNO,
+	        BOARDNO,
+	        USER_ID,
+	        ORG_CMTNO,
+	        CONTENTS,
+	        ADOPT,
+	        TO_CHAR(CDATETIME, 'YYYY-MM-DD HH24:MI') AS CDATETIME,  <!-- ✅ 날짜 포맷 -->
+	        TO_CHAR(UDATETIME, 'YYYY-MM-DD HH24:MI') AS UDATETIME,  <!-- ✅ 날짜 포맷 -->
+	        NICKNAME
+	    FROM TBL_COMMENT
+	    WHERE BOARDNO = #{boardNo}
+	    ORDER BY CDATETIME ASC
+	</select>
+
+
+	<delete id="deleteComment" parameterType="hashmap">
+	    DELETE FROM TBL_COMMENT
+	    WHERE COMMENTNO = #{commentNo}
+	</delete>
+	
+	<update id="updateUserStatus" parameterType="hashmap">
+	    UPDATE USERS
+	    SET STATUS = 'B',
+	        UDATETIME = SYSDATE
+	    WHERE USER_ID = #{userId}
+	</update>
+	
+	<select id="selectBadUsers" resultType="hashmap">
+	    SELECT USER_ID AS userId, NAME AS name, STATUS AS status
+	    FROM USERS
+	    WHERE STATUS = 'B'
+	</select>
+
+	<update id="changeUserStatus">
+	    UPDATE USERS
+	    SET STATUS = #{status}
+	    WHERE USER_ID = #{userId}
+	</update>
+
+
+	<select id="selectReportList" resultType="hashmap">
+	    SELECT 
+	        REPORTNUM,
+	        REPORT_TYPE,
+	        USER_ID,
+	        CONTENT,
+	        BOARDNO,
+	        COMMENTNO
+	    FROM REPORT
+	    ORDER BY REPORTNUM DESC
+	</select>
+
+    <!-- 내 게시글 조회 -->
+	<select id="selectMyPosts" resultType="hashMap">
+	    SELECT 
+	        B.BOARDNO,
+	        B.USER_ID,
+	        B.TITLE,
+	        DBMS_LOB.SUBSTR(B.CONTENTS, 4000, 1) AS CONTENTS,
+	        TO_CHAR(B.CDATETIME, 'YYYY-MM-DD') AS CDATETIME,
+	        (
+	            SELECT COUNT(*) 
+	            FROM TBL_COMMENT C 
+	            WHERE C.BOARDNO = B.BOARDNO
+	        ) AS COMMENT_COUNT  <!-- ✅ 댓글 수 포함 -->
+	    FROM TBL_BOARD B
+	    WHERE B.USER_ID = #{userId}
+	    ORDER BY B.CDATETIME DESC
+	</select>
+
+
+
+	<!-- 내 댓글 조회 + 게시글 정보 포함 -->
+	<select id="selectMyComments" resultType="hashMap">
+	    SELECT 
+	        C.COMMENTNO,
+	        C.USER_ID,
+	        C.CONTENTS AS COMMENT_CONTENT,  <!-- ✅ 댓글 내용 별칭 -->
+	        TO_CHAR(C.CDATETIME, 'YYYY-MM-DD') AS CDATETIME,
+	        B.TITLE AS BOARD_TITLE,
+	        DBMS_LOB.SUBSTR(B.CONTENTS, 4000, 1) AS BOARD_CONTENTS
+	    FROM TBL_COMMENT C
+	    JOIN TBL_BOARD B ON C.BOARDNO = B.BOARDNO
+	    WHERE C.USER_ID = #{userId}
+	    ORDER BY C.CDATETIME DESC
+	</select>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deletePost">
+	    DELETE FROM TBL_BOARD
+	    WHERE BOARDNO = #{boardNo}
+	</delete>
+	
+	<!-- 댓글 삭제 -->
+	  <delete id="deleteCommentById" parameterType="String">
+	    DELETE FROM TBL_COMMENT
+	    WHERE COMMENTNO = #{commentNo}
+	  </delete>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateComment">
+	    UPDATE TBL_COMMENT
+	    SET 
+	        CONTENTS = #{contents},
+	        UDATETIME = SYSDATE
+	    WHERE COMMENTNO = #{commentNo}
+	</update>
+ 
+	
+	<!-- 게시글 수정 -->
+	<update id="updatePost">
+	    UPDATE TBL_BOARD
+	    SET 
+	        TITLE = #{title},
+	        CONTENTS = #{contents},
+	        UDATETIME = SYSDATE
+	    WHERE BOARDNO = #{boardNo}
+	</update>
+
+</mapper>

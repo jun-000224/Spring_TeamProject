@@ -271,3 +271,4 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 }
+

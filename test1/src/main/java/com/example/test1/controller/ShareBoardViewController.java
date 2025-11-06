@@ -37,23 +37,33 @@ public class ShareBoardViewController {
     }
 
     @GetMapping(value = "/share.dox", produces = "application/json;charset=UTF-8")
-//    @ResponseBody
-//    public ResponseEntity<List<HashMap<String, Object>>> searchTour(@RequestParam String keyword) {
-//        List<HashMap<String, Object>> data = ShareBoardViewService.getTourData(keyword);
-//        return ResponseEntity.ok(data);
-//    }
-    
-    //디테일
-//    @ResponseBody
-//    public ResponseEntity<List<HashMap<String, Object>>> searchTour(@RequestParam String keyword) {
-//        List<HashMap<String, Object>> data = ShareBoardViewService.getTourData(keyword);
-//        return ResponseEntity.ok(data);
-//    }
-    
+
 	@ResponseBody
 	public Map<Integer, List<HashMap<String, Object>>> getAllInfo(@RequestParam Map<String,Object> params) {
 	    return ShareBoardViewService.fetchAllInfo(new HashMap<>(params));
 	}
 
+    @GetMapping(value = "/review-detail.dox", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String Detail(@RequestParam HashMap<String, Object> map) throws Exception {
+        String contentId = String.valueOf(map.get("contentId"));
+        List<HashMap<String, Object>> resultList = ShareBoardViewService.DetailInfo(contentId);
+        return new Gson().toJson(resultList);
+    }
+    
+    @GetMapping(value = "/thumbnail.dox", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Map<String, Object> thumbnail(@RequestParam HashMap<String, Object> param) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            Map<Integer, HashMap<String, Object>> result = ShareBoardViewService.thumbnailMap(param);
+            map.put("list", result);
+            map.put("status", "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("status", "error");
+        }
+        return map;
+    }
    
 }

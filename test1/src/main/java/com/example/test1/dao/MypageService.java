@@ -88,5 +88,23 @@ public class MypageService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> updateStatus(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			mypageMapper.updateStatus(map);
+				//오류 나면 catch로 가니 int cnt = 를 생략
+			resultMap.put("msg", "결제가 완료되었습니다.");
+			resultMap.put("result", "success");
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("msg", "오류가 발생했습니다.");
+			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+		}
+		return resultMap;
+	}
+	
+	
 	
 }

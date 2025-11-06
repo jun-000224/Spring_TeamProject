@@ -88,16 +88,6 @@
         .joinBlock{
             margin-top: 20px;
         }
-        .btnField button{
-            width: 150px;
-            height: 50px;
-            font-size: 22px;
-            border-radius: 10px;
-            border-width: 1px;
-        }
-        .btnField button:hover{
-            cursor: pointer;
-        }
         .joinBtn{
             float: right;
             background-color: #0078FF;
@@ -113,20 +103,62 @@
         .cancleBtn:hover{
             background-color: rgb(213, 213, 213);
         }
+
+        .info{
+            position: relative;
+        }
+        .info-dropdown {
+        position: absolute;
+        top: 15px;
+        right: 0px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 8px 12px;
+        list-style: none;
+        margin: 0;
+        z-index: 100;
+        animation: fadeIn 0.2s ease-in-out;
+        min-width: 50px;
+        text-align: center;
+        }
+
+        .info-dropdown li {
+        font-size: 14px;
+        color: #0078FF;
+        padding: 6px 0;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        }
+
+        .info-dropdown li:hover {
+        color: #0056b3;
+        }
+
+        .buyBtn{
+            float:right;
+            margin-right: 15px;
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <%@ include file="components/header.jsp" %>
+        <%@ include file="../components/header.jsp" %>
         
         <div class="field">
             <div class="infoField">
                 <div class="infoBanner">
                     내 정보
-                    <span class="editBtn">
+                    <span class="editBtn info">
                         <a href="javascript:;">
-                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                            <i class="fa-solid fa-ellipsis-vertical" @click="toggleMenu"></i>
+
+                            <ul v-if="infoFlg" class="info-dropdown">
+                                <li @click="fnEdit">수정</li>
+                                <li style="color: red;" @click="fnRelease">탈퇴</li>
+                            </ul>
                         </a>
                     </span>
                 </div>
@@ -166,10 +198,19 @@
                         <i class="fa-solid fa-user-secret"></i>
                         관리자
                     </span>
+
+                    <span class="buyBtn" v-if="info.status === 'U'" >
+                        <button @click="fnSub">구독하기</button>
+                    </span>
+                     {{gradeLabel}}
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-gift"></i>
-                    {{info.bdate}}
+                    {{info.bdate}} (
+                        <span v-if="info.gender === 'M'">남</span>
+                        <span v-else-if="info.gender === 'F'">여</span>
+                        <span v-else>미공개</span>
+                    )
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-solid fa-house"></i>
@@ -178,17 +219,15 @@
                 <div class="infoBanner2">
                     <i class="fa-solid fa-calendar"></i>
                     {{info.cdate}}
+                    <span class="buyBtn">
+                        가입한지 {{info.cdate2}}일 째!
+                    </span>
                 </div>
                 <div class="infoBanner2">
                     <i class="fa-regular fa-calendar"></i>
                     {{info.udate}}
                 </div>
                 
-            </div>
-
-            <div class="btnField">
-                <button class="releaseBtn" @click="fnRelease">탈퇴</button>
-                <button class="editBtn" @click="fnEdit">수정</button>
             </div>
 
             <div class="infoField">
@@ -198,13 +237,13 @@
                 <div class="infoBanner2">
                     <i class="fa-solid fa-key"></i>
                     비밀번호
-                    <button class="editBtn">수정</button>
+                    <button class="editBtn" @click="fnPwdCert">수정</button>
                 </div>
             </div>
             
         </div>
 
-        <%@ include file="components/footer.jsp" %> 
+        <%@ include file="../components/footer.jsp" %> 
          
     </div>
 </body>
@@ -216,9 +255,19 @@
             return {
                 // 변수 - (key : value)
                 sessionId : "${sessionId}",
-                info : {}
+                info : {},
+
+                infoFlg : false,
+
+                id: window.sessionData.id,
+                status: window.sessionData.status,
+                nickname: window.sessionData.nickname,
+                name: window.sessionData.name,
+                point: window.sessionData.point,
+                gradeLabel: window.sessionData.gradeLabel,
             };
         },
+        
         methods: {
             // 함수(메소드) - (key : function())
             fnMyInfo: function () {
@@ -236,12 +285,86 @@
                         self.info = data.info;
                     }
                 });
+            },
+
+            fnEdit: function() {
+                location.href="/myInfo/edit.do";
+            },
+
+            fnRelease : function () {
+                let self = this;
+                let userId = self.sessionId;
+
+                let popup = window.open(
+                    "/myInfo/release.do",
+                    "회원탈퇴",
+                    "width=500,height=500,top=100,left=200,location=no"
+                );
+
+                if(!popup){
+                    alert("팝업이 차단되었습니다. 브라우저 설정을 확인해주세요.");
+                    return;
+                }
+
+                setTimeout(function () {
+                    popup.postMessage({ userId: userId }, window.location.origin);
+                    // console.log("보낸 세션 : ", userId);
+                }, 500);
+            },
+
+            fnSub : function () {
+                let self = this;
+                let userId = self.sessionId;
+
+                let popup = window.open(
+                    "/myInfo/subscribe.do",
+                    "구독하기",
+                    "width=1000,height=700,top=100,left=200,location=no"
+                );
+                
+                if(!popup){
+                    alert("팝업이 차단되었습니다. 브라우저 설정을 확인해주세요.");
+                    return;
+                }
+
+                setTimeout(function () {
+                    popup.postMessage({ userId: userId }, window.location.origin);
+                    // console.log("보낸 세션 : ", userId);
+                }, 500);
+            },
+
+            toggleMenu() {
+                this.infoFlg = !this.infoFlg;
+            },
+
+            toggleLogoutMenu() {
+                this.showLogoutMenu = !this.showLogoutMenu;
+            },
+            goToSettings() {
+                location.href = "/myPoint.do";
+            },
+            goToWithdraw() {
+                location.href = "/member/withdraw.do";
+            },
+            goToLogin() {
+                location.href = "/member/login.do";
+            },
+            logout() {
+                location.href = "/logout.do";
+            },
+            goToMyPage() {
+                location.href = "/main-myPage.do";
+            },
+
+            fnPwdCert () { 
+                location.href = "/myInfo/pwdChange.do";
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnMyInfo();
+            self.infoFlg = false;
         }
     });
 

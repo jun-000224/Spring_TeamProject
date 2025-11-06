@@ -122,8 +122,30 @@ body {
   border-radius: 999px;
   background: #f2f3f5;
   border: 1px solid var(--border);
-  color: #374151
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
+
+.chips .chip button {
+  background: #b9c2ce;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  line-height: 16px;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.chips .chip button:hover {
+  background: #9ca3af;
+}
+
 
 label {
   display: block;
@@ -258,13 +280,11 @@ canvas {
   display: block
 }
 
-/* 잠금 시 range 비활성 표기 */
 input[type="range"]:disabled {
   opacity: .5;
   cursor: not-allowed;
 }
 
-/* 디버그 출력 박스 */
 #debugOut {
   white-space: pre;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -276,7 +296,7 @@ input[type="range"]:disabled {
 }
 
 /* =========================
-   ▼ 모달/플로팅 버튼 추가 CSS
+   ▼ 모달/플로팅 버튼
    ========================= */
 .fab {
   position: fixed;
@@ -386,11 +406,10 @@ input[type="range"]:disabled {
   border: 0;
   display: block
 }
-/*
- * reservation.css (달력 UI 추가)
- */
 
-/* 시작일/종료일 필드 2열 정렬 */
+/* =========================
+   ▼ 달력
+   ========================= */
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -407,14 +426,13 @@ input[type="range"]:disabled {
   font-weight: 600;
 }
 
-/* 달력 공통 */
 .calendar {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   background: #fff;
   padding: 10px;
   margin-top: 10px;
-  user-select: none; /* 드래그 방지 */
+  user-select: none;
 }
 .cal-header {
   display: flex;
@@ -439,7 +457,6 @@ input[type="range"]:disabled {
   background: #f1f5f9;
 }
 
-/* 달력 그리드 */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -454,16 +471,13 @@ input[type="range"]:disabled {
   text-align: center;
   color: #64748b;
 }
-/* 일요일 */
 .cal-day-label:first-child {
   color: #ef4444;
 }
-/* 토요일 */
 .cal-day-label:last-child {
   color: #3b82f6;
 }
 
-/* 날짜 칸 */
 .cal-day {
   font-size: 0.9rem;
   text-align: center;
@@ -478,29 +492,25 @@ input[type="range"]:disabled {
 .cal-day.not-current-month {
   color: #94a3b8;
   cursor: default;
-  pointer-events: none; /* 클릭 방지 */
+  pointer-events: none;
   background: none;
 }
 .cal-day.today {
   font-weight: 700;
   color: #2563eb;
-  /* 오늘 날짜 표시 (선택) */
-  /* border: 1px solid #93c5fd; */
 }
 
-/* 선택된 날짜 (범위) */
 .cal-day.in-range {
-  background-color: #eff6ff; /* 연한 파랑 */
+  background-color: #eff6ff;
   color: #1d4ed8;
   border-radius: 0;
 }
 .cal-day.selected-start,
 .cal-day.selected-end {
-  background-color: #3b82f6; /* 진한 파랑 */
+  background-color: #3b82f6;
   color: #fff;
   font-weight: 700;
 }
-/* 범위의 시작과 끝 모서리 둥글게 */
 .cal-day.selected-start {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -509,18 +519,21 @@ input[type="range"]:disabled {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-/* 날짜 하나만 선택 시 (시작=종료) */
 .cal-day.selected-start.selected-end {
     border-radius: 4px;
 }
-/* reservation.css 파일 맨 아래에 추가 */
 
-/* 지도 탭 버튼 */
+/* =================================
+   ▼ 지도 탭 및 일정 플래너
+   ================================= */
+
+/* 탭 공통 (날짜, 카테고리) */
 .tabs {
   display: flex;
   gap: 6px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border);
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 .tab-btn {
   padding: 10px 16px;
@@ -529,9 +542,9 @@ input[type="range"]:disabled {
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--muted);
   border-bottom: 3px solid transparent;
-  transform: translateY(2px); /* 하단 테두리와 겹치게 */
+  transform: translateY(2px);
 }
 .tab-btn:hover {
   color: #334155;
@@ -542,52 +555,225 @@ input[type="range"]:disabled {
 }
 .tab-btn i {
   margin-right: 6px;
-  width: 14px; /* 아이콘 너비 고정 */
+  width: 14px;
 }
 
-/* 새 지도 영역 */
+.tabs.date-tabs {
+    border-bottom-color: #cbd5e1;
+}
+
 #map-recommend {
   width: 100%;
-  height: 400px; /* 지도를 더 크게 */
-  border-radius: 6px;
+  height: 400px;
+  border-radius: var(--radius);
   background: #f8fafc;
+  margin-bottom: 12px;
 }
-.tabs {
-        display: flex;
-        gap: 6px;
-        border-bottom: 2px solid #e2e8f0;
-        margin-bottom: 12px;
-      }
 
-      .tab-btn {
-        padding: 10px 16px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #64748b;
-        border-bottom: 3px solid transparent;
-        transform: translateY(2px);
-      }
+/* POI 추가 패널 */
+.poi-add-panel {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.poi-add-panel strong {
+    font-size: 1.1rem;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 취소 버튼 */
+.btn-secondary {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    background: #94a3b8;
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: .2px;
+    transition: background .12s, transform .06s, box-shadow .12s;
+    cursor: pointer;
+}
+.btn-secondary:hover {
+    background: #64748b;
+}
+.btn-secondary:active {
+    transform: translateY(1px);
+}
 
-      .tab-btn:hover {
-        color: #334155;
-      }
+/* [신규] 지역 추가 버튼 */
+.region-select-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: flex-end;
+}
+.btn-add-region {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: #4a90e2;
+  color: white;
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .12s;
+  margin-bottom: 12px; /* .field의 margin-bottom과 동일하게 */
+}
+.btn-add-region:hover {
+  background: #3a7bc2;
+}
+.btn-add-region:disabled {
+  background: #b0c4de;
+  cursor: not-allowed;
+}
 
-      .tab-btn.active {
-        color: #2563eb;
-        border-bottom-color: #2563eb;
-      }
+/* [신규] 지역 필터 드롭다운 */
+.region-filter-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+.region-filter-wrap label {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+}
+.region-filter-wrap select {
+    width: auto;
+    min-width: 50px;
+    margin-bottom: 0;
+}
 
-      .tab-btn i {
-        margin-right: 6px;
-        width: 14px;
-      }
+/* =================================
+   ▼ [신규] 최종 일정 패널 (드래그 앤 드롭)
+   ================================= */
+.itinerary-day-block {
+    margin-bottom: 16px;
+}
+.itinerary-day-block h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+}
 
-      #map-recommend {
-        width: 100%;
-        height: 400px;
-        border-radius: 6px;
-        background: #f8fafc;
-      }
+.itinerary-list {
+    /* (기존 스타일 유지) */
+}
+.itinerary-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+}
+.itinerary-list li {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: grab; /* [신규] 드래그 커서 */
+    transition: background-color 0.2s;
+}
+.itinerary-list li:last-child {
+    border-bottom: none;
+}
+.itinerary-list li span {
+    font-weight: 500;
+    color: #334155;
+    pointer-events: none; /* 텍스트가 드래그 이벤트 방해 안 하도록 */
+}
+.itinerary-list li button {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.itinerary-list li button:hover {
+    background: #dc2626;
+}
+
+/* 드래그 앤 드롭 스타일 */
+.itinerary-list li.dragging {
+    opacity: 0.5;
+    background: #f0f4f9;
+}
+.itinerary-list li.drag-over {
+    /* 드롭될 위치(다른 항목) 위에 올렸을 때 */
+    border-top: 3px solid #2563eb;
+}
+/* 카카오맵 기본 마커 이미지를 사용합니다.
+  (빨강: m, 주황/노랑: y, 그 외: p) 
+*/
+.kakao-map-marker {
+    width: 24px;
+    height: 35px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.marker-red {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/m_marker.png);
+}
+.marker-orange {
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/y_marker.png);
+}
+.marker-yellow {
+    /* 카카오가 노란색 핀을 제공하지 않아, 기본 파란색 핀으로 대체합니다 */
+    background-image: url(http://t1.daumcdn.net/mapjsapi/images/p_marker.png);
+}
+.budget-status-wrap {
+    padding: 10px 14px;
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    display: grid; /* 3줄로 표시하기 위해 grid 사용 */
+    gap: 8px; /* 줄 간격 */
+}
+.budget-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.budget-status-item .label {
+    font-weight: 700;
+    font-size: 1.0rem;
+    color: #374151;
+}
+.budget-status-item .amount {
+    font-size: 1.0rem;
+    font-weight: 600;
+}
+.budget-status-item .amount .current {
+    color: #ef4444; /* 사용액 (빨강) */
+}
+.budget-status-item .amount .total {
+    color: #1d4ed8; /* 총액 (파랑) */
+    font-size: 0.9rem;
+}
+/* 예산 초과 시 */
+.budget-status-item .amount.over .current,
+.budget-status-item .amount.over .total {
+    color: #ef4444;
+    font-weight: 800;
+}

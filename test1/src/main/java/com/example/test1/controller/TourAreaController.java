@@ -1,7 +1,8 @@
 package com.example.test1.controller;
 
-import com.example.test1.model.Area;
 import com.example.test1.dao.TourAreaService;
+import com.example.test1.model.reservation.Area;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

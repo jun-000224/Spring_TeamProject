@@ -252,7 +252,7 @@ body {
 
       <h4>후기를 작성해주세요</h4>
       <textarea v-model="reviewText" maxlength="500" placeholder="방문 경험을 공유해주세요..."></textarea>
-      <input type="file" id="file1" name="file1">
+      <input type="file" id="file1" name="file1" multiple>
       <div style="font-size:12px; color:gray;">{{ reviewText.length }}/500자</div>
 
       <div class="modal-footer">
@@ -280,7 +280,8 @@ body {
                 rating:0,
                 reviewText:"",
                 selectedDay:1,
-                contentId:""
+                contentId:"",
+                title:""
             };
         },
         methods: {
@@ -296,9 +297,11 @@ body {
             data:param,
             success: function(data) {
                 self.info = data;  // dayMap 전체
+                console.log(data);
                 
             //키값 넣어주기
             const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
+            console.log(days);
             for (let i = 0; i < days.length; i++) {
               const day = days[i];
               const dayList = data[day];
@@ -319,9 +322,10 @@ body {
                       day:item.day,
                       rating:item.rating,
                     });
-                    console.log(item.rating);
                     
                   }
+                  console.log(self.positionsByDay);
+                  
                   self.selectedDay = days[0];
                   
               }
@@ -369,7 +373,8 @@ body {
                 let param = {
                   rating:self.rating,
                   content:self.reviewText,
-                  contentId:self.contentId
+                  contentId:self.contentId,
+                  resNum:self.resNum
                 };
                 $.ajax({
                     url: "/update-rating.dox",
@@ -379,11 +384,17 @@ body {
                     success: function (data) {
                       alert("후기작성완료되었습니다.");
                       console.log(data);
+                      console.log($("#file1")[0].files);
                       
                       let form = new FormData();
-                      form.append( "file1",  $("#file1")[0].files[0] );
+                      for(let i=0; i<$("#file1")[0].files.length;i++){
+                        form.append( "file1",  $("#file1")[0].files[i] );
+                      }
                       form.append( "contentId",  data.contentId); // 임시 pk
+                      form.append( "userId",  self.userId);
+                      form.append( "title",  self.selectedItem.title)
                       self.upload(form);  
+                      
 
                       self.fninfo();                  
                       if (self.selectedItem) {

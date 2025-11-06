@@ -15,256 +15,357 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
-            /* 🎨 기본 설정 */
-body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: #f8f9fb;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-table {
-    width: 80%;
-    margin: 30px auto;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* ===========================
-   📘 게시글 상세보기 테이블
+            /* ===========================
+💬 댓글 입력 영역 (깔끔하게 개선)
 =========================== */
-table:not(#comment):not(#input) th {
-    background-color: #0078FF;
-    color: #fff;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    border: none;
-    width: 15%;
-}
+            #input {
+                width: 80%;
+                max-width: 900px;
+                margin: 40px auto 60px;
+                border-collapse: separate;
+                border-spacing: 0;
+                background: #ffffff;
+                border: 1px solid #e0e0e0;
+                border-radius: 12px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                transition: all 0.2s ease;
+            }
 
-table:not(#comment):not(#input) td {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eaeaea;
-    font-size: 15px;
-    text-align: center;
-    vertical-align: top;
-}
+            #input:hover {
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            }
 
-table:not(#comment):not(#input) td div {
-    min-height: 100px;
-    margin-top: 30px;
-    line-height: 1.6;
-}
+            #input th {
+                background: #f4f7ff;
+                color: #0078FF;
+                font-size: 18px;
+                text-align: center;
+                padding: 20px;
+                width: 15%;
+                border-right: 1px solid #e0e0e0;
+            }
 
-/* 📎 게시글 수정/삭제 버튼 */
-.post-actions {
-    width: 80%;
-    margin: 0 auto 30px auto;
-    text-align: right;
-}
+            #input td {
+                padding: 15px 20px;
+            }
 
-/* ===========================
-   📗 버튼 공통 스타일
+            #input textarea {
+                width: 100%;
+                height: 90px;
+                border: 1px solid #d6d9e0;
+                border-radius: 8px;
+                padding: 12px 14px;
+                font-size: 15px;
+                line-height: 1.6;
+                font-family: 'Noto Sans KR', sans-serif;
+                resize: none;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+
+            #input textarea:focus {
+                outline: none;
+                border-color: #0078FF;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
+            }
+
+            #input td:last-child {
+                text-align: center;
+                vertical-align: middle;
+                width: 120px;
+            }
+
+            #input td:last-child button {
+                background-color: #0078FF;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                padding: 10px 16px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.2s ease, transform 0.1s ease;
+            }
+
+            #input td:last-child button:hover {
+                background-color: #005FCC;
+                transform: translateY(-1px);
+            }
+
+            /* 댓글쓰는 영역 신경쓰이시면 위에 코드만 제거하시면 됩니다! */
+
+
+
+
+            /* ===========================
+🎨 기본 설정
 =========================== */
-button {
-    background-color: #0078FF;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-left: 8px;
-}
+            body {
+                font-family: 'Noto Sans KR', sans-serif;
+                background: #f8f9fb;
+                color: #333;
+                margin: 0;
+                padding: 0;
+            }
 
-button:hover {
-    background-color: #005FCC;
-}
+            /* 테이블 기본 */
+            table {
+                width: 50%;
+                margin: 30px auto;
+                border-collapse: collapse;
+                background: #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                font-size: 20px;
+                font-weight: bold;
+            }
 
-/* 개별 버튼 색상 */
-button.delete-btn {
-    background-color: #d63b3b;
-}
-
-button.edit-btn {
-    background-color: #00a769;
-}
-
-button.btn-success {
-    background-color: #28a745;
-}
-
-button.btn-success:hover {
-    background-color: #218838;
-}
-
-/* ===========================
-   📙 댓글 목록
+            /* ===========================
+📘 게시글 상세보기 테이블
 =========================== */
-#comment {
-    width: 80%;
-    max-width: 900px;
-    margin: 40px auto 20px;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
+            table:not(#comment):not(#input) th {
+                background-color: #0078FF;
+                color: #fff;
+                padding: 15px;
+                font-size: 18px;
+                font-weight: bold;
+                text-align: center;
+                border: none;
+                width: 15%;
 
-#comment tr {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-}
+            }
 
-#comment tr:hover {
-    background-color: #f4f9ff;
-}
+            table:not(#comment):not(#input) td {
+                padding: 15px 20px;
+                border-bottom: 1px solid #eaeaea;
+                font-size: 18px;
+                text-align: center;
+                vertical-align: top;
+            }
 
-#comment th,
-#comment td {
-    padding: 12px;
-    font-size: 15px;
-    text-align: center;
-    color: #333;
-}
+            table:not(#comment):not(#input) td div {
+                min-height: 100px;
+                margin-top: 30px;
+                line-height: 1.6;
+            }
 
-#comment th:nth-child(1) {
-    width: 120px;
-    font-weight: bold;
-}
-
-#comment th:nth-child(2) {
-    flex-grow: 1;
-    text-align: left;
-    padding: 12px 20px;
-}
-
-#comment td button {
-    width: 100%;
-    padding: 6px 8px;
-    font-size: 13px;
-}
-
-/* 채택 표시 라벨 */
-.adopted-label {
-    color: #28a745;
-    font-weight: bold;
-}
-
-/* ===========================
-   📒 댓글 입력 영역
+            /* ===========================
+📗 버튼 공통 스타일
 =========================== */
-#input {
-    width: 80%;
-    background: #f4f9ff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin: 30px auto;
-}
+            button {
+                background-color: #0078FF;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 15px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                margin-left: 20px;
+            }
 
-#input th {
-    background-color: #0078FF;
-    color: white;
-    padding: 15px;
-    width: 15%;
-    border-radius: 8px 0 0 8px;
-}
+            button:hover {
+                background-color: #005FCC;
+            }
 
-#input textarea {
-    width: 100%;
-    height: 80px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    resize: none;
-    font-size: 14px;
-}
+            /* 개별 버튼 색상 */
+            button.delete-btn {
+                background-color: #d63b3b;
+                margin-left: 1060px
+            }
 
-#input textarea:focus {
-    outline: none;
-    border-color: #0078FF;
-    box-shadow: 0 0 4px rgba(0, 120, 255, 0.3);
-}
+            button.edit-btn {
+                background-color: #00a769;
+            }
 
-/* ===========================
-   📌 모달 (신고창)
+            button.btn-success {
+                background-color: #28a745;
+            }
+
+            button.btn-success:hover {
+                background-color: #218838;
+            }
+
+            /* ===========================
+📘 게시글 수정/삭제 버튼
 =========================== */
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+            .post-actions {
+                width: 80%;
+                margin: 0 auto 30px;
+                text-align: right;
+            }
 
-.modal_body {
-    background: #fff;
-    padding: 25px;
-    border-radius: 10px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-.modal textarea {
-    width: 100%;
-    height: 120px;
-    margin-top: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    padding: 8px;
-    resize: none;
-}
-
-.modal select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* ===========================
-   📱 반응형
+            /* ===========================
+📙 댓글 목록
 =========================== */
-@media (max-width: 768px) {
-    table, #comment, #input {
-        width: 95%;
-    }
+            #comment {
+                width: 80%;
+                max-width: 900px;
+                margin: 40px auto 20px;
+                border-collapse: collapse;
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
 
-    #comment tr {
-        flex-wrap: wrap;
-        padding: 10px 0;
-    }
+            #comment tr {
+                display: flex;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+                transition: background-color 0.2s;
+            }
 
-    #comment th:nth-child(1),
-    #comment td {
-        width: 100%;
-        text-align: left;
-    }
+            #comment tr:hover {
+                background-color: #f4f9ff;
+            }
 
-    #comment button {
-        font-size: 12px;
-        padding: 5px;
-    }
+            #comment th,
+            #comment td {
+                padding: 12px;
+                font-size: 18px;
+                text-align: center;
+                color: #333;
+            }
 
-    .modal_body {
-        width: 90%;
-    }
-}
+            #comment th:nth-child(1) {
+                width: 120px;
+                font-weight: bold;
+            }
 
-           
+            #comment th:nth-child(2) {
+                flex-grow: 1;
+                text-align: left;
+                padding: 12px 20px;
+            }
+
+            #comment td button {
+                width: 100%;
+                padding: 6px 8px;
+                font-size: 13px;
+            }
+
+            /* 채택 표시 */
+            .adopted-label {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            /* ===========================
+📒 댓글 입력 영역
+=========================== */
+
+
+            #input th {
+                background-color: #0078FF;
+                color: white;
+
+                width: 15%;
+                /* border-radius: 8px 0 0 8px; */
+
+            }
+
+            #input textarea {
+                width: 100%;
+                height: 80px;
+                /* border-radius: 6px; */
+                border: 1px solid #ccc;
+                padding: 10px;
+                resize: none;
+                font-size: 14px;
+            }
+
+            #input textarea:focus {
+                outline: none;
+                border-color: #0078FF;
+                box-shadow: 0 0 4px rgba(0, 120, 255, 0.3);
+            }
+
+            /* 저장 버튼 (가운데 정렬) */
+            #input td:last-child {
+                text-align: center;
+                vertical-align: middle;
+                padding-left: 12px;
+            }
+
+            #input td:last-child button {
+                padding: 8px 14px;
+                font-size: 18px;
+                /* border-radius: 6px; */
+                cursor: pointer;
+            }
+
+            /* ===========================
+📌 모달 (신고창)
+=========================== */
+            .modal {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.45);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal_body {
+                background: #fff;
+                padding: 25px;
+                border-radius: 10px;
+                width: 320px;
+                text-align: center;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .modal textarea {
+                width: 100%;
+                height: 120px;
+                margin-top: 10px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+                padding: 8px;
+                resize: none;
+            }
+
+            .modal select {
+                width: 100%;
+                padding: 8px;
+                margin-top: 8px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+            }
+
+            /* ===========================
+📱 반응형 스타일
+=========================== */
+            @media (max-width: 768px) {
+
+                table,
+                #comment,
+                #input {
+                    width: 95%;
+                }
+
+                #comment tr {
+                    flex-wrap: wrap;
+                    padding: 10px 0;
+                }
+
+                #comment th:nth-child(1),
+                #comment td {
+                    width: 100%;
+                    text-align: left;
+                }
+
+                #comment button {
+                    font-size: 12px;
+                    padding: 5px;
+                }
+
+                .modal_body {
+                    width: 90%;
+                }
+            }
         </style>
     </head>
 
@@ -344,40 +445,32 @@ button.btn-success:hover {
 
                 <!-- 게시글 모달 -->
                 <div class="report">
-  <button 
-    v-if="!boardReportCheck" 
-    @click="fnReport(info.userId)">
-    🚨신고하기
-  </button> 
-  <button 
-    v-else 
-    disabled 
-    style="color: gray; cursor: not-allowed;">
-    ✅ 신고완료
-  </button>
-</div>
+                    <div class="report">
+                        <button v-if="!boardReportCheck" @click="fnReport(info.userId)">🚨신고하기</button>
+                        <button v-else disabled style="color: gray; cursor: not-allowed;">✅ 신고완료</button>
+                    </div>
 
 
-                <div v-if="reportFlg" class="modal">
-                    <div class="modal_body">
-                        <h2>🚨신고하기</h2>
-                        <p>신고 대상: {{ reportedUserId }}</p>
-                        <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
+                    <div v-if="reportFlg" class="modal">
+                        <div class="modal_body">
+                            <h2>🚨신고하기</h2>
+                            <p>신고 대상: {{ reportedUserId }}</p>
+                            <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
 
-                        <div>● 신고유형 선택</div>
-                        <div>
-                            <select v-model="reportType">
-                                <option value="E">오류제보</option>
-                                <option value="I">불편사항</option>
-                                <option value="S">사기신고</option>
-                            </select>
-                        </div>
-                        <div>
-                            <button @click="submitReport">제출</button>
-                            <button @click="closeReportModal">취소</button>
+                            <div>● 신고유형 선택</div>
+                            <div>
+                                <select v-model="reportType">
+                                    <option value="E">오류제보</option>
+                                    <option value="I">불편사항</option>
+                                    <option value="S">사기신고</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button @click="submitReport">제출</button>
+                                <button @click="closeReportModal">취소</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
 
 
@@ -385,7 +478,7 @@ button.btn-success:hover {
 
             </table>
 
-            <div style="text-align:center;" v-if="info.userId == userId">
+            <div v-if="info.userId == userId">
                 <button class="delete-btn" @click="fnRemove">삭제</button>
                 <button class="edit-btn" @click="fnUpdate">수정</button>
             </div>
@@ -394,74 +487,69 @@ button.btn-success:hover {
 
             <!-- 댓글 코멘트 -->
             <table id="comment">
-            <tr v-for="(item, index) in commentList" :key="item.commentNo">
-                <th>{{ item.userId }}</th>
-                <th>
-                    <span v-if="editIndex !== index">
-                        {{ item.contents }}
-                    </span>
-                    <input v-else type="text" v-model="item.contents">
-                </th>
-                <!-- 삭제 버튼 -->
-                <td v-if="item.userId == userId || status == 'A'">
-                    <button @click="fncRemove(item.commentNo)">삭제</button>
-                </td>
+                <tr v-for="(item, index) in commentList" :key="item.commentNo">
+                    <th>{{ item.userId }}</th>
+                    <th>
+                        <span v-if="editIndex !== index">
+                            {{ item.contents }}
+                        </span>
+                        <input v-else type="text" v-model="item.contents">
+                    </th>
+                    <!-- 삭제 버튼 -->
+                    <td v-if="item.userId == userId || status == 'A'">
+                        <button @click="fncRemove(item.commentNo)">삭제</button>
+                    </td>
 
-                <!-- 수정 버튼 -->
-                <td v-if="item.userId == userId || status =='A'" >
-                    <button v-if="editIndex !== index" @click="editIndex = index">수정</button>
-                    <button v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
-                </td>
+                    <!-- 수정 버튼 -->
+                    <td v-if="item.userId == userId || status =='A'">
+                        <button v-if="editIndex !== index" @click="editIndex = index">수정</button>
+                        <button v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
+                    </td>
 
-                <!-- 채택 버튼 -->
-                 <td>
-                <div v-if="item.adopt === 'T' && info.type == 'Q '" class="adopted-label">✅ 채택된 댓글</div>
-                <button
-                    v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
-                    @click="fnAdopt(item.commentNo, item.userId)"
-                    class="btn-success">
-                    채택하기
-                </button>
-            </td>
+                    <!-- 채택 버튼 -->
+                    <td>
+                        <div v-if="item.adopt === 'T' && info.type == 'Q '" class="adopted-label">✅ 채택된 댓글</div>
+                        <button
+                            v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
+                            @click="fnAdopt(item.commentNo, item.userId)" class="btn-success">
+                            채택하기
+                        </button>
+                    </td>
 
-                <!-- 🚨 신고 버튼 -->
-                <td v-if="item.userId != userId">
-  <button
-    v-if="!item.reported && !reportedUsers.includes(item.userId)"
-    @click="fnReport(item.userId, item.commentNo)">
-    🚨 신고하기
-  </button>
-  <button
-    v-else
-    disabled
-    style="color: gray; cursor: not-allowed;">
-    ✅ 신고완료
-  </button>
-</td>
-            </tr>
-        </table>
+                    <!-- 🚨 신고 버튼 -->
+                    <td v-if="item.userId != userId">
+                        <button v-if="!commentReportMap[item.commentNo]"
+                            @click="fnCReport(item.commentNo, item.userId)">
+                            🚨 신고하기
+                        </button>
+                        <button v-else disabled style="color: gray; cursor: not-allowed;">
+                            ✅ 신고완료
+                        </button>
+                    </td>
+                </tr>
+            </table>
 
-<!-- ✅ 신고 모달 (테이블 밖으로 이동) -->
-<div v-if="CoReportFlg" class="modal">
-  <div class="modal_body">
-    <h2>신고하기</h2>
-    <p>신고 대상: {{ reportedUserId }}</p>
-    <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
+            <!-- ✅ 신고 모달 (테이블 밖으로 이동) -->
+            <div v-if="CoReportFlg" class="modal">
+                <div class="modal_body">
+                    <h2>신고하기</h2>
+                    <p>신고 대상: {{ reportedUserId }}</p>
+                    <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
 
-    <div>● 신고유형 선택</div>
-    <div>
-      <select v-model="CreportType">
-        <option value="E">오류제보</option>
-        <option value="I">불편사항</option>
-        <option value="S">사기신고</option>
-      </select>
-    </div>
-    <div>
-      <button @click="CsubmitReport">제출</button>
-      <button @click="CcloseReportModal">취소</button>
-    </div>
-  </div>
-</div>
+                    <div>● 신고유형 선택</div>
+                    <div>
+                        <select v-model="CreportType">
+                            <option value="E">오류제보</option>
+                            <option value="I">불편사항</option>
+                            <option value="S">사기신고</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button @click="CsubmitReport">제출</button>
+                        <button @click="CcloseReportModal">취소</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- 댓글 작성 -->
             <table id="input">
@@ -540,9 +628,9 @@ button.btn-success:hover {
                     boardNo: "${boardNo}",
                     userId: "${sessionId}",
                     contents: "",
-                    editIndex:-1,
+                    editIndex: -1,
                     commentList: [],
-                    commentNo: "${commentNo}",
+                    commentNo: "",
                     type: "",
                     editFlg: false,
 
@@ -552,7 +640,7 @@ button.btn-success:hover {
                     reportedUserId: "",         // 신고 대상
                     reason: "",          // 신고 사유,
                     reportType: "E",
-                    currentUserId: "${sessionId}", 
+                    currentUserId: "${sessionId}",
 
                     CoReportFlg: false,   // 모달 표시 여부
                     CReportTyle: "",         // 신고 유형
@@ -561,37 +649,35 @@ button.btn-success:hover {
 
                     adoptedExists: false,
                     boardReportCheck: false,      // 게시글 신고 여부
+                    commentReportMap: {},
                 };
             },
             methods: {
                 // 함수(메소드) - (key : function())
                 fnInfo: function () {
-
                     let self = this;
-                    let param = {
-                        boardNo: self.boardNo,
-                        type: self.type,
-                        userId:self.userId,
-                        
-
-                    };
                     $.ajax({
                         url: "board-view.dox",
-                        dataType: "json",
                         type: "POST",
-                        data: param,
+                        dataType: "json",
+                        data: { boardNo: self.boardNo, userId: self.userId },
                         success: function (data) {
-                            console.log(data);
-
                             self.info = data.info;
-                            self.commentList = data.commentList;
                             self.commentList = data.commentList.map(c => ({
                                 ...c,
-                                reported: c.reported === true // boolean으로 변환
+                                reported: c.reported === true
                             }));
-                            self.adoptedExists = self.commentList.some(c => c.adopt === 'T')
-                             self.boardReportCheck = data.boardReportCheck;
-                            console.log(self.commentList);
+
+                            // 서버에서 이미 신고한 댓글 정보 가져오기
+                            self.commentReportMap = {};
+                            self.commentList.forEach(c => {
+                                if (c.reported) {
+                                    self.commentReportMap[c.commentNo] = true;
+                                }
+                            });
+
+                            self.adoptedExists = self.commentList.some(c => c.adopt === 'T');
+                            self.boardReportCheck = data.boardReportCheck;
                         }
                     });
                 },
@@ -708,43 +794,46 @@ button.btn-success:hover {
 
 
                 fnAdopt(commentNo, commentUserId) {
-  const self = this;
-  $.ajax({
-    url: "adopt-comment.dox",
-    type: "POST",
-    dataType: "json",
-    data: { boardNo: self.boardNo, commentNo, userId: commentUserId },
-    success(data) {
-      if (data.result === "success") {
-        alert("채택 완료!");
-        self.fnInfo(); // ✅ 목록 다시 불러와 adoptedExists 갱신
-      } else {
-        alert(data.msg || "오류 발생");
-      }
-    }
-  });
-},
+                    const self = this;
+                    $.ajax({
+                        url: "adopt-comment.dox",
+                        type: "POST",
+                        dataType: "json",
+                        data: { boardNo: self.boardNo, commentNo, userId: commentUserId },
+                        success(data) {
+                            if (data.result === "success") {
+                                alert("채택 완료!");
+                                self.fnInfo(); // ✅ 목록 다시 불러와 adoptedExists 갱신
+                            } else {
+                                alert(data.msg || "오류 발생");
+                            }
+                        }
+                    });
+                },
 
                 //게시글 모달
                 fnReport(reportedUserId) {
-                    let self=this;
+                    let self = this;
                     self.reportedUserId = reportedUserId;   // 신고 대상 지정
                     self.reportFlg = true;  // 모달 열기
                 },
                 closeReportModal() {
-                    let self=this;
+                    let self = this;
                     self.reportFlg = false; // 모달 닫기
                     self.reason = "";       // 신고이유
                 },
+
                 submitReport() {
-                    let self=this;
+                    let self = this;
                     const param = {
-                        reportType: self.reportType,
-                        reportedUserId: self.reportedUserId,
+                        CoReportFlg: self.reportType,
+                        coreportedUserId: self.reportedUserId,
                         reason: self.reason,
                         boardNo: self.boardNo,
-                        currentUserId : self.userId
+                        userId: self.userId
                     };
+
+
                     // Ajax로 서버에 신고 정보 전송
                     $.ajax({
                         url: "/board-report-submit.dox",
@@ -767,69 +856,70 @@ button.btn-success:hover {
                 },
 
                 // 코멘트 모달
-                fnCReport(reportedUserId, commentNo) {
-    this.reportedUserId = reportedUserId; // 신고 대상
-    this.commentNo = commentNo;
-    this.CoReportFlg = true; // 모달 열기
-},
+                fnCReport(commentNo, reportedUserId) {
+                    let self = this;
+                    self.reportedUserId = reportedUserId; // 신고 대상
+                    self.commentNo = commentNo;
+                    self.CoReportFlg = true; // 모달 열기
+                },
 
-CcloseReportModal() {
-    this.CoReportFlg = false;
-    this.comReason = "";
-},
+                CcloseReportModal() {
+                    let self = this;
+                    self.CoReportFlg = false;
+                    self.comReason = "";
+                },
 
-CsubmitReport() {
-    const self = this;
+                CsubmitReport() {
+                    let self = this;
 
-    if (self.reportedUsers.includes(self.reportedUserId)) {
-        alert("이미 신고한 사용자입니다.");
-        self.CcloseReportModal();
-        return;
-    }
+                    if (!self.comReason) {
+                        alert("신고 사유를 입력해주세요.");
+                        return;
+                    }
 
-    if (!self.comReason) {
-        alert("신고 사유를 입력해주세요.");
-        return;
-    }
+                    if (!confirm("정말 신고하시겠습니까?")) return;
 
-    if (!confirm("정말 신고하시겠습니까?")) return;
+                    let param = {
+                        CreportType: self.CreportType,       // 신고 유형
+                        reportedUserId: self.reportedUserId, // 신고 대상
+                        comReason: self.comReason,           // 신고 사유
+                        commentNo: self.commentNo,           // 신고 댓글 번호
+                        userId: self.userId                  // 신고자
+                    };
 
-    const param = {
-        CreportType: self.CreportType,
-        reportedUserId: self.reportedUserId,
-        comReason: self.comReason,
-        commentNo: self.commentNo,
-        userId: self.currentUserId
-    };
+                    $.ajax({
+                        url: "/board-Creport-submit.dox",
+                        type: "POST",
+                        data: param,
+                        dataType: "json",
+                        success: (data) => {
+                            if (data.result === "success") {
+                                alert("댓글 신고가 접수되었습니다.");
 
-    $.ajax({
-        url: "/board-Creport-submit.dox",
-        type: "POST",
-        data: param,
-        dataType: "json",
-        success: (data) => {
-            if (data.result === "success") {
-                alert("신고가 접수되었습니다.");
+                                // ✅ 댓글 신고 상태만 업데이트
+                                self.commentReportMap[self.commentNo] = true;
 
-                // 신고한 유저 ID를 reportedUsers 배열에 추가
-                self.reportedUsers.push(self.reportedUserId);
+                                // 신고한 유저 ID 저장
+                                self.reportedUsers.push(self.reportedUserId);
 
-                // 모달 닫기 및 목록 갱신
-                self.CcloseReportModal();
-                self.fnInfo();
-            } else if (data.result === "duplicate") {
-                alert("이미 신고하신 댓글입니다.");
-                self.reportedUsers.push(self.reportedUserId);
-                self.CcloseReportModal();
-            } else {
-                alert("오류가 발생하였습니다.");
-            }
-        },
-        error: () => {
-            alert("서버와 통신 중 오류가 발생했습니다.");
-        }
-    });
-}
+                                self.CcloseReportModal();
+                                self.fnInfo();
+                            } else if (data.result === "duplicate") {
+                                alert("이미 신고하신 댓글입니다.");
+
+                                // 이미 신고한 댓글 상태 업데이트
+                                self.commentReportMap[self.commentNo] = true;
+
+                                self.CcloseReportModal();
+                            } else {
+                                alert("오류가 발생하였습니다.");
+                            }
+                        },
+                        error: () => {
+                            alert("서버와 통신 중 오류가 발생했습니다.");
+                        }
+                    });
+                }
 
 
             }, // methods

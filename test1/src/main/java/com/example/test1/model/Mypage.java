@@ -18,4 +18,6 @@ public class Mypage {
 	private String cdate;
 	private String udate;
 	
+	private String cdate2;
+	
 }

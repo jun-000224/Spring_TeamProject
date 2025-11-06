@@ -1,6 +1,7 @@
 package com.example.test1.dao;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
@@ -9,12 +10,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.test1.mapper.MemberMapper;
+import com.example.test1.mapper.PointMapper;
 import com.example.test1.model.Member;
+import com.example.test1.model.Point;
 
 @Service
 public class MemberService {
 	@Autowired
 	MemberMapper memberMapper;
+	@Autowired
+	PointMapper pointMapper;
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	@Autowired
@@ -63,9 +68,11 @@ public class MemberService {
 //		System.out.println(map);
 		
 		Member member = memberMapper .memberLogin(map);
-//		System.out.println(map);
+//		System.out.println(member.getStatus());
 		String message = "";
 		String result = "";
+		
+		
 		
 		
 		if(member != null) {
@@ -73,19 +80,33 @@ public class MemberService {
 //			System.out.println(loginFlg);
 			
 			if(loginFlg) {
+				
 				if(member.getCnt() >= 5) {
 					message = "로그인 불가(비밀번호를 5회 이상 잘못 입력하셨습니다.)";
 					result = "fail";
 				} else {
-					int cntReset = memberMapper.loginCntReset(map);
+					if(member.getStatus().equals("B")) {
+						message = "접속이 제한된 계정입니다.";
+						result = "fail";
+					} else {
+						int cntReset = memberMapper.loginCntReset(map);
+						
+						Point point = pointMapper.recentPoint(map);
+						
+						message = "로그인되었습니다.";
+						result = "success";
+						
+						session.setAttribute("sessionId", member.getUserId());
+						session.setAttribute("sessionName", member.getName());
+						session.setAttribute("sessionNickname", member.getNickname());
+						session.setAttribute("sessionStatus", member.getStatus());
+						
+						session.setAttribute("sessionPoint", point.getTotalPoint());
+						
+						System.out.println(point.getTotalPoint());
+						
+					}
 					
-					message = "로그인되었습니다.";
-					result = "success";
-					
-					session.setAttribute("sessionId", member.getUserId());
-					session.setAttribute("sessionName", member.getName());
-					session.setAttribute("sessionNickname", member.getNickname());
-					session.setAttribute("sessionStatus", member.getStatus());
 				}
 				
 			} else {
@@ -112,6 +133,8 @@ public class MemberService {
 		
 		resultMap.put("msg", message);
 		resultMap.put("result", result);
+		
+//		System.out.println(resultMap);
 		
 		return resultMap;
 	}
@@ -206,6 +229,99 @@ public class MemberService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> discMember(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Member member = memberMapper.memberLogin(map);
+
+			if(member != null) {
+				session.setAttribute("sessionId", member.getUserId());
+				session.setAttribute("sessionName", member.getName());
+				session.setAttribute("sessionNickname", member.getNickname());
+				session.setAttribute("sessionStatus", member.getStatus());
+				
+				resultMap.put("msg", "로그인되었습니다.");
+				resultMap.put("result", "success");
+			} else {
+				resultMap.put("msg", "로그인에 실패했습니다.");
+				resultMap.put("result", "fail");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("msg", "오류가 발생했습니다.");
+			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+		}
+		return resultMap;
+	}
 	
+	public HashMap<String, Object> joinKakao(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		Random ran = new Random();
+		String randomPwd = "";
+		for(int i=0;i<8;i++) {
+			int num = ran.nextInt(10);
+			if(i==0 && num==0) {
+				i--;
+				continue;
+			}
+			randomPwd += num;
+		}
+//		System.out.println(randomPwd);
+		String hashPwd = passwordEncoder.encode((String) randomPwd);
+//		System.out.println(hashPwd);
+		
+		try {
+			map.put("randomPwd", hashPwd);
+			int cnt = memberMapper.kakaoMemberAdd(map);
+
+			if(cnt > 0) {
+				
+				resultMap.put("msg", "가입되었습니다.");
+				resultMap.put("result", "success");
+			} else {
+				resultMap.put("msg", "가입에 실패했습니다.");
+				resultMap.put("result", "fail");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("msg", "오류가 발생했습니다.");
+			resultMap.put("result", "fail");
+			System.out.println(e.getMessage());
+		}
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> pwdConfirm(HashMap<String, Object> map) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		System.out.println(map);
+//		String message = "";
+		try {
+			Member member = memberMapper.memberIdCheck(map);
+//			System.out.println(member.getPassword());
+			boolean pwdFlg = passwordEncoder.matches((String) map.get("pwd"), member.getPassword());
+			
+			if(pwdFlg) {
+				resultMap.put("result", "success");
+			} else {
+//				String hashPwd = passwordEncoder.encode((String) map.get("pwd"));
+//				map.put("hashPwd", hashPwd);
+//				int cnt = memberMapper .memberPwdChange(map);
+				resultMap.put("result", "fail");
+				resultMap.put("msg", "기존 비밀번호와 다릅니다.");
+//				resultMap.put("msg", "변경되었습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "오류가 발생했습니다.");
+			System.out.println(e.getMessage()); // e에 어떤 오류인지 담겨져 있음 -> 개발자가 오류를 확인하기 위해 사용하는 코드
+		}
+		
+		return resultMap;
+	}
 	
 }

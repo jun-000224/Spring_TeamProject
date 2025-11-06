@@ -3,6 +3,7 @@ package com.example.test1.controller;
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,13 @@ public class ReviewController {
 		request.setAttribute("resNum", map.get("resNum"));
 		
         return "/review-add";
+    }
+	
+	@RequestMapping("review-detail.do") 
+    public String reviewDetail(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		request.setAttribute("contentId", map.get("contentId"));
+		
+        return "/review-detail";
     }
 	
 	@RequestMapping("/review-rating.do") 
@@ -84,66 +92,96 @@ public class ReviewController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	@RequestMapping("/review-fileUpload.dox")
-	public String file(@RequestParam("file1") MultipartFile multi, @RequestParam("contentId") int contentId, HttpServletRequest request,HttpServletResponse response, Model model)
-	{
-		String url = null;
-		String path="c:\\img";
-		try {
-
-			//String uploadpath = request.getServletContext().getRealPath(path);
-			String uploadpath = path;
-			String originFilename = multi.getOriginalFilename();
-			String extName = originFilename.substring(originFilename.lastIndexOf("."),originFilename.length());
-			long size = multi.getSize();
-			String saveFileName = SaveFileName(extName);
-			
-			System.out.println("uploadpath : " + uploadpath);
-			System.out.println("originFilename : " + originFilename);
-			System.out.println("extensionName : " + extName);
-			System.out.println("size : " + size);
-			System.out.println("saveFileName : " + saveFileName);
-			String path2 = System.getProperty("user.dir");
-			System.out.println("Working Directory = " + path2 + "\\src\\webapp\\img");
-			if(!multi.isEmpty())
-			{
-				File file = new File(path2 + "\\src\\main\\webapp\\img", saveFileName);
-				multi.transferTo(file);
-				
-				HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("filename", saveFileName);
-				map.put("path", "../img/" + saveFileName);
-				map.put("contentId", contentId);
-				
-				// insert 쿼리 실행
-			   
-				ReviewService.insertImg(map);
-				model.addAttribute("filename", multi.getOriginalFilename());
-				model.addAttribute("uploadPath", file.getAbsolutePath());
-				
-				return "redirect:list.do";
-			}
-		}catch(Exception e) {
-			System.out.println(e);
-		}
-		return "redirect:list.do";
+	@RequestMapping(value = "/review-cnt.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String updateReviewCnt(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = ReviewService.updateReviewCnt(map);
+		
+		return new Gson().toJson(resultMap);
 	}
-	    
+	
+	@RequestMapping(value = "/review-favorite.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String favorite(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		boolean liked = ReviewService.favorite(map);
+		resultMap.put("liked", liked);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping("/review-fileUpload.dox")
+	public String file(
+	        @RequestParam("file1") MultipartFile[] files, // 여러 파일 받기
+	        @RequestParam("contentId") int contentId,
+	        @RequestParam("userId") String userId,
+	        @RequestParam(value="boardNo", required=false) Integer boardNo,
+	        @RequestParam("title") String title,
+	        HttpServletRequest request,
+	        Model model) {
+
+	    // 저장 경로
+	    String path2 = System.getProperty("user.dir") + "\\src\\main\\webapp\\img";
+	    int boardNoValue = (boardNo != null) ? boardNo : 0;
+
+	    try {
+	        // 1️ 기존 파일 삭제
+	        HashMap<String, Object> delMap = new HashMap<>();
+	        delMap.put("contentId", contentId);
+	        delMap.put("boardNo", boardNoValue);
+	        delMap.put("userId", userId);
+
+	        List<String> oldFiles = ReviewService.selectImgs(delMap);
+	        for(String filename : oldFiles) {
+	            File oldFile = new File(path2, filename);
+	            if(oldFile.exists()) oldFile.delete();
+	        }
+	        ReviewService.deleteImg(delMap);
+
+	        // 2️ 새 파일 반복 처리
+	        for(MultipartFile multi : files) {
+	            if(!multi.isEmpty()) {
+	                String originFilename = multi.getOriginalFilename();
+	                String extName = originFilename.substring(originFilename.lastIndexOf("."));
+	                String saveFileName = SaveFileName(extName);
+
+	                // 파일 저장
+	                File file = new File(path2, saveFileName);
+	                multi.transferTo(file);
+
+	                // DB insert
+	                HashMap<String,Object> map = new HashMap<>();
+	                map.put("filename", saveFileName);
+	                map.put("path", "../img/" + saveFileName);
+	                map.put("contentId", contentId);
+	                map.put("userId", userId);
+	                map.put("boardNo", boardNoValue);
+	                map.put("title", title);
+
+	                ReviewService.insertImg(map);
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return "redirect:list.do";
+	}
+
 	// 현재 시간을 기준으로 파일 이름 생성
 	private String SaveFileName(String extName) {
-		String fileName = "";
-		
-		Calendar calendar = Calendar.getInstance();
-		fileName += calendar.get(Calendar.YEAR);
-		fileName += calendar.get(Calendar.MONTH);
-		fileName += calendar.get(Calendar.DATE);
-		fileName += calendar.get(Calendar.HOUR);
-		fileName += calendar.get(Calendar.MINUTE);
-		fileName += calendar.get(Calendar.SECOND);
-		fileName += calendar.get(Calendar.MILLISECOND);
-		fileName += extName;
-		
-		return fileName;
+	    Calendar calendar = Calendar.getInstance();
+	    return "" +
+	            calendar.get(Calendar.YEAR) +
+	            calendar.get(Calendar.MONTH) +
+	            calendar.get(Calendar.DATE) +
+	            calendar.get(Calendar.HOUR) +
+	            calendar.get(Calendar.MINUTE) +
+	            calendar.get(Calendar.SECOND) +
+	            calendar.get(Calendar.MILLISECOND) +
+	            extName;
 	}
 
 	

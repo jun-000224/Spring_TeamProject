@@ -18,6 +18,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.example.test1.mapper.ShareBoardMapper;
+import com.example.test1.mapper.ReviewMapper;
+import com.example.test1.model.Review;
 import com.example.test1.model.Share;
 
 
@@ -31,6 +33,8 @@ public class ShareBoardViewService {
 	@Autowired
 	ShareBoardMapper ShareBoardMapper;
 	
+	@Autowired
+	ReviewMapper reviewMapper;
 	
     //디테일 정보
     public List<HashMap<String, Object>> getInfo(String contentId, String day , int dayNum)throws Exception {
@@ -124,16 +128,14 @@ public class ShareBoardViewService {
             String content = share.getContent();
             // dayNum별로 안전하게 map에 추가
             for (HashMap<String, Object> infoMap : infoList) {
-                if (infoMap.get("dayNum") != null) {
-                    dayNum = Integer.parseInt(String.valueOf(infoMap.get("dayNum")));
-                }
+                infoMap.put("dayNum", dayNum); // ✅ DB 기준 dayNum을 강제로 세팅
                 if (rating != null) {
                     infoMap.put("rating", rating);
                     infoMap.put("content", content);
                 } else {
-                    infoMap.put("rating", 0); // 기본값
+                    infoMap.put("rating", 0);
                 }
-                
+
                 dayMap.computeIfAbsent(dayNum, k -> new ArrayList<>()).add(infoMap);
             }
         }
@@ -141,7 +143,112 @@ public class ShareBoardViewService {
         return dayMap;
     }
 
+  //디테일 정보
+    public List<HashMap<String, Object>> DetailInfo(String contentId)throws Exception {
+		// TODO Auto-generated method stub
+		List<HashMap<String, Object>> resultMap = new ArrayList<>();
+		
+		
+		
+			String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
+                    + "?ServiceKey=" + apiKey
+                    + "&MobileOS=ETC&MobileApp=AppTest"
+                    + "&contentId=" + contentId;
 
+            RestTemplate restTemplate = new RestTemplate();
+            byte[] bytes = restTemplate.getForObject(url, byte[].class);
+            String xmlResponse = new String(bytes); // 공공데이터가 EUC-KR인 경우
+
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            InputSource is = new InputSource(new StringReader(xmlResponse));
+
+            Document doc = factory.newDocumentBuilder().parse(is);
+
+            NodeList items = doc.getElementsByTagName("item");
+          
+            HashMap<String, Object> map = new HashMap<>();
+            for (int i = 0; i < items.getLength(); i++) {
+                Element item = (Element) items.item(i);
+                map.put("title", getTag(item, "title"));
+                map.put("addr1", getTag(item, "addr1"));
+                map.put("mapx", getTag(item, "mapx"));
+                map.put("mapy", getTag(item, "mapy"));
+                map.put("firstimage", getTag(item, "firstimage"));
+                map.put("contentid", getTag(item, "contentid"));
+                map.put("tel", getTag(item, "tel"));
+                map.put("overview",getTag(item, "overview"));
+                map.put("homepage",getTag(item, "homepage"));           
+            }
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("contentId", contentId);
+
+            List<Review> reviewList = reviewMapper.detailReviewList(paramMap);
+            List<Review> reviewImgList = reviewMapper.detailReviewImgList(paramMap);
+            
+           map.put("list", reviewList);
+           map.put("imgList", reviewImgList);
+          
+           resultMap.add(map);
+       
+        return resultMap;
+    }
+    
+    public Map<Integer, HashMap<String, Object>> thumbnailMap(HashMap<String, Object> paramMap) {
+        Map<Integer, HashMap<String, Object>> resultMap = new HashMap<>();
+
+        List<Review> resList = reviewMapper.thumbnailWithResNum(paramMap);
+
+        for (Review r : resList) {
+            Integer resNum = r.getResNum();
+            String contentId = String.valueOf(r.getContentId());
+
+            if (contentId == null || contentId.isEmpty()) continue;
+
+            String firstImage;
+            try {
+                firstImage = getFirstImage(contentId);
+                if (firstImage == null || firstImage.isEmpty()) {
+                    firstImage = "/images/default.jpg";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                firstImage = "/images/default.jpg";
+            }
+
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("contentId", contentId);
+            map.put("firstimage", firstImage);
+
+            resultMap.put(resNum, map);
+        }
+
+        return resultMap;
+    }
+
+    // API로 이미지 가져오기
+    public String getFirstImage(String contentId) throws Exception {
+        String url = "https://apis.data.go.kr/B551011/KorService2/detailCommon2"
+                + "?ServiceKey=" + apiKey
+                + "&MobileOS=ETC&MobileApp=AppTest"
+                + "&contentId=" + contentId;
+
+        RestTemplate restTemplate = new RestTemplate();
+        byte[] bytes = restTemplate.getForObject(url, byte[].class);
+        String xmlResponse = new String(bytes);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        InputSource is = new InputSource(new StringReader(xmlResponse));
+        Document doc = factory.newDocumentBuilder().parse(is);
+
+        NodeList items = doc.getElementsByTagName("item");
+        if (items.getLength() == 0) return null;
+
+        Element item = (Element) items.item(0);
+        return getTag(item, "firstimage");
+    }   
+
+   
+    
 
 	
 }

@@ -55,6 +55,10 @@
 		WHERE USER_ID = #{userId}
 	</update>
 	
+	<insert id="kakaoMemberAdd" parameterType="hashmap">
+		INSERT INTO USERS(USER_ID, NAME, PASSWORD, NICKNAME, PHONE, BIRTH, ADDR, EMAIL, GENDER)
+		VALUES(#{userId}, '미공개', #{randomPwd}, #{nickname}, '미공개', '1900-01-01', '미공개', '미공개', 'N') 
+	</insert>
 	
 </mapper>
 

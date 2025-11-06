@@ -17,5 +17,18 @@ public class Review {
 	private String cdatetime;
 	private int boardNo;
 	
+	private String contentId;
+	private int rating;
+	private String content;
+	private String title;
+	private String storUrl;
+	private String sortNo;
+	
+	private String nickname;
+	private int liked;
+	
+
+	
+	
 	
 }

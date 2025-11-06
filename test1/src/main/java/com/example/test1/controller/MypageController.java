@@ -38,10 +38,10 @@ public class MypageController {
 	      
 	}
 
-	@RequestMapping("/myInfo/detail.do") 
+	@RequestMapping("/myInfo/pwdChange.do") 
     public String infoDetail(Model model) throws Exception{
 
-    return "/mypage/myInfo-detail";
+    return "/mypage/myInfo-pwdChange";
 	      
 	}
 	
@@ -56,6 +56,20 @@ public class MypageController {
     public String infoRelease(Model model) throws Exception{
 
     return "/mypage/memberRelease";
+	      
+	}
+	
+	@RequestMapping("/myInfo/subscribe.do") 
+    public String infoSubscribe(Model model) throws Exception{
+
+    return "/mypage/myInfo-subscribe";
+	      
+	}
+	
+	@RequestMapping("/myInfo/pwdCerti.do") 
+    public String pwdCerti(Model model) throws Exception{
+
+    return "/mypage/myInfo-pwdCerti";
 	      
 	}
 	
@@ -91,6 +105,15 @@ public class MypageController {
 	public String mypageTemp(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = mypageService.mypageTemp(map);
+		
+		return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/mypage/statusUp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String payHistory(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap = mypageService.updateStatus(map);
 		
 		return new Gson().toJson(resultMap);
 	}
