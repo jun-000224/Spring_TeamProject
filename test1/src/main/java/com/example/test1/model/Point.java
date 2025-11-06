@@ -9,6 +9,7 @@ public class Point {
 	private int pointGet;
 	private int pointOut;
 	private String pointDate;
+	private String pDate;
 	
 	private String name;
 	private String nickname;
