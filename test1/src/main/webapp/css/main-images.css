@@ -1,23 +1,30 @@
+/* 공통 설정 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* 슬라이더 영역 */
 .map-banner-slider {
   position: relative;
   width: 100%;
   height: 250px;
   overflow: hidden;
-  margin-bottom: 24px;
-  margin-top: 24px;
+  margin: 24px 0;
 }
 
 .slider-track-wrapper {
   position: relative;
   overflow: hidden;
   width: 100%;
-  padding: 0 10px; /* 좌우 여백 추가로 둥근 모서리 잘림 방지 */
+  padding: 0 10px;
 }
-
 
 .slider-track {
   display: flex;
-  gap: 10px; /* 모든 배너 간격을 통일 */
+  gap: 10px;
   transition: transform 0.5s ease;
   will-change: transform;
 }
@@ -25,13 +32,14 @@
 .slider-track a {
   flex: 0 0 400px;
   display: block;
-  border-radius: 12px; /* 모든 배너 링크도 둥글게 */
-  overflow: hidden;    /* 둥근 모서리 밖 이미지 잘림 방지 */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 부드러운 그림자 */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   opacity: 0;
   animation: fadeIn 0.8s ease forwards;
-  animation-delay: calc(var(--i) * 0.2s); /* 각 배너 순차 등장 */
+  animation-delay: calc(var(--i) * 0.2s);
 }
+
 @keyframes fadeIn {
   to {
     opacity: 1;
@@ -44,7 +52,6 @@
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-
 
 .slider-arrow {
   position: absolute;
@@ -84,8 +91,6 @@
   pointer-events: none;
 }
 
-
-/* 네온 테두리 효과 */
 .slider-arrow::before {
   content: '';
   position: absolute;
@@ -97,7 +102,6 @@
   z-index: -1;
 }
 
-/* 터치 웨이브 효과 */
 .slider-arrow:active::after {
   content: '';
   position: absolute;
@@ -114,20 +118,11 @@
   width: 100%;
   height: 250px;
   overflow: hidden;
-  border-radius: 12px; /* ✅ 여기서 잘림 유도 */
+  border-radius: 12px;
 }
 
-/*------------------------------------------------------------------------------------*/
-
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f5f5f5;
-  margin: 0;
-  padding: 0;
-}
-
-/* 도시 버튼 영역 */
-.region-tabs {
+/* 버튼 영역 공통 */
+.section-tabs {
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -135,14 +130,13 @@ body {
   max-width: 1000px;
   margin: 0 auto 40px;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
 
-.region-tabs h2 {
+.section-tabs h2 {
   font-size: 22px;
   font-weight: bold;
   color: #333;
@@ -150,7 +144,8 @@ body {
   text-align: center;
 }
 
-.region-btn {
+.hotel-btn,
+.travel-btn {
   padding: 8px 16px;
   font-size: 14px;
   border: none;
@@ -163,20 +158,16 @@ body {
   line-height: 20px;
   text-align: center;
   transition: background 0.3s ease;
+  margin: 4px;
 }
 
-.region-btn.active {
+.hotel-btn.active,
+.travel-btn.active {
   background: linear-gradient(135deg, #ff6ec4, #7873f5);
   color: white;
 }
 
-/* 버튼 정렬 */
-.region-tabs .region-btn {
-  margin: 4px;
-}
-
-
-/* 호텔 리스트 영역 */
+/* 호텔 리스트 */
 .region-hotels {
   display: flex;
   justify-content: center;
@@ -190,14 +181,15 @@ body {
   justify-content: center;
   max-width: 960px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .hotel-list.active {
   display: flex;
 }
 
-/* 호텔 카드 공통 스타일 */
-.hotel-card {
+.hotel-card,
+.hotel-card.special-card {
   width: 300px;
   height: 420px;
   background: white;
@@ -209,11 +201,13 @@ body {
   transition: transform 0.2s ease;
 }
 
-.hotel-card:hover {
+.hotel-card:hover,
+.hotel-card.special-card:hover {
   transform: translateY(-4px);
 }
 
-.hotel-card img {
+.hotel-card img,
+.hotel-card.special-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
@@ -251,20 +245,89 @@ body {
   color: #333;
 }
 
-/* 초특가 호텔 카드도 동일하게 맞춤 */
-.hotel-card.special-card {
+.hotel-card.special-card .hotel-rating {
+  color: #444;
+}
+
+/* 여행지 리스트 */
+.region-destinations {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.destination-list {
+  display: none;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.destination-list.active {
+  display: flex;
+}
+
+.dest-card,
+.dest-card.highlight-card {
   width: 300px;
   height: 420px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+  margin: 0;
+}
+
+.dest-card:hover,
+.dest-card.highlight-card:hover {
+  transform: translateY(-4px);
+}
+
+.dest-card img,
+.dest-card.highlight-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.dest-info {
+  padding: 16px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.hotel-card.special-card .hotel-rating {
+.dest-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.dest-rating {
   font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.dest-rating span {
+  font-size: 12px;
+  color: #999;
+}
+
+.dest-card.highlight-card .dest-rating {
   color: #444;
 }
 
+/* 공통 버튼 */
 .deal-btn {
   display: inline-block;
   margin-top: 10px;
@@ -275,25 +338,41 @@ body {
   border-radius: 6px;
   text-decoration: none;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* 반응형 처리 */
+/* 반응형 */
 @media (max-width: 960px) {
-  .hotel-card {
+  .hotel-card,
+  .dest-card {
     width: 45%;
+	
   }
 }
 
 @media (max-width: 600px) {
-  .hotel-card {
+  .hotel-card,
+  .dest-card {
     width: 100%;
   }
-
-  .region-btn {
-    font-size: 13px;
-    padding: 6px 12px;
-    height: 32px;
   }
-}
+  
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  @media (max-width: 600px) {
+    .dest-reactions {
+      display: flex;              /* ✅ 추가 */
+      justify-content: center;
+      text-align: center;
+      flex-wrap: wrap;            /* ✅ 여러 줄일 경우 줄바꿈 */
+      gap: 8px;                   /* ✅ 이모지 간 간격 */
+    }
+  }
 
-
+  
