@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -197,28 +198,43 @@ public class ShareBoardViewService {
         Map<Integer, HashMap<String, Object>> resultMap = new HashMap<>();
 
         List<Review> resList = reviewMapper.thumbnailWithResNum(paramMap);
-
+        String[] randomImages = {
+                "/img/defaultImg01.jpg",
+                "/img/defaultImg02.jpg",
+                "/img/defaultImg03.jpg",
+                "/img/defaultImg04.jpg",
+                "/img/defaultImg05.jpg",
+                "/img/defaultImg06.jpg"
+            };
+        Random random = new Random();
         for (Review r : resList) {
             Integer resNum = r.getResNum();
-            String contentId = String.valueOf(r.getContentId());
+            String contentId = (r.getContentId() != null) ? String.valueOf(r.getContentId()) : null;
 
-            if (contentId == null || contentId.isEmpty()) continue;
+            // contentId가 없으면 그냥 랜덤 이미지로
+            if (contentId == null || contentId.isEmpty()) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("contentId", "");
+                map.put("firstimage", randomImages[random.nextInt(randomImages.length)]);
+                resultMap.put(resNum, map);
+                continue;
+            }
 
-            String firstImage;
+            String firstImage = null;
             try {
                 firstImage = getFirstImage(contentId);
-                if (firstImage == null || firstImage.isEmpty()) {
-                    firstImage = "/images/default.jpg";
-                }
             } catch (Exception e) {
-                e.printStackTrace();
-                firstImage = "/images/default.jpg";
+                System.err.println("[WARN] 이미지 조회 실패: contentId=" + contentId);
+            }
+
+            // ✅ API 결과 없거나 공백이면 랜덤 이미지로 대체
+            if (firstImage == null || firstImage.trim().isEmpty()) {
+                firstImage = randomImages[random.nextInt(randomImages.length)];
             }
 
             HashMap<String, Object> map = new HashMap<>();
             map.put("contentId", contentId);
             map.put("firstimage", firstImage);
-
             resultMap.put(resNum, map);
         }
 

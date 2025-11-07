@@ -12,13 +12,16 @@
             rel="stylesheet"
         />
         <script src="/js/page-change.js"></script>
+        <link rel="stylesheet" href="/css/main-style.css" />
+        <link rel="stylesheet" href="/css/common-style.css" />
+        <link rel="stylesheet" href="/css/header-style.css" />
+        <link rel="stylesheet" href="/css/main-images.css" />
 
         <style>
             body {
                 font-family: "Noto Sans KR", sans-serif;
                 background-color: #f6f7fb;
                 margin: 0;
-                padding: 40px 20px;
             }
 
             h2 {
@@ -195,7 +198,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin-top: 40px;
+                margin: 40px 0px;
                 gap: 8px;
                 font-family: "Noto Sans KR", sans-serif;
             }
@@ -283,7 +286,7 @@
                 color: #555;
                 margin-right: 10px;
             }
-            
+
             .page-title {
                 display: flex;
                 align-items: center;
@@ -317,17 +320,16 @@
         </style>
     </head>
     <body>
+        <%@ include file="components/header.jsp" %>
         <div id="app">
-
-           <div class="page-title">
+            <div class="page-title">
                 <div class="back-btn">
                     <button class="back" @click="fnbck">
                         <span class="material-symbols-outlined">arrow_back</span>
                         뒤로가기
                     </button>
                 </div>
-    
-    
+
                 <h2>📋 게시글 목록</h2>
             </div>
 
@@ -354,7 +356,7 @@
                         <div class="card-front">
                             <img
                                 class="card-img"
-                                :src="thumbnailMap[item.resNum]?.firstimage || 'https://placehold.co/600x400'"
+                                :src="thumbnailMap[item.resNum]?.firstimage || getRandomImage()"
                                 :alt="item.packname"
                             />
                         </div>
@@ -403,18 +405,30 @@
                 </div>
             </div>
 
+            <!-- 페이지네이션 -->
             <div class="pagination">
-                <a href="javascript:;" @click="fnMove(-1)">
+                <!-- 이전 그룹 -->
+                <a href="javascript:;" v-if="page > 1" @click="fnMove(-1)">
                     <span v-if="page > 1">◀</span>
                 </a>
-                <a id="index" href="javascript:;" v-for="num in index" :key="num" @click="fnchange(num)">
-                    <span :class="{active : page == num}">{{ num }}</span>
+
+                <!-- 페이지 번호 -->
+                <a
+                    href="javascript:;"
+                    v-for="num in pageGroupEnd - pageGroupStart + 1"
+                    :key="num"
+                    @click="fnchange(pageGroupStart + num - 1)"
+                >
+                    <span :class="{ active: page == (pageGroupStart + num - 1) }">{{ pageGroupStart + num - 1 }}</span>
                 </a>
-                <a href="javascript:;" @click="fnMove(+1)">
-                    <span v-if="page != index">▶</span>
+
+                <!-- 다음 그룹 -->
+                <a href="javascript:;" v-if="page < totalPages" @click="fnMove(1)">
+                    <span>▶</span>
                 </a>
             </div>
         </div>
+        <%@ include file="components/footer.jsp" %>
     </body>
 
     <script>
@@ -425,10 +439,21 @@
                     list: [],
                     liked: false,
                     thumbnailMap: {},
-                    pageSize: 6, // 한페이지에 출력할 개수
-                    page: 1, //현재페이지
-                    index: 0, //몇페이지까지 존재하는지
+                    page: 1,
+                    pageSize: 6,
+                    pageGroupSize: 10,
+                    totalPages: 0,
+                    pageGroupStart: 1,
+                    pageGroupEnd: 10,
                     tag: "",
+                    randomImages: [
+                        "/img/defaultImg01.jpg",
+                        "/img/defaultImg02.jpg",
+                        "/img/defaultImg03.jpg",
+                        "/img/defaultImg04.jpg",
+                        "/img/defaultImg05.jpg",
+                        "/img/defaultImg06.jpg",
+                    ],
                 };
             },
             methods: {
@@ -446,8 +471,12 @@
                         },
                         success: function (data) {
                             self.list = data.list;
-                            self.index = Math.ceil(data.cnt / self.pageSize);
-                            console.log(data);
+                            self.totalPages = Math.ceil(data.cnt / self.pageSize);
+                            let group = Math.floor((self.page - 1) / self.pageGroupSize);
+                            console.log(self.page, self.pageGroupSize);
+
+                            self.pageGroupStart = group * self.pageGroupSize + 1;
+                            self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
                         },
                     });
                 },
@@ -490,18 +519,22 @@
                 fnchange(num) {
                     let self = this;
                     self.page = num;
-                    console.log(self.page);
-
                     self.fnList();
                 },
                 fnMove(num) {
                     let self = this;
                     self.page += num;
+                    if (self.page < 1) self.page = 1;
+                    if (self.page > self.totalPages) self.page = self.totalPages;
                     self.fnList();
                 },
-                 fnbck() {
-                        history.back();
-                    },
+                fnbck() {
+                    history.back();
+                },
+                getRandomImage() {
+                    const index = Math.floor(Math.random() * this.randomImages.length);
+                    return this.randomImages[index];
+                },
             },
             mounted() {
                 let self = this;
