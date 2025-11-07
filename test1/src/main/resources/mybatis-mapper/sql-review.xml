@@ -6,6 +6,15 @@
 	<select id="myResList" parameterType="hashmap" resultType="com.example.test1.model.Review">
 		SELECT * FROM RESERVATION 
 		WHERE USER_ID = #{userId}		
+		ORDER BY RDATETIME DESC
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<select id="myResListCnt" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM RESERVATION 
+		WHERE USER_ID = #{userId}		
+		ORDER BY RDATETIME DESC
+		
 	</select>
 	
 	<select id="reviewList" parameterType="hashmap" resultType="com.example.test1.model.Review">
@@ -75,7 +84,7 @@
 	
 	<select id="thumbnailWithResNum" parameterType="hashmap" resultType="com.example.test1.model.Review">
 	SELECT R.RES_NUM, CONTENT_ID FROM FAV F
-	INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
+	INNER JOIN TBL_REVIEW R ON F.BOARDNO = R.BOARDNO
 	INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
 	INNER JOIN (SELECT RES_NUM, MIN(CONTENT_ID) AS CONTENT_ID
 	    FROM POI
@@ -84,7 +93,7 @@
 	    WHERE 1=1
 	    <if test="userId !=null and userId !=''">
 	    AND R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
-    </if>
+    	</if>
     </select>
 	
 	<select id="selectFavorite" parameterType="hashmap" resultType="com.example.test1.model.Review">

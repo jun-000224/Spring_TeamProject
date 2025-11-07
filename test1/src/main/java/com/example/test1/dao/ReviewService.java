@@ -24,8 +24,9 @@ public class ReviewService{
 		// TODO Auto-generated method stub
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		List<Review> List = ReviewMapper.myResList(map);
-		
+		int cnt = ReviewMapper.myResListCnt(map);
 		resultMap.put("list", List);
+		resultMap.put("cnt", cnt);
 		return resultMap;
 	}
 	//리뷰게시판 리스트

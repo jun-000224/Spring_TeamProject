@@ -7,13 +7,21 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet"
+/>
+ <link rel="stylesheet" href="/css/main-style.css">
+<link rel="stylesheet" href="/css/common-style.css">
+<link rel="stylesheet" href="/css/header-style.css">
+<link rel="stylesheet" href="/css/main-images.css">
+
 
 <style>
 body {
   background: #f3f7ff;
   font-family: "Pretendard", sans-serif;
   margin: 0;
-  padding: 20px;
 }
 .create-btn {
   background-color: #1565c0;
@@ -27,11 +35,30 @@ body {
   transition: 0.3s;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
+
+/* 뒤로가기 버튼 */
+.back {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.material-symbols-outlined {
+    font-size: 32px;
+    vertical-align: middle;
+}
 .create-btn:hover {
   background-color: #0d47a1;
   transform: translateY(-2px);
 }
-
+.main-con{
+  width: 80%;
+  margin: 0 auto;
+}
 .day-num {
   font-size: 20px;
   font-weight: 700;
@@ -59,6 +86,7 @@ body {
 .day-item-con img {
   width: 280px;
   height: 200px;
+  padding: 20px;
   object-fit: cover;
 }
 
@@ -193,8 +221,15 @@ body {
 </style>
 </head>
 <body>
+      <%@ include file="components/header.jsp" %>
 <div id="app">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; width: 80%; margin: 0 auto;">
+    <div class="back-btn">
+        <button class="back" @click="fnbck">
+            <span class="material-symbols-outlined">arrow_back</span>
+            뒤로가기
+        </button>
+    </div>
     <h2 style="margin:0;">📅 여행 일정</h2>
     <button class="create-btn" @click="fnWrite">게시글 등록하기</button>
   </div>
@@ -214,11 +249,11 @@ body {
   </div>
 
   <!-- 선택된 일차만 표시 -->
-  <div v-if="positionsByDay[selectedDay]">
+  <div v-if="positionsByDay[selectedDay]" class="main-con">
     <div class="day-num">{{ selectedDay }}일차 - {{ positionsByDay[selectedDay][0].day }}</div>
 
     <div v-for="item in positionsByDay[selectedDay]" :key="item.title" class="day-item-con" @click="openModal(item)">
-      <img :src="item.firstimage" alt="이미지">
+      <img :src="item.firstimage !=''? item.firstimage:'https://placehold.co/320x240'" alt="이미지">
       <div class="item-md">
         <div>
           <div class="item-title">{{ item.title }}</div>
@@ -237,7 +272,7 @@ body {
 
   <div v-if="modalFlg" class="modal-overlay" @click.self="closeModal">
     <div class="modal">
-      <img :src="selectedItem.firstimage">
+      <img :src="selectedItem.firstimage !='' ? selectedItem.firstimage : 'https://placehold.co/600x260' ">
       <h3>{{ selectedItem.title }}</h3>
       <p style="margin-bottom:15px;">{{ selectedItem.overview }}</p>
       <h4>평점을 선택해주세요</h4>
@@ -263,6 +298,7 @@ body {
   </div>
 </div>
 </div>
+<%@ include file="components/footer.jsp" %>
 </body>
 </html>
 
@@ -430,15 +466,24 @@ body {
                       
                     }
                 });
-        }
-
-
+        },
+         fnbck() {
+                history.back();
+          },
 
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fninfo();
+           window.addEventListener("popstate", () => {
+                self.fninfo();
+            });
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    self.fninfo();
+                }
+            });
         }
     });
 
