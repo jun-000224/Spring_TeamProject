@@ -1,7 +1,8 @@
 package com.example.test1.mapper;
 
 import com.example.test1.model.reservation.Poi;
-import com.example.test1.model.reservation.ReservationList; 
+// import com.example.test1.model.reservation.ReservationList; // 🛑 [삭제] ReservationList DTO 사용 안 함
+import com.example.test1.model.Reservation; // 🛑 [수정] Reservation DTO 사용
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,15 +11,12 @@ import java.util.List;
 @Mapper
 public interface ResMapper {
 
-    /**
-     * 🛑 [신규 추가] 예약 상세 정보 조회
-     */
-    ReservationList selectReservationByResNum(Long resNum);
 
-    int insertReservation(ReservationList reservation);
+    Reservation selectReservationByResNum(Long resNum); // 🛑 [수정] Reservation DTO 사용
+
+    int insertReservation(Reservation reservation);
     
     int insertPoi(Poi poi); 
 
     List<Poi> selectPoisByResNum(Long resNum);
-    
 }

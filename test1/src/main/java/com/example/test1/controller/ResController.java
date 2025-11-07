@@ -1,7 +1,7 @@
 package com.example.test1.controller;
 
 import com.example.test1.model.reservation.Poi;
-import com.example.test1.model.reservation.ReservationList;
+import com.example.test1.model.Reservation; 
 import com.example.test1.model.reservation.ReservationRequest; 
 import com.example.test1.dao.ResService;
 import com.fasterxml.jackson.databind.ObjectMapper; 
@@ -39,16 +39,19 @@ public class ResController {
     @ResponseBody
     public ResponseEntity<?> saveReservation(@RequestBody ReservationRequest request) {
         try {
-            ReservationList reservation = createReservationList(request);
+            Reservation reservation = createReservation(request);
             
             reservation.setUserId("999"); 
             Long calculatedPrice = calculateTotalPrice(request); 
-            reservation.setPrice(calculatedPrice); 
+            reservation.setPrice(String.valueOf(calculatedPrice)); 
             setAreaNumFromRequest(reservation, request);
             setThemNumFromRequest(reservation, request);
+
+            // 🛑 [수정] 예산 할당량(%) 필드 설정
+            setBudgetWeights(reservation, request);
             
-            if (reservation.getPackName() == null) {
-                reservation.setPackName("임시 패키지명");
+            if (reservation.getPackname() == null) { 
+                reservation.setPackname("임시 패키지명");
             }
             
             List<Poi> pois = createPoiList(request);
@@ -63,52 +66,46 @@ public class ResController {
             return ResponseEntity.internalServerError().body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
         }
     }
-
-    /**
-     * 🛑 [수정] 이 AJAX 엔드포인트는 이제 DB에서 모든 정보를 가져오므로 필요 없습니다.
-     */
-    /*
-    @GetMapping("/api/reservation/poi-details") 
-    @ResponseBody
-    public Poi getPoiDetailsForView(@RequestParam("contentId") String contentId) {
-        Poi details = resService.getPoiDetailsByContentId(contentId);
-        if (details != null) {
-            return details;
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "POI 상세 정보를 찾을 수 없습니다.");
-        }
-    }
-    */
-
+    
     @GetMapping("/reservation-view.do")
     public String reservationView(@RequestParam("resNum") Long resNum, Model model) {
         
+        Reservation reservationDetails = resService.getReservationDetails(resNum);
         List<Poi> pois = resService.getPoisByResNum(resNum);
-        ReservationList reservationDetails = resService.getReservationDetails(resNum);
 
         model.addAttribute("kakaoAppKey", kakaoAppKey); 
         
         try {
-            // 🛑 [수정] JSP(EL)가 아닌 Vue가 객체를 사용하도록 JSON 문자열 2개 전달
+            reservationDetails.setPois(pois); 
             
-            // 1. POI 목록 (지도/리스트용)
-            String poisJson = objectMapper.writeValueAsString(pois);
-            model.addAttribute("poiListJson", poisJson);
-            
-            // 2. 예약 정보 (기본 정보 표시용)
             String reservationJson = objectMapper.writeValueAsString(reservationDetails);
             model.addAttribute("reservationJson", reservationJson);
+            
+            String poisJson = objectMapper.writeValueAsString(pois);
+            model.addAttribute("poiListJson", poisJson);
 
         } catch (Exception e) {
             System.err.println("JSON 변환 실패: " + e.getMessage());
-            model.addAttribute("poiListJson", "[]");
             model.addAttribute("reservationJson", "{}");
+            model.addAttribute("poiListJson", "[]");
         }
         
         return "reservation-view"; 
     }
 
     // --- Private Helper Methods (전체 구현부) ---
+
+    // 🛑 [수정] 예산 할당량(%) 설정 메서드 - String.valueOf() 제거! Float을 직접 전달합니다.
+    private void setBudgetWeights(Reservation reservation, ReservationRequest request) {
+        Map<String, Integer> weights = request.getBudgetWeights();
+        if (weights == null) return;
+        
+        // 🛑 [핵심 수정] Float 객체를 반환하여 setEtcBudget(Float) 메서드 요구사항 충족
+        reservation.setEtcBudget(weights.getOrDefault("etc", 0).floatValue());
+        reservation.setAccomBudget(weights.getOrDefault("accom", 0).floatValue());
+        reservation.setFoodBudget(weights.getOrDefault("food", 0).floatValue());
+        reservation.setActBudget(weights.getOrDefault("act", 0).floatValue());
+    }
 
     private Long calculateTotalPrice(ReservationRequest request) {
         return request.getItinerary().values().stream()
@@ -117,7 +114,7 @@ public class ResController {
                 .sum();
     }
 
-    private void setThemNumFromRequest(ReservationList reservation, ReservationRequest request) {
+    private void setThemNumFromRequest(Reservation reservation, ReservationRequest request) {
         if (request.getThemes() != null && !request.getThemes().isEmpty()) {
             String themesString = String.join(",", request.getThemes());
             reservation.setThemNum(themesString); 
@@ -126,21 +123,21 @@ public class ResController {
         }
     }
 
-    private void setAreaNumFromRequest(ReservationList reservation, ReservationRequest request) {
+    private void setAreaNumFromRequest(Reservation reservation, ReservationRequest request) {
         if (request.getRegions() != null && !request.getRegions().isEmpty()) {
             try {
                 String sidoCode = request.getRegions().get(0).getSidoCode();
-                reservation.setAreaNum(Integer.parseInt(sidoCode)); 
-            } catch (NumberFormatException e) {
-                reservation.setAreaNum(99); 
+                reservation.setAreaNum(sidoCode); 
+            } catch (Exception e) {
+                reservation.setAreaNum("99"); 
             }
         } else {
-            reservation.setAreaNum(99); 
+            reservation.setAreaNum("99"); 
         }
     }
 
-    private ReservationList createReservationList(ReservationRequest request) {
-        ReservationList list = new ReservationList();
+    private Reservation createReservation(ReservationRequest request) {
+        Reservation list = new Reservation();
         list.setStartDate(request.getStartDate());
         list.setEndDate(request.getEndDate());
         return list;

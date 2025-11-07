@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -23,14 +23,13 @@
 
 
     <style>
-        /* 🛑 [복구] UI 업그레이드 스타일 */
+        /* 🛑 [수정] UI 업그레이드 스타일 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f4f7f6;
             color: #333;
         }
 
-        /* 페이지 타이틀 */
         .page-title {
             font-size: 2.25rem;
             font-weight: 700;
@@ -40,7 +39,6 @@
             margin-bottom: 20px;
         }
         
-        /* 섹션 공통 패널 스타일 */
         .panel {
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -55,7 +53,6 @@
             padding-bottom: 10px;
         }
 
-        /* 기본 정보 리스트 */
         .info-list {
             list-style-type: none;
             padding-left: 0;
@@ -67,14 +64,14 @@
             color: #555;
             display: flex;
             align-items: center;
-            gap: 10px; /* 라벨과 값 사이 간격 */
+            gap: 10px;
         }
         .info-list li strong {
             color: #333;
-            width: 120px; /* 라벨 너비 고정 */
+            width: 120px;
             flex-shrink: 0;
         }
-        .info-list input[type="text"] { /* v-model 입력창 스타일 */
+        .info-list input[type="text"] {
             font-size: 1em;
             padding: 8px;
             border: 1px solid #ccc;
@@ -82,36 +79,48 @@
             flex-grow: 1;
         }
         
-        /* 예산 현황판 스타일 */
-        .budget-status-wrap {
-            display: grid;
-            grid-template-columns: 1.5fr repeat(4, 1fr); /* 총 예산 + 4개 항목 */
-            gap: 15px;
-            margin-top: 20px;
-            align-items: center;
+        /* 🛑 [수정] 예산 현황판 스타일 (줄바꿈 해결) */
+        .budget-status-main {
+            display: flex;
+            flex-direction: column; /* 세로 배치 */
         }
         .budget-total {
             font-size: 1.2em;
             font-weight: bold;
+            color: #333;
+            margin-bottom: 15px; /* 현황판과 분리 */
         }
+        .budget-status-wrap {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4개 카테고리 그리드 */
+            gap: 15px;
+            padding: 15px; /* 현황판 자체 패딩 */
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        /* 🛑 [수정] 아이템 내부 스타일 (세로쓰기 방지) */
         .budget-status-item {
+            flex: 1;
             background: #fff;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 15px;
+            padding: 10px 5px; /* 패딩 조정 */
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            min-height: 70px; /* 크기 확보 */
         }
         .budget-status-item .label {
-            font-size: 0.9em;
+            font-size: 0.8em; /* 폰트 축소 */
             color: #555;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         .budget-status-item .amount {
-            font-size: 1.4em;
+            font-size: 1.2em;
             font-weight: 600;
             color: #3498db;
+            display: block;
         }
         .budget-status-item .amount .current {
             color: #d9480f;
@@ -121,74 +130,33 @@
             color: #888;
         }
 
-        /* 지도 및 상세 목록 */
         #map-container {
-            width: 100%;
-            height: 400px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-top: 15px;
+            width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 8px; margin-top: 15px;
         }
         .poi-item {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px;
         }
-        .poi-item p {
-            margin: 0;
-            line-height: 1.6;
-        }
-        .poi-item p:first-child strong {
-            font-size: 1.2em;
-            color: #2c3e50;
-        }
+        .poi-item p { margin: 0; line-height: 1.6; }
+        .poi-item p:first-child strong { font-size: 1.2em; color: #2c3e50; }
         
-        /* 저장 버튼 */
         .save-button-wrap {
-            text-align: center;
-            margin-top: 30px;
+            text-align: center; margin-top: 30px;
         }
         .save-button-wrap button {
-            padding: 12px 40px;
-            font-size: 1.2em;
-            font-weight: bold;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 12px 40px; font-size: 1.2em; font-weight: bold; background-color: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s;
         }
         .save-button-wrap button:hover {
             background-color: #2980b9;
         }
         
-        /* 날짜 탭 스타일 */
         .date-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #ddd;
+            display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #ddd;
         }
         .tab-btn {
-            padding: 10px 15px;
-            border: none;
-            background: #f0f0f0;
-            cursor: pointer;
-            border-radius: 6px 6px 0 0;
-            font-size: 0.95em;
-            color: #555;
-            position: relative;
-            bottom: -2px;
+            padding: 10px 15px; border: none; background: #f0f0f0; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 0.95em; color: #555; position: relative; bottom: -2px;
         }
         .tab-btn.active {
-            background: #fff;
-            border: 2px solid #ddd;
-            border-bottom: 2px solid #fff;
-            font-weight: bold;
-            color: #3498db;
+            background: #fff; border: 2px solid #ddd; border-bottom: 2px solid #fff; font-weight: bold; color: #3498db;
         }
     </style>
 </head>
@@ -206,35 +174,36 @@
                 <ul class="info-list">
                     <li>
                         <strong>여행 코스 이름</strong>
-                        <input type="text" v-model='reservation.packname'>
+                        <input type="text" v-model='reservation.packname' placeholder="코스 별칭을 입력하세요">
                     </li>
                     <li><strong>여행 기간</strong> {{ formatDate(reservation.startDate) }} ~ {{ formatDate(reservation.endDate) }}</li>
-                    <li><strong>방문 예정 지점</strong> 총 {{ poiList ? poiList.length : 0 }}개</li>
+                    <li><strong>방문 예정 장소</strong>{{ reservation.pois ? reservation.pois.length : 0 }}지점</li>
                     <li><strong>테마</strong> {{ reservation.themNum }}</li>
                 </ul>
             </div>
             
             <div class="panel">
                 <h3>예산 현황</h3>
+                
+                <div class="budget-total"><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</div>
+                
                 <div class="budget-status-wrap">
-                    <div class="budget-total"><strong>총 예산:</strong><br>{{ formatPrice(reservation.price) }}원</div>
-                    
                     <div class="budget-status-item">
-                        <span class="label">기타 예산 (할당량)</span>
+                        <span class="label">기타 예산</span>
                         <span class="amount" id="budget-etc">0원</span>
                     </div>
                     <div class="budget-status-item">
-                        <span class="label">관광지 예산 (할당량)</span>
+                        <span class="label">관광지 예산</span>
                         <span class="amount" id="budget-activity">0원</span>
                     </div>
                     <div class="budget-status-item">
-                        <span class="label">숙박 예산 (사용/할당량)</span>
+                        <span class="label">숙박 예산</span>
                         <span class="amount" id="budget-accom">
                             <span class="current">0원</span> / <span class="total">0원</span>
                         </span>
                     </div>
                     <div class="budget-status-item">
-                        <span class="label">식당 예산 (사용/할당량)</span>
+                        <span class="label">식비 예산</span>
                         <span class="amount" id="budget-food">
                             <span class="current">0원</span> / <span class="total">0원</span>
                         </span>
@@ -244,7 +213,7 @@
 
             <div class="panel">
                 <h2>🗺️ 여행 경로 지도</h2>
-                <div id="map-container" style="width:100%; height:400px; border: 1px solid #ddd;">지도
+                <div id="map-container">지도
                     로딩 중...
                 </div>
             </div>
@@ -302,16 +271,36 @@
                 poiList: [],
                 kakaoAppKey: '${kakaoAppKey}',
                 map: null,
-                newPackName: "", // 이젠 사용되지 않지만, fnUpdatePackname을 위해 유지
-                showPacknameForm: false, // 이젠 사용되지 않지만, fnUpdatePackname을 위해 유지
                 
-                // 탭 기능용 데이터
-                itineraryByDate: {}, // 날짜별로 그룹화된 POI 목록
-                activeDate: null     // 현재 선택된 탭의 날짜
+                itineraryByDate: {}, 
+                activeDate: null     
             };
         },
         methods: {
-            // (fnUpdatePackname과 togglePacknameForm은 현재 UI에서 제거되었으므로 생략)
+            fnUpdatePackname() {
+                let self = this;
+                if (!self.reservation.packname || self.reservation.packname.trim() === "") {
+                    alert("별칭을 입력해주세요.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/reservation/update/packname',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        resNum: self.reservation.resNum,
+                        packName: self.reservation.packname
+                    }),
+                    success: function (response) {
+                        alert('별칭이 저장되었습니다.');
+                        self.reservation.packName = self.reservation.packname;
+                    },
+                    error: function (jqXHR) {
+                        alert(`저장 실패 (${jqXHR.status}): 백엔드 API 수정이 필요합니다.`);
+                    }
+                });
+            },
 
             formatPrice(value) {
                 return value ? value.toLocaleString() : '0';
@@ -368,6 +357,12 @@
             
             fnSave() {
                 let self = this;
+                
+                if (!self.reservation.packname || self.reservation.packname.trim() === "") {
+                    alert("여행 코스 이름을 입력해주세요.");
+                    return;
+                }
+                
                 let param = {
                     resNum: self.reservation.resNum,
                     packName: self.reservation.packname
@@ -388,9 +383,7 @@
                 });
             },
             
-            // 날짜별로 POI 목록을 그룹화하는 함수
             groupPoisByDate(poiList) {
-                // 날짜 오름차순으로 먼저 정렬
                 const sortedList = [...poiList].sort((a, b) => 
                     new Date(a.reservDate) - new Date(b.reservDate)
                 );
@@ -406,13 +399,11 @@
                 
                 this.itineraryByDate = grouped;
                 
-                // 첫 번째 날짜를 활성 탭으로 설정
                 if (Object.keys(grouped).length > 0) {
                     this.activeDate = Object.keys(grouped)[0];
                 }
             },
             
-            // 활성 탭 변경 함수
             setActiveDate(date) {
                 this.activeDate = date;
             }
@@ -429,10 +420,8 @@
                 poi.contentId && !isNaN(poi.contentId) && poi.contentId > 0
             );
 
-            // POI 목록을 날짜별로 그룹화
             self.groupPoisByDate(self.poiList);
 
-            // 지도 초기화
             const validMapPois = self.poiList.filter(poi =>
                 poi.mapY != null && poi.mapX != null &&
                 !isNaN(poi.mapY) && !isNaN(poi.mapX)
