@@ -427,8 +427,11 @@
 
                 <div class="admin-info">
                     <p><strong>관리자:</strong> {{ name }} ({{ nickname }})</p>
-                    <p><strong>ID:</strong> {{ id }} / <strong>포인트:</strong> {{ point }} / <strong>권한:</strong> {{
-                        status }}</p>
+                    <p>
+                        <strong>ID:</strong> {{ id }} /
+                        <strong>포인트:</strong> {{ point }} /
+                        <strong>권한:</strong> {{ gradeLabel() }}
+                    </p>
                 </div>
 
                 <div class="tab-buttons">
@@ -597,7 +600,7 @@
 
                             <h3>💬 댓글 목록</h3>
                             <ul v-if="boardComments && boardComments.length > 0" class="comment-list">
-                                
+
                                 <li v-for="comment in boardComments" :key="comment.COMMENTNO" class="comment-item">
                                     <div class="comment-content">
                                         <div class="comment-nickname">{{ comment.userId }}</div>
@@ -699,7 +702,14 @@
                     this.fetchInquiries();
                 },
                 methods: {
-
+                    gradeLabel() {
+                        switch (this.status) {
+                            case 'A': return '👑 ';
+                            case 'S': return '✨ ';
+                            case 'U': return '🙂 ';
+                            default: return '❓ ';
+                        }
+                    },
                     selectBoard(boardNo) {
                         $.ajax({
                             url: "/board-detail.dox",
