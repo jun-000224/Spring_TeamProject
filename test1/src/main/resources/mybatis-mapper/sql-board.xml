@@ -17,7 +17,7 @@
 		WHERE 1=1
 		
 		<if test="type != '' and type != null">
-			AND TYPE = #{type}
+    	AND TYPE LIKE '%' || #{type} || '%'
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
@@ -58,7 +58,7 @@
 		
 		
 		<if test="type != '' and type != null">
-			AND TYPE = #{type}
+    	AND TYPE LIKE '%' || #{type} || '%'
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
@@ -184,7 +184,7 @@
 	
 	<insert id="BoardReport" parameterType="hashmap">
 	INSERT INTO REPORT
-	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{reportedUserId}, #{reason}, #{boardNo} , NULL , 1, #{currentUserId})
+	VALUES(REPORT_SEQ.NEXTVAL, #{reportType}, #{reportedUserId}, #{reason}, #{boardNo} , NULL , 1, #{userId})
 	</insert>
 	
 	<select id="whishList" parameterType="hashmap" resultType="com.example.test1.model.Board">
@@ -259,4 +259,75 @@
       AND ADOPT = 'T'
 </select>
 
+<select id="noticeList" parameterType="hashmap" resultType="com.example.test1.model.Board">
+	SELECT 
+		    B.*, 
+		    DECODE(TO_CHAR(CDATETIME, 'YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(CDATETIME,'HH24:MI:SS'),TO_CHAR(CDATETIME, 'YYYY-MM-DD')) AS CDATE, 
+		    NVL(CCNT, 0) AS COMMENTCNT
+		FROM TBL_BOARD B
+		LEFT JOIN (
+		    SELECT BOARDNO, COUNT(*) AS CCNT
+		    FROM TBL_COMMENT
+		    GROUP BY BOARDNO
+		) T ON T.BOARDNO = B.BOARDNO
+		WHERE TYPE = 'N'
+		
+		
+		<if test="searchOption == 'all'">
+		AND (TITLE LIKE '%' || #{keyword} || '%' OR
+			USER_ID LIKE '%' || #{keyword} || '%'
+			)
+		 
+		</if>
+		
+		<if test="searchOption == 'id'">
+		AND USER_ID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'title'">
+		AND TITLE LIKE '%' || #{keyword} || '%' 
+		</if>
+		
+		
+		<if test="order == 'time'">
+			ORDER BY B.CDATETIME DESC
+		</if>
+		<if test="order == 'num'">
+			ORDER BY B.BOARDNO ASC
+		</if>
+		<if test="order == 'title'">
+			ORDER BY TITLE ASC
+		</if>
+		<if test="order == 'cnt'">
+			ORDER BY CNT DESC
+		</if>
+		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+</select>
+	
+	<select id="selectNotice" parameterType="hashmap" resultType="int">
+	SELECT NVL(COUNT(*), 0)
+	FROM TBL_BOARD B
+	WHERE TYPE = 'N'
+		
+		
+		<if test="searchOption == 'all'">
+		AND (TITLE LIKE '%' || #{keyword} || '%' OR
+			USER_ID LIKE '%' || #{keyword} || '%'
+			)
+		 
+		</if>
+		
+		<if test="searchOption == 'id'">
+		AND USER_ID LIKE '%' || #{keyword} || '%' 
+		</if>
+		<if test="searchOption == 'title'">
+		AND TITLE LIKE '%' || #{keyword} || '%' 
+		</if>
+	</select>
+	
+	<select id="noticeView" parameterType="hashmap" resultType="com.example.test1.model.Board">
+		SELECT *
+		FROM TBL_BOARD
+		WHERE BOARDNO = #{boardNo} 
+	</select>
+	
 </mapper>

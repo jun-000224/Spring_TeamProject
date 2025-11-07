@@ -26,7 +26,7 @@ public interface BoardMapper {
 	List<Board> whishList(HashMap<String , Object> map);
 	
 	//찜게시판리시트 수
-		int cntWhishList(HashMap<String , Object>map);
+	int cntWhishList(HashMap<String , Object>map);
 	//댓글 등록
 	int insertComment(HashMap<String , Object> map);
 	
@@ -86,5 +86,16 @@ public interface BoardMapper {
 	//게시글 채택하기 수
 	int checkAlreadyAdopted(HashMap<String , Object>map);
 
+	//공지 게시판(Notice)
+	List<Board> noticeList(HashMap<String , Object> map);
+	
+	//게시글 전체 개수(Notice)
+	int selectNotice(HashMap<String , Object>map);
+	
+	//notice view 상세보기
+	Board noticeView(HashMap<String , Object> map);
+
+	
+	
 }
 

@@ -3,35 +3,33 @@
 
 <mapper namespace="com.example.test1.mapper.ResMapper">
 
-    <select id="selectReservationByResNum" parameterType="Long" resultType="com.example.test1.model.reservation.ReservationList">
+    <insert id="insertReservation" parameterType="com.example.test1.model.Reservation">
+        
+        <selectKey keyProperty="resNum" resultType="String" order="BEFORE"> 
+            SELECT RES_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        
+        INSERT INTO ADMIN.RESERVATION (
+            RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, START_DATE, END_DATE,
+            FOOD_BUDGET, ACCOM_BUDGET, ETC_BUDGET, ACT_BUDGET
+        )
+        VALUES (
+            #{resNum}, #{userId, jdbcType=VARCHAR}, #{packname}, #{price}, #{areaNum}, #{themNum}, #{descript, jdbcType=VARCHAR}, #{startDate}, #{endDate},
+            #{foodBudget}, #{accomBudget}, #{etcBudget}, #{actBudget}
+        )
+    </insert>
+
+    <select id="selectReservationByResNum" parameterType="Long" resultType="com.example.test1.model.Reservation">
         SELECT 
-            RES_NUM,
-            USER_ID,
-            PACKNAME,
-            PRICE,
-            AREANUM,
-            THEMNUM,
-            DESCRIPT,
-            RDATETIME,
-            STATUS,
-            DEADLINE,
-            START_DATE,
-            END_DATE
+            RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, 
+            RDATETIME, STATUS, DEADLINE, START_DATE, END_DATE,
+            FOOD_BUDGET AS foodBudget,
+            ACCOM_BUDGET AS accomBudget,
+            ETC_BUDGET AS etcBudget,
+            ACT_BUDGET AS actBudget
         FROM ADMIN.RESERVATION
         WHERE RES_NUM = #{resNum}
     </select>
-
-    <insert id="insertReservation" parameterType="com.example.test1.model.reservation.ReservationList">
-        <selectKey keyProperty="resNum" resultType="Long" order="BEFORE">
-            SELECT RES_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
-        INSERT INTO ADMIN.RESERVATION (
-            RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, START_DATE, END_DATE
-        )
-        VALUES (
-            #{resNum}, #{userId, jdbcType=VARCHAR}, #{packName}, #{price}, #{areaNum}, #{themNum}, #{descript, jdbcType=VARCHAR}, #{startDate}, #{endDate}
-        )
-    </insert>
 
     <insert id="insertPoi" parameterType="com.example.test1.model.reservation.Poi">
         INSERT INTO ADMIN.POI (
@@ -45,13 +43,15 @@
             #{reservDate}, 
             #{rating, jdbcType=INTEGER},  
             #{content, jdbcType=CLOB},
-            #{placeName, jdbcType=VARCHAR} )
+            #{placeName, jdbcType=VARCHAR}
+        )
     </insert>
 
     <select id="selectPoisByResNum" parameterType="Long" resultType="com.example.test1.model.reservation.Poi">
         SELECT
-            T.POI_ID, T.CONTENT_ID, T.TYPE_ID, T.RES_NUM, T.RESERV_DATE, T.RATING, T.CONTENT,
-            T.PLACE_NAME AS placeName, A.MAPY AS mapY,  
+            T.POI_ID, T.CONTENT_ID, T.TYPE_ID, T.RES_NUM, TO_CHAR(T.RESERV_DATE, 'YYYY-MM-DD') AS reservDate, T.RATING, T.CONTENT,
+            T.PLACE_NAME AS placeName,
+            A.MAPY AS mapY,  
             A.MAPX AS mapX
         FROM ADMIN.POI T
         LEFT JOIN ADMIN.ATTR A
@@ -59,5 +59,5 @@
         WHERE T.RES_NUM = #{resNum}
         ORDER BY T.RESERV_DATE ASC, T.POI_ID ASC
     </select>
-    
-    </mapper>
+
+</mapper>

@@ -12,6 +12,10 @@
             rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_back"
         />
+        <link rel="stylesheet" href="/css/main-style.css" />
+        <link rel="stylesheet" href="/css/common-style.css" />
+        <link rel="stylesheet" href="/css/header-style.css" />
+        <link rel="stylesheet" href="/css/main-images.css" />
         <script src="/js/page-change.js"></script>
 
         <style>
@@ -19,7 +23,6 @@
                 background: #f3f7ff;
                 font-family: "Pretendard", sans-serif;
                 margin: 0;
-                padding: 20px;
             }
 
             /* 전체 레이아웃 */
@@ -34,7 +37,7 @@
                 justify-content: center; /* 중앙 정렬 기준 */
                 position: relative; /* 뒤로가기 버튼 절대 위치 가능하게 */
                 max-width: 70%;
-                margin: 0 auto 28px;
+                margin: 30px auto;
                 text-align: center;
             }
 
@@ -187,6 +190,7 @@
         </style>
     </head>
     <body>
+        <%@ include file="components/header.jsp" %>
         <div id="app">
             <div class="page-title">
                 <div class="back-btn">
@@ -235,94 +239,92 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            const app = Vue.createApp({
-                data() {
-                    return {
-                        resNum: "${resNum}",
-                        info: [],
-                        positionsByDay: {},
-                        selectedDay: 1,
-                    };
-                },
-                methods: {
-                    fninfo() {
-                        let self = this;
-                        $.ajax({
-                            url: "/share.dox",
-                            type: "GET",
-                            data: { resNum: self.resNum },
-                            success(data) {
-                                self.info = data;
-                                const days = Object.keys(data)
-                                    .map((k) => parseInt(k))
-                                    .sort((a, b) => a - b);
-                                for (let day of days) {
-                                    self.positionsByDay[day] = data[day].map((item) => ({
-                                        title: item.title,
-                                        lat: parseFloat(item.mapy),
-                                        lng: parseFloat(item.mapx),
-                                        overview: item.overview,
-                                        dayNum: day,
-                                        reserv_date: item.reserv_date,
-                                        firstimage: item.firstimage,
-                                        addr1: item.addr1,
-                                        contentId: item.contentid,
-                                        day: item.day,
-                                        rating: item.rating,
-                                    }));
-                                    console.log( days);
-                                    
-                                }
-                                self.selectedDay = days[0];
-                                console.log(self.selectedDay);
-                                
-                            },
-                        });
-                    },
-                    getStarIcon(index, rating) {
-                        if (rating >= index) return "star";
-                        else if (rating >= index - 0.5) return "star_half";
-                        else return "star_border";
-                    },
-                    fnView(contentId) {
-                        pageChange("review-detail.do", { contentId });
-                    },
-                    fnbck() {
-                        history.back();
-                    },
-                    fncnt() {
-                        let self = this;
-                        $.ajax({
-                            url: "/review-cnt.dox",
-                            dataType: "json",
-                            type: "POST",
-                            data: {
-                                resNum: self.resNum,
-                            },
-                            success: function (data) {},
-                        });
-                    },
-                },
-                mounted() {
-                    let self = this;
-                    self.fninfo();
-                    self.fncnt();
-
-                    window.addEventListener("popstate", () => {
-                        self.fninfo();
-                        self.fncnt();
-                    });
-                    window.addEventListener("pageshow", (event) => {
-                        if (event.persisted) {
-                            self.fninfo();
-                            self.fncnt();
-                        }
-                    });
-                },
-            });
-            app.mount("#app");
-        </script>
+        <%@ include file="components/footer.jsp" %>
     </body>
 </html>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                resNum: "${resNum}",
+                info: [],
+                positionsByDay: {},
+                selectedDay: 1,
+            };
+        },
+        methods: {
+            fninfo() {
+                let self = this;
+                $.ajax({
+                    url: "/share.dox",
+                    type: "GET",
+                    data: { resNum: self.resNum },
+                    success(data) {
+                        self.info = data;
+                        const days = Object.keys(data)
+                            .map((k) => parseInt(k))
+                            .sort((a, b) => a - b);
+                        for (let day of days) {
+                            self.positionsByDay[day] = data[day].map((item) => ({
+                                title: item.title,
+                                lat: parseFloat(item.mapy),
+                                lng: parseFloat(item.mapx),
+                                overview: item.overview,
+                                dayNum: day,
+                                reserv_date: item.reserv_date,
+                                firstimage: item.firstimage,
+                                addr1: item.addr1,
+                                contentId: item.contentid,
+                                day: item.day,
+                                rating: item.rating,
+                            }));
+                            console.log(days);
+                        }
+                        self.selectedDay = days[0];
+                        console.log(self.selectedDay);
+                    },
+                });
+            },
+            getStarIcon(index, rating) {
+                if (rating >= index) return "star";
+                else if (rating >= index - 0.5) return "star_half";
+                else return "star_border";
+            },
+            fnView(contentId) {
+                pageChange("review-detail.do", { contentId });
+            },
+            fnbck() {
+                history.back();
+            },
+            fncnt() {
+                let self = this;
+                $.ajax({
+                    url: "/review-cnt.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        resNum: self.resNum,
+                    },
+                    success: function (data) {},
+                });
+            },
+        },
+        mounted() {
+            let self = this;
+            self.fninfo();
+            self.fncnt();
+
+            window.addEventListener("popstate", () => {
+                self.fninfo();
+                self.fncnt();
+            });
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    self.fninfo();
+                    self.fncnt();
+                }
+            });
+        },
+    });
+    app.mount("#app");
+</script>

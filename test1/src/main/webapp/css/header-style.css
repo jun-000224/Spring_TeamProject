@@ -15,6 +15,7 @@ header {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08); /* 그림자를 더 명확하게 */
     position: 12px 30px;
     z-index: 1000;
+	margin-bottom: 30px;
 }
 
 .logo a {

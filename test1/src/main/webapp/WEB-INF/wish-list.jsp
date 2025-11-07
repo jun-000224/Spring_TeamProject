@@ -1,19 +1,28 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-     <link
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"
+        ></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
         />
+        
         <script src="/js/page-change.js"></script>
+        <link rel="stylesheet" href="/css/main-style.css">
+        <link rel="stylesheet" href="/css/common-style.css">
+        <link rel="stylesheet" href="/css/header-style.css">
+        <link rel="stylesheet" href="/css/main-images.css">
 
-    <style>
+        <style>
             body {
                 font-family: "Noto Sans KR", sans-serif;
                 background-color: #f6f7fb;
@@ -283,7 +292,7 @@
                 color: #555;
                 margin-right: 10px;
             }
-            
+
             .page-title {
                 display: flex;
                 align-items: center;
@@ -317,38 +326,39 @@
             /* ===============================
    ✅ 좋아요 하러가기 (빈 목록일 때)
 =============================== */
-.favoriteEmp {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 300px;
-    color: #555;
-    font-size: 1.1em;
-    gap: 15px;
-}
+            .favoriteEmp {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 300px;
+                color: #555;
+                font-size: 1.1em;
+                gap: 15px;
+            }
 
-.favoriteEmp button {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 3px 8px rgba(25, 118, 210, 0.2);
-}
+            .favoriteEmp button {
+                background-color: #1976d2;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-size: 1em;
+                cursor: pointer;
+                transition: all 0.25s ease;
+                box-shadow: 0 3px 8px rgba(25, 118, 210, 0.2);
+            }
 
-.favoriteEmp button:hover {
-    background-color: #0d47a1;
-    transform: translateY(-2px);
-}
+            .favoriteEmp button:hover {
+                background-color: #0d47a1;
+                transform: translateY(-2px);
+            }
         </style>
-</head>
-<body>
-    <div id="app">
-        <div class="page-title">
+    </head>
+    <body>
+        <%@ include file="components/header.jsp" %>
+        <div id="app">
+            <div class="page-title">
                 <div class="back-btn">
                     <button class="back" @click="fnbck">
                         <span class="material-symbols-outlined">arrow_back</span>
@@ -372,7 +382,7 @@
                     <option value="조용한">조용한</option>
                 </select>
             </div>
-            
+
             <div v-if="list.length != 0" class="card-container">
                 <div class="card" v-for="item in list" :key="item.packname" @click="fnDetail(item.resNum)">
                     <div class="card-inner">
@@ -380,7 +390,7 @@
                         <div class="card-front">
                             <img
                                 class="card-img"
-                                :src="thumbnailMap[item.resNum]?.firstimage || 'https://placehold.co/600x400'"
+                                :src="thumbnailMap[item.resNum]?.firstimage || 'https://placehold.co/370x320'"
                                 :alt="item.packname"
                             />
                         </div>
@@ -427,23 +437,35 @@
                         </div>
                     </div>
                 </div>
-            </div >
-            <div v-else class="favoriteEmp">
-                <button cl @click="fnReviewList">좋아요 하러가기</button>
             </div>
+            <div v-else class="favoriteEmp">
+                <button @click="fnReviewList">좋아요 하러가기</button>
+            </div>
+            <!-- 페이지네이션 -->
             <div class="pagination">
-                <a href="javascript:;" @click="fnMove(-1)">
+                <!-- 이전 그룹 -->
+                <a href="javascript:;" v-if="page > 1" @click="fnMove(-1)">
                     <span v-if="page > 1">◀</span>
                 </a>
-                <a id="index" href="javascript:;" v-for="num in index" :key="num" @click="fnchange(num)">
-                    <span :class="{active : page == num}">{{ num }}</span>
+
+                <!-- 페이지 번호 -->
+                <a
+                    href="javascript:;"
+                    v-for="num in pageGroupEnd - pageGroupStart + 1"
+                    :key="num"
+                    @click="fnchange(pageGroupStart + num - 1)"
+                >
+                    <span :class="{ active: page == (pageGroupStart + num - 1) }">{{ pageGroupStart + num - 1 }}</span>
                 </a>
-                <a href="javascript:;" @click="fnMove(+1)">
-                    <span v-if="page != index">▶</span>
+
+                <!-- 다음 그룹 -->
+                <a href="javascript:;" v-if="page < totalPages" @click="fnMove(1)">
+                    <span>▶</span>
                 </a>
             </div>
-    </div>
-</body>
+        </div>
+        <%@ include file="components/footer.jsp" %>
+    </body>
 </html>
 
 <script>
@@ -451,13 +473,16 @@
         data() {
             return {
                 // 변수 - (key : value)
-                userId:"${sessionId}",
-                list:[],
+                userId: "${sessionId}",
+                list: [],
                 liked: false,
                 thumbnailMap: {},
-                pageSize: 6, // 한페이지에 출력할 개수
-                page: 1, //현재페이지
-                index: 0, //몇페이지까지 존재하는지
+                page: 1,
+                pageSize: 6,
+                pageGroupSize: 10,
+                totalPages: 0,
+                pageGroupStart: 1,
+                pageGroupEnd: 10,
                 tag: "",
             };
         },
@@ -466,10 +491,10 @@
             fnList: function () {
                 let self = this;
                 let param = {
-                    userId:self.userId,
+                    userId: self.userId,
                     tag: self.tag,
                     pageSize: self.pageSize,
-                    page: (self.page - 1) * self.pageSize
+                    page: (self.page - 1) * self.pageSize,
                 };
                 $.ajax({
                     url: "whish-list.dox",
@@ -478,75 +503,82 @@
                     data: param,
                     success: function (data) {
                         console.log(data);
-                        self.list=data.list,
-                        self.index = Math.ceil(data.cnt / self.pageSize);
-                    }
+                        self.list = data.list;
+                        self.totalPages = Math.ceil(data.cnt / self.pageSize);
+                        let group = Math.floor((self.page - 1) / self.pageGroupSize);
+                        console.log(self.page, self.pageGroupSize);
+
+                        self.pageGroupStart = group * self.pageGroupSize + 1;
+                        self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
+                    },
                 });
             },
             fnThumnail() {
-                    let self = this;
-                    $.ajax({
-                        url: "/thumbnail.dox",
-                        dataType: "json",
-                        type: "GET",
-                        data: {
-                            userId:self.userId
-                        },
-                        success: function (data) {
-                            self.thumbnailMap = data.list;
-                            console.log(self.thumbnailMap[1].firstimage);
-                        },
-                    });
-                },
-                toggleLike(item) {
-                    let self = this;
-
-                    param = {
+                let self = this;
+                $.ajax({
+                    url: "/thumbnail.dox",
+                    dataType: "json",
+                    type: "GET",
+                    data: {
                         userId: self.userId,
-                        boardNo: item.boardNo,
-                    };
-                    $.ajax({
-                        url: "review-favorite.dox",
-                        dataType: "json",
-                        type: "POST",
-                        data: param,
-                        success: function (data) {
-                            item.liked = data.liked;
-                            self.fnList();
-                        },
-                    });
-                    console.log(item);
-                },
-                fnDetail(item) {
-                    // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
-                    pageChange("review-view.do", { resNum: item });
-                },
-                fnReviewList(){
-                    location.href="review-list.do"
-                },
-                fnchange(num) {
-                    let self = this;
-                    self.page = num;
-                    console.log(self.page);
-
-                    self.fnList();
-                },
-                fnMove(num) {
-                    let self = this;
-                    self.page += num;
-                    self.fnList();
-                },
-                 fnbck() {
-                        history.back();
                     },
+                    success: function (data) {
+                        self.thumbnailMap = data.list;
+                        console.log();
+                    },
+                });
+            },
+            toggleLike(item) {
+                let self = this;
+
+                param = {
+                    userId: self.userId,
+                    boardNo: item.boardNo,
+                };
+                $.ajax({
+                    url: "review-favorite.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        item.liked = data.liked;
+                        self.fnList();
+                    },
+                });
+                console.log(item);
+            },
+            fnDetail(item) {
+                // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
+                pageChange("review-view.do", { resNum: item });
+            },
+            fnReviewList() {
+                location.href = "review-list.do";
+            },
+            fnchange(num) {
+                let self = this;
+                self.page = num;
+                console.log(self.page);
+
+                self.fnList();
+            },
+            fnMove(num) {
+                let self = this;
+                self.page += num;
+                if (self.page < 1) self.page = 1;
+                if (self.page > self.totalPages) self.page = self.totalPages;
+                self.fnList();
+            },
+            fnbck() {
+                history.back();
+            },
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnList();
             self.fnThumnail();
-        }
+        },
     });
 
-    app.mount('#app');
+    app.mount("#app");
 </script>

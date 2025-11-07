@@ -13,6 +13,9 @@ import com.example.test1.model.Review;
 public interface ReviewMapper {
 	//나의 예약리스트
 	List<Review> myResList(HashMap<String , Object> map);
+	//나의 예약리스트
+	int myResListCnt(HashMap<String , Object> map);
+	
 	//후기게시판리스트
 	List<Review> reviewList(HashMap<String , Object> map);
 	

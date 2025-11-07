@@ -36,11 +36,12 @@ ul {
 /* 4. HERO SECTION (메인 배너 영역) - ⭐️ 핵심 추가 스타일 ⭐️ */
 /* ================================== */
 .hero-section {
-    /* ⭐️ 배경 이미지 설정 및 크기 조정 ⭐️ */
-/*    background-image: url('1.png');  실제 이미지 URL로 변경하세요 */
-    background-size: cover; /* 배경이 요소를 덮도록 설정 */
-    background-position: center; /* 이미지를 중앙에 배치 */
-    height: 400px; /* 배너 높이 설정 */
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap; /* ✅ 반응형 대응 */
+}
     
     /* ⭐️ 위젯 중앙 정렬을 위한 Flexbox 설정 ⭐️ */
     display: flex;
@@ -289,23 +290,39 @@ body {
 
 
 /* ⭐️ #map 스타일을 여기서 명확히 정의하여 HTML 인라인 스타일보다 관리 용이하게 합니다 ⭐️ */
+.map_wrap {
+  width: 60%;
+  min-width: 400px;
+  height: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
+}
 #map {
   width: 100%;
-  height: 450px;
+  height: 100%;
   border: 1px solid #ccc;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   object-fit: cover;
 }
 
 /* Select 박스의 중앙 정렬을 위한 마진을 유지하되, 보기 좋게 조정 */
-.hero-section > select {
-    margin-bottom : 20px; 
-    padding: 8px 15px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 14px;
+.hero-section {
+  display: flex !important;
+  flex-direction: row !important; /* ✅ 가로 정렬 */
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
+
+
 
 /* 지도 위에 띄운 검색 위젯 스타일은 유지 */
 .search-overlay {
@@ -418,6 +435,76 @@ body {
 
 
 
+.promo-card {
+  width: 35%;
+  min-width: 280px;
+  height: 420px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.promo-card:hover {
+  transform: translateY(-5px);
+}
+
+.promo-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.promo-info {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.promo-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.promo-info p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.promo-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.promo-btn:hover {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+}
 
 
+@media (max-width: 768px) {
+  .hero-section {
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .map_wrap,
+  .promo-card {
+    width: 100%;
+    height: auto;
+  }
+}
