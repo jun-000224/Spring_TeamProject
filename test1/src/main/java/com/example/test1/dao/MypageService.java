@@ -103,7 +103,9 @@ public class MypageService {
 	public HashMap<String, Object> updateStatus(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
+			System.out.println(map);
 			mypageMapper.updateStatus(map);
+			
 				//오류 나면 catch로 가니 int cnt = 를 생략
 			session.setAttribute("sessionStatus", "S");
 			resultMap.put("msg", "결제가 완료되었습니다.");

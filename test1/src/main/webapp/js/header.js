@@ -67,14 +67,28 @@ function logout(){
       dataType: "json",
       type: "POST",
       success: (data) => {
-        alert(data.msg || "로그아웃되었습니다.");
-        location.href = "/main-list.do";
+        //alert(data.msg || "로그아웃되었습니다.");
+		console.log(data);
+		
+		const clientId = data.kakaoClientId;
+        const redirectUri = data.kakaoRedirectUri;
+
+		const fullLogoutUrl =
+          `https://accounts.kakao.com/logout?continue=` +
+          encodeURIComponent(
+            `https://kauth.kakao.com/oauth/logout?client_id=${clientId}&logout_redirect_uri=${redirectUri}`
+          );
+
+        window.location.href = fullLogoutUrl;
+		//alert(data.msg);
+       // location.href = "/main-list.do";
       },
       error: () => {
         alert("로그아웃 중 오류가 발생했습니다.");
       },
     });
 }
+
 
 function goToLogin() {
    location.href = "/member/login.do";
@@ -102,6 +116,7 @@ const headerApp = Vue.createApp({
 	computed:{
 		isLoggedIn() {
             return this.nickname !== "";
+			//return this.nickname && this.nickname !== "null" && this.nickname.trim() !== "";
         },
         gradeLabel() {
             switch (this.status) {

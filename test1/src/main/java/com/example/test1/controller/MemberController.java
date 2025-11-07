@@ -101,6 +101,7 @@ public class MemberController {
 	public String memberJoin(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = memberService.insertJoin(map);
+//		System.out.println(map);
 		
 		return new Gson().toJson(resultMap);
 	}
@@ -119,6 +120,9 @@ public class MemberController {
 	public String memberLogout(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap = memberService.memberLogout(map);
+		
+		resultMap.put("kakaoClientId", kakao_client_id);
+        resultMap.put("kakaoRedirectUri", kakao_redirect_uri);
 		
 		return new Gson().toJson(resultMap);
 	}

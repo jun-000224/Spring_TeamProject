@@ -188,7 +188,7 @@
                     <br>
                     <input type="text" class="inputWidth" v-model="emailFront" @input="emailFront = emailFront.replace(/[^a-z0-9]/g, '')"> @
                     <select v-model="emailBack">
-                        <option value="abc">선택해주세요.</option>
+                        <option value="default">선택해주세요.</option>
                         <option value="naver.com">naver.com</option>
                         <option value="gmail.com">gmail.com</option>
                         <option value="daum.net">daum.net</option>
@@ -206,7 +206,7 @@
                     전화번호 
                     <span class="guideMust">(필수)</span>
                     <br>
-                    <span class="phone">
+                    <span v-if="!certifiFlg" class="phone">
                         <select v-model="phone1">
                             <option value="010">010</option>
                             <option value="011">011</option>
@@ -219,21 +219,25 @@
                         <input type="text" v-model="phone2" @input="phone2 = phone2.replace(/[^0-9]/g, '').slice(0, 4)"> -
                         <input type="text" v-model="phone3" @input="phone3 = phone3.replace(/[^0-9]/g, '').slice(0, 4)">
                     </span>
-                
-                    <div class="joinBlock" v-if="!certifiFlg">
-                        문자인증 
-                        <span class="guideMust">(필수)</span>
-                        <br>
-                        <input type="text" class="inputWidth" v-model="inputNum" :placeholder="timer">
-                            <!-- 속성에 :를 붙이면 변수가 동적으로 변함 -->
-                        <template v-if="!smsFlg">
-                            <button @click="fnSms" class="checkButton">인증번호 전송</button>
-                        </template>
-                        <template v-else>
-                            <button @click="fnSmsAuth" class="checkButton">인증</button>
-                        </template>
-                    </div>
+                    <span v-else>
+                        <input type="text" :value="phone1 + '-' + phone2 + '-' + phone3" disabled>
+                    </span>
                 </div>
+
+                <div class="joinBlock" v-if="!certifiFlg">
+                    문자인증 
+                    <span class="guideMust">(필수)</span>
+                    <br>
+                    <input type="text" class="inputWidth" v-model="inputNum" :placeholder="timer">
+                        <!-- 속성에 :를 붙이면 변수가 동적으로 변함 -->
+                    <template v-if="!smsFlg">
+                        <button @click="fnSms" class="checkButton">인증번호 전송</button>
+                    </template>
+                    <template v-else>
+                        <button @click="fnSmsAuth" class="checkButton">인증</button>
+                    </template>
+                </div>
+                
                 <div class="joinBlock">
                     닉네임
                     
@@ -287,7 +291,7 @@
                 month : "01",
                 day : "01",
                 emailFront : "",
-                emailBack : "abc",
+                emailBack : "default",
                 addr : "",
                 phone1 : "010",
                 phone2 : "",
@@ -366,7 +370,7 @@
             fnSms : function () {
                 let self = this;
                 let param = {
-
+                    phone : self.phone1+self.phone2+self.phone3
                 };
 
                 $.ajax({
@@ -436,7 +440,7 @@
                     alert("이메일을 입력해주세요.");
                     return;
                 }
-                if(self.emailBack=="abc"){
+                if(self.emailBack=="default"){
                     alert("이메일을 입력해주세요.");
                     return;
                 }

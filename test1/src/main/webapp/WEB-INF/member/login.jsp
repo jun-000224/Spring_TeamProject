@@ -154,7 +154,7 @@
                         console.log(data);
                         if(data.result=="success"){
                             // alert(data.msg);
-                            location.href="/main-list.do";
+                            // location.href="/main-list.do";
                         } else{
                             alert(data.msg);
                             return;

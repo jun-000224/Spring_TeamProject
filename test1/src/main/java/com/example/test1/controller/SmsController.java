@@ -9,12 +9,14 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.nurigo.sdk.NurigoApp;
@@ -96,13 +98,16 @@ public class SmsController {
      * 단일 메시지 발송 예제
      */
     @PostMapping("/send-one")
-    public HashMap<String, Object> sendOne() {
-        Message message = new Message();
+    public HashMap<String, Object> sendOne(@RequestParam Map<String, String> params) {
+        System.out.println(params);
+        String phone = params.get("phone");
+    	Message message = new Message();
         // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
         String ranStr= randomNumber();
         message.setFrom("01046548947");
         	//api 키 소유자 번호 입력
         message.setTo("01082667938");
+//        message.setTo(phone);
         	//수신자 번호는 자유
         message.setText("[본인 인증] 인증번호 " + ranStr + "를 화면에 입력해주세요.");
         

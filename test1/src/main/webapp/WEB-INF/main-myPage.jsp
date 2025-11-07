@@ -132,8 +132,8 @@
     </head>
 
     <body>
-        <div id="app">
             <%@ include file="components/header.jsp" %>
+        <div id="app">
 
                 <div class="mypage-container">
 
@@ -173,8 +173,10 @@
                     </div>
                 </div>
  
-                <%@ include file="components/footer.jsp" %>
+                
+        {{status}}, {{sessionstatus}}
         </div>
+        <%@ include file="components/footer.jsp" %>
     </body>
 
     </html>
@@ -184,7 +186,7 @@
             data() {
                 return {
                     // id: "${sessionId}",
-                    // status: "${sessionStatus}",
+                    sessionstatus: "${sessionStatus}",
                     // nickname: "${sessionNickname}",
                     // name: "${sessionName}",
                     // point: "${sessionPoint}",

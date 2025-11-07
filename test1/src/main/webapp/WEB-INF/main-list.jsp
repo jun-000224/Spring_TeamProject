@@ -15,9 +15,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
         <link rel="stylesheet" href="/css/main-style.css">
         <link rel="stylesheet" href="/css/common-style.css">
         <link rel="stylesheet" href="/css/header-style.css">
@@ -190,8 +187,9 @@
     </head>
 
     <body>
+        <%@ include file="components/header.jsp" %>
         <div id="app">
-            <%@ include file="components/header.jsp" %>
+            
 
                 <!-- 가운데 정렬을 위한 래퍼 추가 -->
                 <div class="content-wrapper">
@@ -462,8 +460,9 @@
                             </table>
                         </div>
                     </main>
-                    <%@ include file="components/footer.jsp" %>
+                    
                 </div>
+                <%@ include file="components/footer.jsp" %>
         </div>
     </body>
 

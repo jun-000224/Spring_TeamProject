@@ -92,8 +92,9 @@
                 <div class="explainField">
                     <br>
                     <br>
-                    <div class="verticalMid">기본 일정 생성 가능</div>
-                    <div class="verticalMid">일정 저장 및 불러오기</div>
+                    <!-- <div class="verticalMid">기본 일정 생성 가능</div>
+                    <div class="verticalMid">일정 저장 및 불러오기</div> -->
+                    <div class="verticalMid">포인트 추가 적립 2%</div>
                     <div class="verticalMid">경로 생성 기능 일일 최대 5번</div>
                 </div>
             </div>
