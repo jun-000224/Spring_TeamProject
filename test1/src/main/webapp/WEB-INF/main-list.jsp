@@ -252,23 +252,37 @@
                                 <li id="CS2"><span class="category_bg store"></span>편의점</li>
                                 <li id="AD5"><span class="category_bg home"></span>숙소</li>
                             </ul>
+
+                        </div>
+                        <div class="promo-card">
+                            <img src="/images/your-banner.jpg" alt="11.11 메가세일">
+                            <div class="promo-info">
+                                <h4>11.11 메가세일 🎉</h4>
+                                <p>항공권·호텔 최대 <strong>91%</strong> 할인!</p>
+                                <a href="/event/mega-sale" class="promo-btn">지금 확인하기</a>
+                            </div>
                         </div>
                     </div>
+
                     <!-- 지도 아래에 POI 순위 테이블 추가 -->
                     <!-- 지역 선택 탭 -->
 
 
                     <div class="region-tabs">
-                        <h2 class="region-title">인기 호텔 및 숙소</h2>
-                        <div class="region-buttons">
-                            <button class="region-btn active" data-region="jeju">제주</button>
-                            <button class="region-btn" data-region="busan">부산</button>
-                            <button class="region-btn" data-region="gyeonggi">경기</button>
-                            <button class="region-btn" data-region="daegu">대구</button>
-                            <button class="region-btn" data-region="cheongju">청주</button>
-                            <button class="region-btn" data-region="yeosu">여수</button>
+                        <h2 class="region-title" style="text-align: center;">인기 호텔 및 숙소</h2>
+                        <div class="button-group">
+
+                            <div class="region-buttons">
+                                <button class="hotel-btn active" data-region="jeju">제주</button>
+                                <button class="hotel-btn" data-region="busan">부산</button>
+                                <button class="hotel-btn" data-region="gyeonggi">경기</button>
+                                <button class="hotel-btn" data-region="daegu">대구</button>
+                                <button class="hotel-btn" data-region="cheongju">강릉</button>
+                                <button class="hotel-btn" data-region="yeosu">여수</button>
+                            </div>
                         </div>
                     </div>
+                    <br>
 
                     <!-- 지역별 호텔 리스트 -->
                     <div class="region-hotels">
@@ -364,7 +378,7 @@
                         <!-- 대구 -->
                         <div class="hotel-list" id="daegu">
                             <div class="hotel-card">
-                                <img src="/images/daegu1.jpg" alt="대구 인터불고 호텔">
+                                <img src="/images/dagu.jpg" alt="대구 인터불고 호텔">
                                 <div class="hotel-details">
                                     <div class="hotel-name">대구 인터불고 호텔</div>
                                     <div class="hotel-rating">⭐ 8.5 <span>(389명 리뷰)</span></div>
@@ -372,7 +386,7 @@
                                 </div>
                             </div>
                             <div class="hotel-card">
-                                <img src="/images/daegu2.jpg" alt="토요코인 대구 동성로">
+                                <img src="/images/dagu2.jpg" alt="토요코인 대구 동성로">
                                 <div class="hotel-details">
                                     <div class="hotel-name">토요코인 대구 동성로</div>
                                     <div class="hotel-rating">⭐ 9.0 <span>(1,050명 리뷰)</span></div>
@@ -390,20 +404,20 @@
                             </div>
                         </div>
 
-                        <!-- 청주 -->
+                        <!-- 강릉 -->
                         <div class="hotel-list" id="cheongju">
                             <div class="hotel-card">
-                                <img src="/images/cheongju1.jpg" alt="청주 그랜드호텔">
+                                <img src="/images/gang.jpg" alt="세인트존스 호텔">
                                 <div class="hotel-details">
-                                    <div class="hotel-name">청주 그랜드호텔</div>
+                                    <div class="hotel-name">세인트존스 호텔</div>
                                     <div class="hotel-rating">⭐ 8.3 <span>(274명 리뷰)</span></div>
                                     <div class="hotel-price">₩98,000 / 1박</div>
                                 </div>
                             </div>
                             <div class="hotel-card">
-                                <img src="/images/cheongju2.jpg" alt="글로스터호텔 청주">
+                                <img src="/images/gang2.jpg" alt="스카이베이 호텔 경포">
                                 <div class="hotel-details">
-                                    <div class="hotel-name">글로스터호텔 청주</div>
+                                    <div class="hotel-name">스카이베이 호텔 경포</div>
                                     <div class="hotel-rating">⭐ 8.9 <span>(504명 리뷰)</span></div>
                                     <div class="hotel-price">₩109,000 / 1박</div>
                                 </div>
@@ -422,17 +436,17 @@
                         <!-- 여수 -->
                         <div class="hotel-list" id="yeosu">
                             <div class="hotel-card">
-                                <img src="/images/yeosu1.jpg" alt="여수 라마다호텔">
+                                <img src="/images/yeosu.jpg" alt="라마다프라자 바이 윈덤 여수">
                                 <div class="hotel-details">
-                                    <div class="hotel-name">여수 라마다호텔</div>
+                                    <div class="hotel-name">라마다프라자 바이 윈덤 여수</div>
                                     <div class="hotel-rating">⭐ 9.0 <span>(502명 리뷰)</span></div>
                                     <div class="hotel-price">₩125,000 / 1박</div>
                                 </div>
                             </div>
                             <div class="hotel-card">
-                                <img src="/images/yeosu2.jpg" alt="라마다프라자 바이 윈덤 여수">
+                                <img src="/images/yeosu2.jpg" alt="여수 베네치아호텔 & 스위트">
                                 <div class="hotel-details">
-                                    <div class="hotel-name">라마다프라자 바이 윈덤 여수</div>
+                                    <div class="hotel-name">여수 베네치아호텔 & 스위트</div>
                                     <div class="hotel-rating">⭐ 9.2 <span>(4,097명 리뷰)</span></div>
                                     <div class="hotel-price">₩158,000 / 1박</div>
                                 </div>
@@ -450,8 +464,220 @@
                         </div>
 
                     </div>
+                    <br>
+                    <!-- 여행지 선택 탭 -->
+                    <div class="region-tabs">
+                        <h2 class="section-title" style="text-align: center;">추천 여행지</h2>
+                        <div class="button-group">
 
+                            <div class="region-buttons">
+                                <button class="travel-btn active" data-city="dubai">두바이</button>
+                                <button class="travel-btn" data-city="rome">로마</button>
+                                <button class="travel-btn" data-city="shanghai">상하이</button>
+                                <button class="travel-btn" data-city="sydney">시드니</button>
+                                <button class="travel-btn" data-city="la">LA</button>
+                                <button class="travel-btn" data-city="paris">파리</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- 도시별 추천 여행지 리스트 -->
+                    <div class="region-destinations">
 
+                        <!-- 두바이 -->
+                        <div class="destination-list active" id="dubai">
+                            <div class="dest-card">
+                                <img src="/images/burj.jpg" alt="부르즈 할리파">
+                                <div class="dest-info">
+                                    <div class="dest-name">부르즈 할리파</div>
+                                    <div class="dest-rating">⭐ 4.6 <span>(5,315개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 1.2k &nbsp;&nbsp; 💖 980 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/palm.jpg" alt="더 뷰 앳 더 팜">
+                                <div class="dest-info">
+                                    <div class="dest-name">더 뷰 앳 더 팜</div>
+                                    <div class="dest-rating">⭐ 4.6 <span>(469개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 6418 &nbsp;&nbsp; 💖 510 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 로마 -->
+                        <div class="destination-list" id="rome">
+                            <div class="dest-card">
+                                <img src="/images/colosseum.jpg" alt="콜로세움">
+                                <div class="dest-info">
+                                    <div class="dest-name">콜로세움</div>
+                                    <div class="dest-rating">⭐ 4.7 <span>(8,120개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 2.6k &nbsp;&nbsp; 💖 2510 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/vatican.jpg" alt="바티칸 박물관">
+                                <div class="dest-info">
+                                    <div class="dest-name">바티칸 박물관</div>
+
+                                    <div class="dest-rating">⭐ 4.6 <span>(6,540개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 1.4k &nbsp;&nbsp; 💖 1260 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 상하이 -->
+                        <div class="destination-list" id="shanghai">
+                            <div class="dest-card">
+                                <img src="/images/tower.jpg" alt="동방명주">
+                                <div class="dest-info">
+                                    <div class="dest-name">동방명주</div>
+                                    <div class="dest-rating">⭐ 4.5 <span>(2,870개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 2257 &nbsp;&nbsp; 💖 280 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/disney.jpg" alt="상하이 디즈니랜드">
+                                <div class="dest-info">
+                                    <div class="dest-name">상하이 디즈니랜드</div>
+                                    <div class="dest-rating">⭐ 4.7 <span>(9,120개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 5.4k &nbsp;&nbsp; 💖 3980 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 시드니 -->
+                        <div class="destination-list" id="sydney">
+                            <div class="dest-card">
+                                <img src="/images/opera.jpg" alt="오페라 하우스">
+                                <div class="dest-info">
+                                    <div class="dest-name">오페라 하우스</div>
+                                    <div class="dest-rating">⭐ 4.8 <span>(7,310개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 8653 &nbsp;&nbsp; 💖 1284 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/bridge.jpg" alt="하버 브리지">
+                                <div class="dest-info">
+                                    <div class="dest-name">하버 브리지</div>
+                                    <div class="dest-rating">⭐ 4.6 <span>(5,420개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 1.8k &nbsp;&nbsp; 💖 1820 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LA -->
+                        <div class="destination-list" id="la">
+                            <div class="dest-card">
+                                <img src="/images/hollywood.jpg" alt="할리우드 사인">
+                                <div class="dest-info">
+                                    <div class="dest-name">할리우드 사인</div>
+                                    <div class="dest-rating">⭐ 4.6 <span>(4,890개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 3.9k &nbsp;&nbsp; 💖 1460 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/santamonica.jpg" alt="산타모니카 해변">
+                                <div class="dest-info">
+                                    <div class="dest-name">산타모니카 해변</div>
+                                    <div class="dest-rating">⭐ 4.7 <span>(5,320개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 1.6k &nbsp;&nbsp; 💖 1105 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 파리 -->
+                        <div class="destination-list" id="paris">
+                            <div class="dest-card">
+                                <img src="/images/eiffel.jpg" alt="에펠탑">
+                                <div class="dest-info">
+                                    <div class="dest-name">에펠탑</div>
+                                    <div class="dest-rating">⭐ 4.8 <span>(10,210개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 7.2k &nbsp;&nbsp; 💖 5980 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card">
+                                <img src="/images/louvre.jpg" alt="루브르 박물관">
+                                <div class="dest-info">
+                                    <div class="dest-name">루브르 박물관</div>
+                                    <div class="dest-rating">⭐ 4.7 <span>(8,430개 리뷰)</span></div>
+                                    <div class="dest-reactions">
+                                        👍 1.8k &nbsp;&nbsp; 💖 520 &nbsp;&nbsp; 📷 포토존
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dest-card highlight-card">
+                                <img src="/images/global1.jpg" alt="인기 여행지">
+                                <div class="dest-info">
+                                    <div class="dest-name">🌍 인기 여행지</div>
+                                    <div class="hotel-rating">지금 예약하면 최대 50% 할인!</div>
+                                    <a href="/popular-destinations" class="deal-btn">지금 확인하기</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
 
                     <br>
                     <main>
@@ -638,17 +864,15 @@
 
             },
             mounted() {
-
-                const regionButtons = document.querySelectorAll('.region-btn');
+                // 호텔 버튼 제어
+                const hotelButtons = document.querySelectorAll('.hotel-btn');
                 const hotelLists = document.querySelectorAll('.hotel-list');
 
-                regionButtons.forEach(button => {
+                hotelButtons.forEach(button => {
                     button.addEventListener('click', () => {
-                        // 버튼 활성화 처리
-                        regionButtons.forEach(btn => btn.classList.remove('active'));
+                        hotelButtons.forEach(btn => btn.classList.remove('active'));
                         button.classList.add('active');
 
-                        // 호텔 리스트 전환
                         const selectedRegion = button.getAttribute('data-region');
                         hotelLists.forEach(list => {
                             list.classList.remove('active');
@@ -658,6 +882,26 @@
                         });
                     });
                 });
+
+                // 여행지 버튼 제어
+                const travelButtons = document.querySelectorAll('.travel-btn');
+                const travelLists = document.querySelectorAll('.destination-list');
+
+                travelButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        travelButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        const selectedCity = button.getAttribute('data-city');
+                        travelLists.forEach(list => {
+                            list.classList.remove('active');
+                            if (list.id === selectedCity) {
+                                list.classList.add('active');
+                            }
+                        });
+                    });
+                });
+
                 this.$nextTick(() => {
 
                     this.initMap();
