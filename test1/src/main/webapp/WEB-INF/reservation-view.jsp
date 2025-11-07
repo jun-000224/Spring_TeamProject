@@ -15,7 +15,6 @@
     <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
     
-    <%-- 🛑 [수정] reservation.jsp와 동일한 CSS 파일 링크 추가 --%>
     <link rel="stylesheet" href="/css/main-style.css">
     <link rel="stylesheet" href="/css/common-style.css">
     <link rel="stylesheet" href="/css/header-style.css">
@@ -24,167 +23,262 @@
 
 
     <style>
-        table,
-        tr,
-        td,
-        th {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 5px 10px;
-            text-align: center;
+        /* 🛑 [복구] UI 업그레이드 스타일 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
         }
 
-        th {
-            background-color: beige;
+        /* 페이지 타이틀 */
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* 섹션 공통 패널 스타일 */
+        .panel {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .panel h2, .panel h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
 
-        tr:nth-child(even) {
-            background-color: azure;
+        /* 기본 정보 리스트 */
+        .info-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
         }
-
-        .poi-item {
-            border-bottom: 1px dashed #eee;
-            padding: 5px 0;
-        }
-
-        .budget-status-wrap {
+        .info-list li {
+            font-size: 1.1em;
+            line-height: 2;
+            color: #555;
             display: flex;
+            align-items: center;
+            gap: 10px; /* 라벨과 값 사이 간격 */
+        }
+        .info-list li strong {
+            color: #333;
+            width: 120px; /* 라벨 너비 고정 */
+            flex-shrink: 0;
+        }
+        .info-list input[type="text"] { /* v-model 입력창 스타일 */
+            font-size: 1em;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+        
+        /* 예산 현황판 스타일 */
+        .budget-status-wrap {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(4, 1fr); /* 총 예산 + 4개 항목 */
             gap: 15px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 8px;
+            margin-top: 20px;
+            align-items: center;
         }
-
+        .budget-total {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
         .budget-status-item {
-            flex: 1;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
-
         .budget-status-item .label {
             font-size: 0.9em;
             color: #555;
             display: block;
+            margin-bottom: 8px;
         }
-
         .budget-status-item .amount {
-            font-size: 1.2em;
-            font-weight: bold;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #3498db;
         }
-
         .budget-status-item .amount .current {
             color: #d9480f;
         }
-
         .budget-status-item .amount .total {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #888;
         }
 
-        .packname-form-wrap {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f9f9f9;
+        /* 지도 및 상세 목록 */
+        #map-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            display: none;
+            margin-top: 15px;
         }
-
-        .packname-form-wrap input[type="text"] {
-            width: 300px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
+        .poi-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
-
-        .packname-form-wrap button {
-            padding: 9px 12px;
-            background: #3498db;
+        .poi-item p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        .poi-item p:first-child strong {
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+        
+        /* 저장 버튼 */
+        .save-button-wrap {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .save-button-wrap button {
+            padding: 12px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            background-color: #3498db;
             color: white;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
-            border-radius: 4px;
-            vertical-align: middle;
-            font-weight: bold;
+            transition: background-color 0.2s;
         }
-
-        #btn-toggle-packname {
-            font-size: 10px;
-            margin-left: 5px;
-            background: #eee;
-            border: 1px solid #ccc;
-            padding: 2px 4px;
+        .save-button-wrap button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 날짜 탭 스타일 */
+        .date-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: #f0f0f0;
             cursor: pointer;
-            border-radius: 3px;
+            border-radius: 6px 6px 0 0;
+            font-size: 0.95em;
+            color: #555;
+            position: relative;
+            bottom: -2px;
+        }
+        .tab-btn.active {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-bottom: 2px solid #fff;
+            font-weight: bold;
+            color: #3498db;
         }
     </style>
 </head>
 
 <body>
-    <%-- 🛑 [수정] header.jsp는 wrap 밖으로 이동 --%>
     <%@ include file="components/header.jsp" %>
-
-    <%-- 🛑 [수정] <div class="wrap">이 #app을 감싸도록 수정 --%>
+    
     <div class="wrap">
         <div id="app">
 
-            <h1>예약 상세 확인</h1>
+            <h1 class="page-title">예약 상세 확인</h1>
 
-            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+            <div class="panel">
                 <h3>기본 예약 정보 확인</h3>
-                <ul>
+                <ul class="info-list">
                     <li>
-                        여행 코스 이름 : <input v-model='reservation.packname'></span>
+                        <strong>여행 코스 이름</strong>
+                        <input type="text" v-model='reservation.packname'>
                     </li>
-                    <li><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</li>
-                    <li><strong>여행 기간:</strong> {{ reservation.startDate }} ~ {{ reservation.endDate }}</li>
-                    <li><strong>방문 예정 지점 :</strong> 총 {{ reservation.pois ? reservation.pois.length : 0 }}개
-                    </li>
-                    <li><strong>테마:</strong> {{ reservation.themNum }}</li>
+                    <li><strong>여행 기간</strong> {{ formatDate(reservation.startDate) }} ~ {{ formatDate(reservation.endDate) }}</li>
+                    <li><strong>방문 예정 지점</strong> 총 {{ poiList ? poiList.length : 0 }}개</li>
+                    <li><strong>테마</strong> {{ reservation.themNum }}</li>
                 </ul>
             </div>
+            
+            <div class="panel">
+                <h3>예산 현황</h3>
+                <div class="budget-status-wrap">
+                    <div class="budget-total"><strong>총 예산:</strong><br>{{ formatPrice(reservation.price) }}원</div>
+                    
+                    <div class="budget-status-item">
+                        <span class="label">기타 예산 (할당량)</span>
+                        <span class="amount" id="budget-etc">0원</span>
+                    </div>
+                    <div class="budget-status-item">
+                        <span class="label">관광지 예산 (할당량)</span>
+                        <span class="amount" id="budget-activity">0원</span>
+                    </div>
+                    <div class="budget-status-item">
+                        <span class="label">숙박 예산 (사용/할당량)</span>
+                        <span class="amount" id="budget-accom">
+                            <span class="current">0원</span> / <span class="total">0원</span>
+                        </span>
+                    </div>
+                    <div class="budget-status-item">
+                        <span class="label">식당 예산 (사용/할당량)</span>
+                        <span class="amount" id="budget-food">
+                            <span class="current">0원</span> / <span class="total">0원</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-            <div class="budget-status-wrap">
-                <div class="budget-status-item">
-                    <span class="label">기타 예산 (할당량)</span>
-                    <span class="amount" id="budget-etc">0원</span>
-                </div>
-                <div class="budget-status-item">
-                    <span class="label">관광지 예산 (할당량)</span>
-                    <span class="amount" id="budget-activity">0원</span>
-                </div>
-                <div class="budget-status-item">
-                    <span class="label">숙박 예산 (사용/할당량)</span>
-                    <span class="amount" id="budget-accom">
-                        <span class="current">0원</span> / <span class="total">0원</span>
-                    </span>
-                </div>
-                <div class="budget-status-item">
-                    <span class="label">식당 예산 (사용/할당량)</span>
-                    <span class="amount" id="budget-food">
-                        <span class="current">0원</span> / <span class="total">0원</span>
-                    </span>
+            <div class="panel">
+                <h2>🗺️ 여행 경로 지도</h2>
+                <div id="map-container" style="width:100%; height:400px; border: 1px solid #ddd;">지도
+                    로딩 중...
                 </div>
             </div>
 
-            <hr>
-
-            <h2>🗺️ 여행 경로 지도</h2>
-            <div id="map-container" style="width:100%; height:400px; border: 1px solid #ddd;">지도 로딩 중...
-            </div>
-
-            <hr>
-
-            <h2>📋 상세 일정 목록</h2>
-            <div id="detail-schedule-list">
-                <p v-if="poiList.length === 0">유효한 POI 일정이 없습니다.</p>
-                <div v-else v-for="(poi, index) in poiList" :key="poi.poiId" class="poi-item">
-                    <p>[{{ index + 1 }}] <strong>{{ poi.placeName }}</strong></p>
-                    <p>방문 예정일: {{ poi.reservDate }} </p>
+            <div class="panel">
+                <h2>📋 상세 일정 목록</h2>
+                
+                <div class="date-tabs" v-if="Object.keys(itineraryByDate).length > 0">
+                    <button type="button" 
+                        v-for="(pois, date, index) in itineraryByDate" 
+                        :key="date"
+                        :class="['tab-btn', { active: activeDate === date }]" 
+                        @click="setActiveDate(date)">
+                        {{ index + 1 }}일차 ({{ formatDate(date) }})
+                    </button>
+                </div>
+                
+                <div id="detail-schedule-list">
+                    <p v-if="poiList.length === 0">유효한 POI 일정이 없습니다.</p>
+                    
+                    <div v-else v-for="(poi, index) in itineraryByDate[activeDate]" :key="poi.poiId" class="poi-item">
+                        <p>[{{ index + 1 }}] <strong>{{ poi.placeName }}</strong></p>
+                        <p>방문 예정일: {{ formatDate(poi.reservDate) }} </p>
+                    </div>
                 </div>
             </div>
-            <div><button @click ="fnSave">저장하기</button></div>
+            
+            <div class="save-button-wrap">
+                <button @click="fnSave">저장하기</button>
+            </div>
+            
         </div>
     </div> 
+    
     <%@ include file="components/footer.jsp" %>
 </body>
 
@@ -197,55 +291,39 @@
             return {
                 reservation: {
                     resNum: 0,
-                    packName: "로딩 중...",
+                    packName: "사용자 지정 코스 이름",
                     price: 0,
                     startDate: "",
                     endDate: "",
                     pois: [],
                     themNum: "",
-                    packname: "" 
+                    packname: ""
                 },
                 poiList: [],
                 kakaoAppKey: '${kakaoAppKey}',
-
                 map: null,
-                newPackName: "",
-                showPacknameForm: false
+                newPackName: "", // 이젠 사용되지 않지만, fnUpdatePackname을 위해 유지
+                showPacknameForm: false, // 이젠 사용되지 않지만, fnUpdatePackname을 위해 유지
+                
+                // 탭 기능용 데이터
+                itineraryByDate: {}, // 날짜별로 그룹화된 POI 목록
+                activeDate: null     // 현재 선택된 탭의 날짜
             };
         },
         methods: {
-            fnUpdatePackname() {
-                let self = this;
-                if (!self.newPackName || self.newPackName.trim() === "") {
-                    alert("별칭을 입력해주세요.");
-                    return;
-                }
-
-                $.ajax({
-                    url: '/api/reservation/update/packname',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        resNum: self.reservation.resNum,
-                        packName: self.newPackName
-                    }),
-                    success: function (response) {
-                        alert('별칭이 저장되었습니다.');
-                        self.reservation.packName = self.newPackName;
-                        self.showPacknameForm = false;
-                    },
-                    error: function (jqXHR) {
-                        alert(`저장 실패 (${jqXHR.status}): 백엔드 API 수정이 필요합니다.`);
-                    }
-                });
-            },
-
-            togglePacknameForm() {
-                this.showPacknameForm = !this.showPacknameForm;
-            },
+            // (fnUpdatePackname과 togglePacknameForm은 현재 UI에서 제거되었으므로 생략)
 
             formatPrice(value) {
                 return value ? value.toLocaleString() : '0';
+            },
+            
+            formatDate(dateString) {
+                if (!dateString) return "날짜 없음";
+                try {
+                    return dateString.split(' ')[0];
+                } catch (e) {
+                    return dateString; 
+                }
             },
 
             initializeMap(markerData) {
@@ -286,13 +364,63 @@
                 });
 
                 this.map.setBounds(bounds);
+            },
+            
+            fnSave() {
+                let self = this;
+                let param = {
+                    resNum: self.reservation.resNum,
+                    packName: self.reservation.packname
+                };
+                $.ajax({
+                    url: "/reservation-view/save.dox",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json', 
+                    data: JSON.stringify(param), 
+                    success: function (data) {
+                        alert("여행 일정 저장이 완료되었습니다.")
+                        location.href="/main-list.do"
+                    },
+                    error: function(jqXHR) {
+                        alert(`저장 실패 (${jqXHR.status}): 백엔드 API 구현이 필요합니다.`);
+                    }
+                });
+            },
+            
+            // 날짜별로 POI 목록을 그룹화하는 함수
+            groupPoisByDate(poiList) {
+                // 날짜 오름차순으로 먼저 정렬
+                const sortedList = [...poiList].sort((a, b) => 
+                    new Date(a.reservDate) - new Date(b.reservDate)
+                );
+                
+                const grouped = {};
+                sortedList.forEach(poi => {
+                    const date = this.formatDate(poi.reservDate); 
+                    if (!grouped[date]) {
+                        grouped[date] = [];
+                    }
+                    grouped[date].push(poi);
+                });
+                
+                this.itineraryByDate = grouped;
+                
+                // 첫 번째 날짜를 활성 탭으로 설정
+                if (Object.keys(grouped).length > 0) {
+                    this.activeDate = Object.keys(grouped)[0];
+                }
+            },
+            
+            // 활성 탭 변경 함수
+            setActiveDate(date) {
+                this.activeDate = date;
             }
         },
         mounted() {
             let self = this;
 
             self.reservation = JSON.parse('<c:out value="${reservationJson}" escapeXml="false"/>');
-            self.newPackName = self.reservation.packName;
             self.reservation.packname = self.reservation.packName; 
 
             const rawPoiList = JSON.parse('<c:out value="${poiListJson}" escapeXml="false"/>');
@@ -301,7 +429,10 @@
                 poi.contentId && !isNaN(poi.contentId) && poi.contentId > 0
             );
 
-            // 3. 지도 초기화
+            // POI 목록을 날짜별로 그룹화
+            self.groupPoisByDate(self.poiList);
+
+            // 지도 초기화
             const validMapPois = self.poiList.filter(poi =>
                 poi.mapY != null && poi.mapX != null &&
                 !isNaN(poi.mapY) && !isNaN(poi.mapX)
