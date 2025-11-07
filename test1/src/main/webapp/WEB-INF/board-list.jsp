@@ -27,8 +27,8 @@
                 display: flex;
                 flex-direction: column;
                 gap: 14px;
-                
-                
+
+
             }
 
             /* 🔹 검색바 상단 */
@@ -37,6 +37,7 @@
                 align-items: center;
                 gap: 10px;
                 position: relative;
+               
             }
 
             /* 🔹 검색 input */
@@ -57,15 +58,7 @@
                 outline: none;
             }
 
-            /* 🔹 돋보기 아이콘 효과 (가짜) */
-            .filter-row:first-child::before {
-                position: absolute;
-                right: 18px;
-                font-size: 18px;
-                color: #7a7a7a;
-                
-            }
-
+           
             /* 🔹 셀렉트 및 버튼 */
             .board-filter select,
             .board-filter button {
@@ -107,6 +100,7 @@
                 align-items: center;
                 gap: 10px;
                 flex-wrap: wrap;
+                /* margin-left: 110px; */
             }
 
             /* 반응형 */
@@ -119,7 +113,7 @@
                 .filter-row {
                     flex-direction: column;
                     align-items: stretch;
-                    
+
                 }
 
                 .board-filter input {
@@ -173,6 +167,7 @@
                 /* 살짝 여백 추가 */
                 flex-wrap: wrap;
                 
+
             }
 
             /* 📙 셀렉트, 인풋, 버튼 스타일 */
@@ -301,8 +296,8 @@
 
             /* 📗 글쓰기 버튼 영역 (수정) */
             .board-filter-write-button {
-               margin-left: 200px;
-               
+                margin-left: 200px;
+
             }
 
             /* 📗 글쓰기 버튼 스타일 (기존 스타일에서 가져옴) */
@@ -315,9 +310,10 @@
                 font-size: 18px;
                 cursor: pointer;
                 transition: background-color 0.2s;
-                /* margin-right: 1300px; */
-               
-                
+                /* margin-top: 10px; */
+                /* margin-left: 1200px; */
+                margin: 10px 10px 50px 1200px;
+
             }
 
             .write-button-area button:hover {
@@ -344,187 +340,107 @@
     <body>
         <div id="app">
             <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-            <header>
-                <div class="logo">
-                    <a href="http://localhost:8081/main-list.do">
-                        <!-- <img src="이미지.png" alt="Team Project"> -->
+            <%@ include file="components/header.jsp" %>
+                <!-- 🔹 필터 영역 -->
+
+
+                <div class="board-filter">
+                    <div class="filter-row">
+                        <select v-model="searchOption">
+                            <option value="all">::전체::</option>
+                            <option value="title">::제목::</option>
+                            <option value="id">::작성자::</option>
+                        </select>
+
+                        <input @keyup.enter="fnList" v-model="keyword" placeholder="검색어를 입력해주세요.">
+                        <button @click="fnList">검색</button>
+
+
+
+                        <div class="filter-row" style="margin-left: 367px;">
+                        <select v-model="pageSize" @change="fnList">
+                            <option value="5">::5개씩::</option>
+                            <option value="10">::10개씩::</option>
+                            <option value="15">::15개씩::</option>
+                        </select>
+
+                        <select v-model="type" @change="fnList">
+                            <option value="">::전체::</option>
+                            <option value="N">::공지사항::</option>
+                            <option value="F">::자유게시판::</option>
+                            <option value="Q">::질문게시판::</option>
+                            <option value="SQ">::문의게시판</option>
+                        </select>
+
+                        <select v-model="order" @change="fnList">
+                            <option value="num">::번호순::</option>
+                            <option value="title">::제목순::</option>
+                            <option value="cnt">::조회수::</option>
+                        </select>
+
+                    </div>
+                    </div>
+                    
+                    
+                    
+                </div>
+
+                <table>
+                    <tr>
+                        <th>번호</th>
+                        <th>작성자</th>
+                        <th>제목</th>
+                        <th>추천수</th>
+                        <th>조회수</th>
+                        <th>작성일</th>
+
+
+                    </tr>
+
+                    <tr v-for="item in list" @click="fnView(item.boardNo)">
+                        <td>{{item.boardNo}}</td>
+                        <td>{{item.userId}}</td>
+                        <td>
+                            <a href="javascript:;">{{item.title}}</a>
+                            <span v-if="item.commentCnt != 0" style="color:red;"> [{{item.commentCnt}}]</span>
+                        </td>
+                        <td> {{item.fav}}</td>
+                        <td>{{item.cnt}}</td>
+                        <td>{{item.cdate}}</td>
+
+
+                    </tr>
+
+                </table>
+
+
+
+                <!-- 페이지네이션 -->
+                <div class="pagination">
+                    <!-- 이전 그룹 -->
+                    <a href="javascript:;" v-if="page > 1" @click="fnMove(-1)">
+                        <span v-if="page > 1">◀</span>
+                    </a>
+
+                    <!-- 페이지 번호 -->
+                    <a href="javascript:;" v-for="num in pageGroupEnd - pageGroupStart + 1" :key="num"
+                        @click="fnPage(pageGroupStart + num - 1)">
+                        <span :class="{ active: page == (pageGroupStart + num - 1) }">{{ pageGroupStart + num - 1
+                            }}</span>
+                    </a>
+
+                    <!-- 다음 그룹 -->
+                    <a href="javascript:;" v-if="page < totalPages" @click="fnMove(1)">
+                        <span>▶</span>
                     </a>
                 </div>
-                <h1 class="logo">
-                    <a href="main-list.do" target="_blank">Team Project</a>
-                </h1>
-                <nav>
-                    <ul>
-                        <li class="main-menu"><a href="/main-Traveling.do">여행하기</a></li>
-                        <li class="main-menu"><a href="/main-Community.do">커뮤니티</a></li>
-                        <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
-                        <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
-                        <!-- 마이페이지 / 관리자 페이지  -->
-                        <li class="main-menu" v-if="status === 'U'">
-                            <a href="/main-myPage.do">마이페이지</a>
-                        </li>
-                        <li class="main-menu" v-else-if="status === 'A'">
-                            <a href="/admin-page.do">관리자 페이지</a>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <!-- 로그인 전 -->
-                    <div class="login-btn" v-if="!isLoggedIn">
-                        <button @click="goToLogin">로그인/회원가입</button>
-                    </div>
-
-                    <!-- 로그인 후 -->
-                    <div class="user-info" v-else style="position: relative;">
-                        <span @click="toggleLogoutMenu" class="nickname">{{ nickname }}님 환영합니다!</span>
-
-                        <ul v-if="showLogoutMenu" class="logout-dropdown">
-                            <li @click="goToMyPage">회원탈퇴</li>
-                            <li @click="goToSettings">내 포인트 : </li>
-                            <li @click="logout">로그아웃</li>
-                        </ul>
-                    </div>
+                <!-- 🔹 글쓰기 버튼 영역 -->
+                <div>
+                    <a href="board-add.do" class="write-button-area button"><button>글쓰기</button></a>
                 </div>
-
-
-
-
-
-
-            </header>
-            <!-- 🔹 필터 영역 -->
-            <div class="board-filter">
-                
-                <div class="filter-row">
-                    <select v-model="searchOption">
-                        <option value="all">::전체::</option>
-                        <option value="title">::제목::</option>
-                        <option value="id">::작성자::</option>
-                    </select>
-
-                    <input @keyup.enter="fnList" v-model="keyword" placeholder="검색어를 입력해주세요.">
-                    <button @click="fnList">검색</button>
-                </div>
-
-                <div class="filter-row">
-                    <select v-model="pageSize" @change="fnList">
-                        <option value="5">::5개씩::</option>
-                        <option value="10">::10개씩::</option>
-                        <option value="15">::15개씩::</option>
-                    </select>
-
-                    <select v-model="type" @change="fnList">
-                        <option value="">::전체::</option>
-                        <option value="N">::공지사항::</option>
-                        <option value="F">::자유게시판::</option>
-                        <option value="Q">::질문게시판::</option>
-                        <option value="SQ">::문의게시판</option>
-                    </select>
-
-                    <select v-model="order" @change="fnList">
-                        <option value="num">::번호순::</option>
-                        <option value="title">::제목순::</option>
-                        <option value="cnt">::조회수::</option>
-                    </select>
-                      <div>
-                <a href="board-add.do" style="margin-left: 1200px;" class="write-button-area button"><button>글쓰기</button></a>
-            </div>
-                </div>
-
-            </div>
-
-             
-            <table>
-                <tr>
-                    <th>번호</th>
-                    <th>작성자</th>
-                    <th>제목</th>
-                    <th>추천수</th>
-                    <th>조회수</th>
-                    <th>작성일</th>
-
-
-                </tr>
-
-                <tr v-for="item in list" @click="fnView(item.boardNo)">
-                    <td>{{item.boardNo}}</td>
-                    <td>{{item.userId}}</td>
-                    <td>
-                        <a href="javascript:;">{{item.title}}</a>
-                        <span v-if="item.commentCnt != 0" style="color:red;"> [{{item.commentCnt}}]</span>
-                    </td>
-                    <td> {{item.fav}}</td>
-                    <td>{{item.cnt}}</td>
-                    <td>{{item.cdate}}</td>
-
-
-                </tr>
-
-            </table>
-          
-
-
-            <div>
-                <a v-if="page !=1" @click="fnMove(-1)" href="javascript:;">◀</a>
-                <a href="javascript:;" v-for="num in index" class="num" @click="fnPage(num)">
-                    <span :class="{active: page == num}">{{num}}</span>
-
-
-                </a>
-                <a v-if="page!=index" @click="fnMove(1)" href="javascript:;">▶</a>
-            </div>
-
         </div>
 
-        <footer>
-            <div class="footer-content">
-                <div class="footer-links" style="display: flex">
-                    <div class="footer-section">
-                        <h4>회사 소개</h4>
-                        <ul>
-                            <li><a href="#">회사 연혁</a></li>
-                            <li><a href="#">인재 채용</a></li>
-                            <li><a href="#">투자자 정보</a></li>
-                            <li><a href="#">제휴 및 협력</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>지원</h4>
-                        <ul>
-                            <li><a href="#">고객센터</a></li>
-                            <li><a href="#">자주 묻는 질문</a></li>
-                            <li><a href="#">개인정보 처리방침</a></li>
-                            <li><a href="#">이용 약관</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>여행 상품</h4>
-                        <ul>
-                            <li><a href="#">호텔</a></li>
-                            <li><a href="#">항공권</a></li>
-                            <li><a href="#">렌터카</a></li>
-                            <li><a href="#">투어 & 티켓</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>문의 및 제휴</h4>
-                        <ul>
-                            <li><a href="#">파트너십 문의</a></li>
-                            <li><a href="#">광고 문의</a></li>
-                            <li><a href="#">이메일: team@project.com</a></li>
-                            <li><a href="#">대표전화: 02-1234-5678</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
-                    </p>
-                </div>
-            </div>
-        </footer>
+        <%@ include file="components/footer.jsp" %>
     </body>
 
     </html>
@@ -536,14 +452,18 @@
                     // 변수 - (key : value)
                     list: [],
                     searchOption: "all",
-                    pageSize: 5,
+
                     type: "",
                     order: "num",
                     keyword: "",
 
                     sessionId: "${sessionId}",
                     page: 1,
-                    index: 0,
+                    pageSize: 5,
+                    pageGroupSize: 10,
+                    totalPages: 0,
+                    pageGroupStart: 1,
+                    pageGroupEnd: 10,
                     num: ""
 
 
@@ -571,9 +491,14 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            console.log(data.list); //자유,질문 게시판의 list가 안넘어옴
+                            console.log(data.list);
                             self.list = data.list;
-                            self.index = Math.ceil(data.cnt / self.pageSize);
+                            self.totalPages = Math.ceil(data.cnt / self.pageSize);
+
+                            // 페이지 그룹 계산
+                            const group = Math.floor((self.page - 1) / self.pageGroupSize);
+                            self.pageGroupStart = group * self.pageGroupSize + 1;
+                            self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
                         }
                     });
                 },
@@ -590,6 +515,8 @@
                 fnMove: function (num) {
                     let self = this;
                     self.page += num;
+                    if (self.page < 1) self.page = 1;
+                    if (self.page > self.totalPages) self.page = self.totalPages;
                     self.fnList();
                 }
             }, // methods

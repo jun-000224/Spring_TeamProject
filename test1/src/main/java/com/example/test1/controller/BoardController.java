@@ -35,6 +35,7 @@ public class BoardController {
     public String view(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
 		System.out.println(map);
 		request.setAttribute("boardNo", map.get("boardNo"));
+		request.setAttribute("status", map.get("status"));
         return "/board-view";
     }
 	@RequestMapping("/board-add.do") 
@@ -73,6 +74,16 @@ public class BoardController {
     public String wishlistList(Model model) throws Exception{ 
 
         return "/wish-list";
+    }
+	
+	
+	
+	@RequestMapping("/main-Notice-View.do") 
+    public String noticeView(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map);
+	request.setAttribute("boardNo", map.get("boardNo"));
+	request.setAttribute("status", map.get("status"));
+        return "/main-Notice-View";
     }
 	
 	@RequestMapping(value = "/board-list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -270,5 +281,22 @@ public class BoardController {
 	    HashMap<String, Object> resultMap = boardService.adoptComment(map);
 	    return new Gson().toJson(resultMap);
 	}
+	
+	@RequestMapping(value = "/main-Notice.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String noticeList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.listNotice(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	@RequestMapping(value = "/main-Notice-View.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String noticeView(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.viewNotice(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
+	
+	
 }
 

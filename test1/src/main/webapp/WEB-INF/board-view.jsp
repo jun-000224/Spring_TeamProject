@@ -151,6 +151,19 @@
             }
 
             /* ===========================
+🖼️ 이미지 깨짐 방지 (추가)
+=========================== */
+            table:not(#comment):not(#input) td div img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                margin: 10px auto;
+                /* 중앙 정렬을 위해 auto 추가 */
+                display: block;
+            }
+
+
+            /* ===========================
 📗 버튼 공통 스타일
 =========================== */
             button {
@@ -173,7 +186,7 @@
             /* 개별 버튼 색상 */
             button.delete-btn {
                 background-color: #d63b3b;
-                margin-left: 1060px
+                margin-left: 1150px
             }
 
             button.edit-btn {
@@ -366,255 +379,193 @@
                     width: 90%;
                 }
             }
+
+            .report {
+                margin: 10px 0px 0px 80px;
+
+            }
+
+            .comment-report-cell {
+                width: 10%;
+                text-align: center;
+                vertical-align: middle;
+
+            }
+
+            .comment-report-cell button {
+                font-size: 13px;
+                padding: 5px 8px;
+                margin: 0;
+                /* 버튼이 <td> 내에 있으므로 기존 button 전역 마진 제거 */
+                width: 100%;
+            }
+            
         </style>
     </head>
 
     <body>
         <div id="app">
             <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-            <header>
-                <div class="logo">
-                    <a href="http://localhost:8081/main-list.do">
-                        <!-- <img src="이미지.png" alt="Team Project"> -->
-                    </a>
-                </div>
-                <h1 class="logo">
-                    <a href="main-list.do" target="_blank">Team Project</a>
-                </h1>
-                <nav>
-                    <ul>
-                        <li class="main-menu"><a href="/main-Traveling.do">여행하기</a></li>
-                        <li class="main-menu"><a href="/main-Community.do">커뮤니티</a></li>
-                        <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
-                        <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
-                        <!-- 마이페이지 / 관리자 페이지  -->
-                        <li class="main-menu" v-if="status === 'U'">
-                            <a href="/main-myPage.do">마이페이지</a>
-                        </li>
-                        <li class="main-menu" v-else-if="status === 'A'">
-                            <a href="/admin-page.do">관리자 페이지</a>
-                        </li>
+            <%@ include file="components/header.jsp" %>
 
-                    </ul>
-                </nav>
+                <table>
 
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <!-- 로그인 전 -->
-                    <div class="login-btn" v-if="!isLoggedIn">
-                        <button @click="goToLogin">로그인/회원가입</button>
-                    </div>
+                    <tr>
+                        <th>제목</th>
+                        <td>{{info.title}}</td>
+                    </tr>
 
-                    <!-- 로그인 후 -->
-                    <div class="user-info" v-else style="position: relative;">
-                        <span @click="toggleLogoutMenu" class="nickname">{{ nickname }}님 환영합니다!</span>
+                    <tr>
+                        <th>작성자</th>
+                        <td>{{info.userId}}</td>
+                    </tr>
+                    <tr>
+                        <th>조회수</th>
+                        <td>{{info.cnt}}</td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+                        <td>
+                            <div v-html="info.contents"></div>
+                        </td>
 
-                        <ul v-if="showLogoutMenu" class="logout-dropdown">
-                            <li @click="goToMyPage">회원탈퇴</li>
-                            <li @click="goToSettings">내 포인트 : </li>
-                            <li @click="logout">로그아웃</li>
-                        </ul>
-                    </div>
-                </div>
-
-            </header>
-
-            <table>
-
-                <tr>
-                    <th>제목</th>
-                    <td>{{info.title}}</td>
-                </tr>
-
-                <tr>
-                    <th>작성자</th>
-                    <td>{{info.userId}}</td>
-
-                </tr>
-                <tr>
-                    <th>조회수</th>
-                    <td>{{info.cnt}}</td>
-                </tr>
-                <tr>
-                    <th>내용</th>
-                    <td>
-                        <div v-html="info.contents"></div>
-                    </td>
-
-                </tr>
+                    </tr>
 
 
-                <!-- 게시글 모달 -->
-                <div class="report">
+                    <!-- 게시글 모달 -->
                     <div class="report">
-                        <button v-if="!boardReportCheck" @click="fnReport(info.userId)">🚨신고하기</button>
-                        <button v-else disabled style="color: gray; cursor: not-allowed;">✅ 신고완료</button>
-                    </div>
+                        <div class="report">
+                            <button v-if="!boardReportCheck" @click="fnReport(info.userId)">🚨신고하기</button>
+                            <button v-else disabled style="color: gray; cursor: not-allowed;">✅ 신고완료</button>
+                        </div>
 
 
-                    <div v-if="reportFlg" class="modal">
-                        <div class="modal_body">
-                            <h2>🚨신고하기</h2>
-                            <p>신고 대상: {{ reportedUserId }}</p>
-                            <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
+                        <div v-if="reportFlg" class="modal">
+                            <div class="modal_body">
+                                <h2>🚨신고하기</h2>
+                                <p>신고 대상: {{ reportedUserId }}</p>
+                                <textarea v-model="reason" placeholder="신고 사유를 입력하세요"></textarea>
 
-                            <div>● 신고유형 선택</div>
-                            <div>
-                                <select v-model="reportType">
-                                    <option value="E">오류제보</option>
-                                    <option value="I">불편사항</option>
-                                    <option value="S">사기신고</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button @click="submitReport">제출</button>
-                                <button @click="closeReportModal">취소</button>
+                                <div>● 신고유형 선택</div>
+                                <div>
+                                    <select v-model="reportType">
+                                        <option value="E">오류제보</option>
+                                        <option value="I">불편사항</option>
+                                        <option value="S">사기신고</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button @click="submitReport">제출</button>
+                                    <button @click="closeReportModal">취소</button>
+                                </div>
                             </div>
                         </div>
+
+
+
+
+
+                </table>
+
+                <div v-if="info.userId == userId || sessionStatus == 'A'">
+                    <button class="delete-btn" @click="fnRemove">삭제</button>
+                    <button class="edit-btn" @click="fnUpdate">수정</button>
+                </div>
+
+                <hr>
+
+                <!-- 댓글 코멘트 -->
+                <table id="comment">
+                    <tr v-for="(item, index) in commentList" :key="item.commentNo">
+                        <th>{{ item.userId }}</th>
+                        <th>
+                            <span v-if="editIndex !== index">
+                                {{ item.contents }}
+                            </span>
+                            <input v-else type="text" v-model="item.contents">
+                        </th>
+                        <!-- 삭제 버튼 -->
+                        <td v-if="item.userId == userId || sessionStatus == 'A'">
+                            <button @click="fncRemove(item.commentNo)">삭제</button>
+                        </td>
+
+                        <!-- 수정 버튼 -->
+                        <td v-if="item.userId == userId || sessionStatus =='A'">
+                            <button v-if="editIndex !== index" @click="editIndex = index">수정</button>
+                            <button v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
+                        </td>
+
+                        <!-- 채택 버튼 -->
+                        <td>
+                            <div v-if="item.adopt === 'T' && info.type == 'Q '" class="adopted-label">✅ 채택된 댓글</div>
+                            <button
+                                v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
+                                @click="fnAdopt(item.commentNo, item.userId)" class="btn-success">
+                                채택하기
+                            </button>
+                        </td>
+
+                        <!-- 🚨 신고 버튼 -->
+                        <div class="comment-report">
+                            <td v-if="item.userId != userId">
+
+                            </td>
+                        </div>
+                        <td class="comment-report-cell" v-if="item.userId != userId">
+                            <button v-if="!commentReportMap[item.commentNo]"
+                                @click="fnCReport(item.commentNo, item.userId)">
+                                🚨 신고하기
+                            </button>
+                            <button v-else disabled style="color: gray; cursor: not-allowed;">
+                                ✅ 신고완료
+                            </button>
+                        </td>
+
+
+                    </tr>
+                </table>
+
+                <!-- ✅ 신고 모달 (테이블 밖으로 이동) -->
+                <div v-if="CoReportFlg" class="modal">
+                    <div class="modal_body">
+                        <h2>신고하기</h2>
+                        <p>신고 대상: {{ reportedUserId }}</p>
+                        <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
+
+                        <div>● 신고유형 선택</div>
+                        <div>
+                            <select v-model="CreportType">
+                                <option value="E">오류제보</option>
+                                <option value="I">불편사항</option>
+                                <option value="S">사기신고</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button @click="CsubmitReport">제출</button>
+                            <button @click="CcloseReportModal">취소</button>
+                        </div>
                     </div>
+                </div>
 
-
-
-
-
-            </table>
-
-            <div v-if="info.userId == userId">
-                <button class="delete-btn" @click="fnRemove">삭제</button>
-                <button class="edit-btn" @click="fnUpdate">수정</button>
-            </div>
-
-            <hr>
-
-            <!-- 댓글 코멘트 -->
-            <table id="comment">
-                <tr v-for="(item, index) in commentList" :key="item.commentNo">
-                    <th>{{ item.userId }}</th>
-                    <th>
-                        <span v-if="editIndex !== index">
-                            {{ item.contents }}
-                        </span>
-                        <input v-else type="text" v-model="item.contents">
-                    </th>
-                    <!-- 삭제 버튼 -->
-                    <td v-if="item.userId == userId || status == 'A'">
-                        <button @click="fncRemove(item.commentNo)">삭제</button>
-                    </td>
-
-                    <!-- 수정 버튼 -->
-                    <td v-if="item.userId == userId || status =='A'">
-                        <button v-if="editIndex !== index" @click="editIndex = index">수정</button>
-                        <button v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
-                    </td>
-
-                    <!-- 채택 버튼 -->
+                <!-- 댓글 작성 -->
+                <table id="input">
+                    <th>댓글</th>
                     <td>
-                        <div v-if="item.adopt === 'T' && info.type == 'Q '" class="adopted-label">✅ 채택된 댓글</div>
-                        <button
-                            v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
-                            @click="fnAdopt(item.commentNo, item.userId)" class="btn-success">
-                            채택하기
-                        </button>
+                        <textarea cols="40" rows="4" v-model="contents" @keyup.enter="fnSave"></textarea>
+                    </td>
+                    <td>
+                        <button @click="fnSave">저장</button>
+
                     </td>
 
-                    <!-- 🚨 신고 버튼 -->
-                    <td v-if="item.userId != userId">
-                        <button v-if="!commentReportMap[item.commentNo]"
-                            @click="fnCReport(item.commentNo, item.userId)">
-                            🚨 신고하기
-                        </button>
-                        <button v-else disabled style="color: gray; cursor: not-allowed;">
-                            ✅ 신고완료
-                        </button>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- ✅ 신고 모달 (테이블 밖으로 이동) -->
-            <div v-if="CoReportFlg" class="modal">
-                <div class="modal_body">
-                    <h2>신고하기</h2>
-                    <p>신고 대상: {{ reportedUserId }}</p>
-                    <textarea v-model="comReason" placeholder="신고 사유를 입력하세요"></textarea>
-
-                    <div>● 신고유형 선택</div>
-                    <div>
-                        <select v-model="CreportType">
-                            <option value="E">오류제보</option>
-                            <option value="I">불편사항</option>
-                            <option value="S">사기신고</option>
-                        </select>
-                    </div>
-                    <div>
-                        <button @click="CsubmitReport">제출</button>
-                        <button @click="CcloseReportModal">취소</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 댓글 작성 -->
-            <table id="input">
-                <th>댓글</th>
-                <td>
-                    <textarea cols="40" rows="4" v-model="contents" @keyup.enter="fnSave"></textarea>
-                </td>
-                <td>
-                    <button @click="fnSave">저장</button>
-
-                </td>
-
-            </table>
+                </table>
 
 
 
-            </table>
+                </table>
+               
         </div>
-        <footer>
-            <div class="footer-content">
-                <div class="footer-links" style="display: flex">
-                    <div class="footer-section">
-                        <h4>회사 소개</h4>
-                        <ul>
-                            <li><a href="#">회사 연혁</a></li>
-                            <li><a href="#">인재 채용</a></li>
-                            <li><a href="#">투자자 정보</a></li>
-                            <li><a href="#">제휴 및 협력</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>지원</h4>
-                        <ul>
-                            <li><a href="#">고객센터</a></li>
-                            <li><a href="#">자주 묻는 질문</a></li>
-                            <li><a href="#">개인정보 처리방침</a></li>
-                            <li><a href="#">이용 약관</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>여행 상품</h4>
-                        <ul>
-                            <li><a href="#">호텔</a></li>
-                            <li><a href="#">항공권</a></li>
-                            <li><a href="#">렌터카</a></li>
-                            <li><a href="#">투어 & 티켓</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>문의 및 제휴</h4>
-                        <ul>
-                            <li><a href="#">파트너십 문의</a></li>
-                            <li><a href="#">광고 문의</a></li>
-                            <li><a href="#">이메일: team@project.com</a></li>
-                            <li><a href="#">대표전화: 02-1234-5678</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
-                    </p>
-                </div>
-            </div>
-        </footer>
+        <%@ include file="components/footer.jsp" %>
     </body>
 
     </html>
@@ -627,12 +578,16 @@
                     info: {},
                     boardNo: "${boardNo}",
                     userId: "${sessionId}",
+                    status : "${sessionStatus}", 
+                    sessionStatus : window.sessionData.status ,
+
                     contents: "",
                     editIndex: -1,
                     commentList: [],
                     commentNo: "",
                     type: "",
                     editFlg: false,
+                    
 
 
                     reportedUsers: [], //이미 신고한 사용자들의 ID저장용
@@ -739,7 +694,7 @@
                 fnUpdate: function () {
 
                     let self = this;
-                    console.log(self.boardNo);
+                    console.log(self.boardNo, self.sessionStatus);
                     pageChange("board-edit.do", { boardNo: self.boardNo });
 
                 },
@@ -826,8 +781,8 @@
                 submitReport() {
                     let self = this;
                     const param = {
-                        CoReportFlg: self.reportType,
-                        coreportedUserId: self.reportedUserId,
+                        reportType: self.reportType,
+                        reportedUserId: self.reportedUserId,
                         reason: self.reason,
                         boardNo: self.boardNo,
                         userId: self.userId

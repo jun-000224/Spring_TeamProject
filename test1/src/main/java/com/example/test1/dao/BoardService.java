@@ -322,5 +322,43 @@ try {
 
 	    return result;
 	}
+	public HashMap<String, Object> listNotice(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<Board> list = boardMapper.noticeList(map);	
+		int cnt = boardMapper.selectNotice(map);
+		
+		resultMap.put("list", list);
+		resultMap.put("cnt", cnt);
+		
+		resultMap.put("result", "success");
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> viewNotice(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		System.out.println(map);
+		try {
+			
+			Board info = boardMapper.noticeView(map);
+			System.out.println(info);
+			resultMap.put("info", info);
+			resultMap.put("result", "success");
+			resultMap.put("msg", "게시글 보임");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+			resultMap.put("msg", "서버오류 다시시도");
+		}
+		return resultMap;
+	
+	}
+
+	
+	
+	
+	
+	
 }
 

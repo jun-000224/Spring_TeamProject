@@ -19,7 +19,7 @@
         <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
         <style>
             table {
-                width: 80%;
+                width: 60%;
                 margin: 30px auto;
                 border-collapse: collapse;
                 background: #fff;
@@ -28,11 +28,11 @@
                 overflow: hidden;
                 text-align: center;
                 font-family: 'Noto Sans KR', sans-serif;
-
             }
 
             th {
                 background-color: #0078FF;
+                border-bottom: 1px solid #eee;
                 color: white;
                 font-weight: 600;
                 padding: 14px;
@@ -67,11 +67,23 @@
                 box-shadow: 0 0 5px rgba(0, 120, 255, 0.3);
             }
 
-            /* 버튼 위치 중앙 정렬 */
-            table+div {
+            /* 버튼 영역 중앙 정렬 및 버튼 오른쪽 정렬 */
+            #update-button-area {
+                width: 60%;
+                /* 테이블과 동일한 너비 */
+                margin: 20px 25%;
+                /* 중앙 정렬 */
                 text-align: center;
-                margin: 20px auto 40px;
+                /* 버튼 오른쪽 정렬 */
             }
+
+            /* table+div {
+        text-align: center;
+        margin: 20px auto 40px;
+    }
+    // 이전에 사용하셨던 table+div 스타일은 #update-button-area로 대체되었으므로 주석 처리하거나 삭제하는 것이 좋습니다.
+    */
+
 
             /* 수정 버튼 스타일 */
             button {
@@ -83,164 +95,72 @@
                 font-size: 15px;
                 cursor: pointer;
                 transition: background-color 0.25s ease;
+
             }
 
             button:hover {
                 background-color: #005FCC;
             }
 
-
-            /* ... 기존 스타일 유지 ... */
+            #editor {
+                padding: 10px;
+            }
 
             /* 제목 입력 필드 전용 스타일 */
             .input-title {
                 font-size: 18px;
-                margin-right: 200px;
-                /* 글꼴 크기 키우기 */
-                
-                /* 약간 굵게 */
                 color: #333;
-                /* 글꼴 색상 진하게 */
                 height: 20px;
-                width: 96% ;
-                /* 높이 설정 */
+                width: 80%;
                 padding: 8px 15px;
-                /* 상하 패딩 조정 */
+                border-radius: 10px;
+                border: none;
+                background-color: #f5f6f8;
             }
-
-          
-            
-        
+            .userId{
+                width: 80%;
+                margin: 0 auto;
+                text-align: center;
+            }
         </style>
     </head>
 
     <body>
         <div id="app">
             <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-            <header>
-                <div class="logo">
-                    <a href="http://localhost:8081/main-list.do">
-                        <!-- <img src="이미지.png" alt="Team Project"> -->
-                    </a>
+            <%@ include file="components/header.jsp" %>
+                <table>
+                    <tr>
+                        <th>제목</th>
+                        <td><input v-model="title" class="input-title" placeholder="제목을 입력하세요"></td>
+                    </tr>
+                    <tr>
+                        <th>작성자</th>
+                        <td>
+                            <div class="userId">
+                                {{userId}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+
+                        <td style="height: 300px; padding: 50px;">
+                            <!-- <textarea v-model="contents" cols="50" rows="20"></textarea> -->
+                            <div id="editor"></div>
+                        </td>
+
+                    </tr>
+
+                </table>
+                <div id="update-button-area">
+                    <button @click="fnUpdate">수정</button>
                 </div>
-                <h1 class="logo">
-                    <a href="main-list.do" target="_blank">Team Project</a>
-                </h1>
-                <nav>
-                    <ul>
-                        <li class="main-menu"><a href="/main-Traveling.do">여행하기</a></li>
-                        <li class="main-menu"><a href="/main-Community.do">커뮤니티</a></li>
-                        <li class="main-menu"><a href="/main-Notice.do">공지사항</a></li>
-                        <li class="main-menu"><a href="/main-Service.do">고객센터</a></li>
-                        <!-- 마이페이지 / 관리자 페이지  -->
-                        <li class="main-menu" v-if="status === 'U'">
-                            <a href="/main-myPage.do">마이페이지</a>
-                        </li>
-                        <li class="main-menu" v-else-if="status === 'A'">
-                            <a href="/admin-page.do">관리자 페이지</a>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <!-- 로그인 전 -->
-                    <div class="login-btn" v-if="!isLoggedIn">
-                        <button @click="goToLogin">로그인/회원가입</button>
-                    </div>
-
-                    <!-- 로그인 후 -->
-                    <div class="user-info" v-else style="position: relative;">
-                        <span @click="toggleLogoutMenu" class="nickname">{{ nickname }}님 환영합니다!</span>
-
-                        <ul v-if="showLogoutMenu" class="logout-dropdown">
-                            <li @click="goToMyPage">회원탈퇴</li>
-                            <li @click="goToSettings">내 포인트 : </li>
-                            <li @click="logout">로그아웃</li>
-                        </ul>
-                    </div>
-                </div>
-
-
-
-
-
-
-            </header>
-            <table>
-                <tr>
-                    <th>제목</th>
-                    <td><input v-model="title" class="input-title"></td>
-                </tr>
-                <tr>
-                    <th>작성자</th>
-                    <td>{{userId}}</td>
-                </tr>
-                <tr>
-                    <th>내용</th>
-
-                    <td style="height: 300px; padding: 30px;">
-                        <!-- <textarea v-model="contents" cols="50" rows="20"></textarea> -->
-                        <div id="editor"></div> 
-                    </td>
-
-                </tr>
-
-            </table>
-            <div>
-                <button @click="fnUpdate">수정</button>
-            </div>
         </div>
 
         </div>
 
-        <footer>
-            <div class="footer-content">
-                <div class="footer-links" style="display: flex">
-                    <div class="footer-section">
-                        <h4>회사 소개</h4>
-                        <ul>
-                            <li><a href="#">회사 연혁</a></li>
-                            <li><a href="#">인재 채용</a></li>
-                            <li><a href="#">투자자 정보</a></li>
-                            <li><a href="#">제휴 및 협력</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>지원</h4>
-                        <ul>
-                            <li><a href="#">고객센터</a></li>
-                            <li><a href="#">자주 묻는 질문</a></li>
-                            <li><a href="#">개인정보 처리방침</a></li>
-                            <li><a href="#">이용 약관</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>여행 상품</h4>
-                        <ul>
-                            <li><a href="#">호텔</a></li>
-                            <li><a href="#">항공권</a></li>
-                            <li><a href="#">렌터카</a></li>
-                            <li><a href="#">투어 & 티켓</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h4>문의 및 제휴</h4>
-                        <ul>
-                            <li><a href="#">파트너십 문의</a></li>
-                            <li><a href="#">광고 문의</a></li>
-                            <li><a href="#">이메일: team@project.com</a></li>
-                            <li><a href="#">대표전화: 02-1234-5678</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Team Project. All Rights Reserved. | 본 사이트는 프로젝트 학습 목적으로 제작되었습니다.
-                    </p>
-                </div>
-            </div>
-        </footer>
+        <%@ include file="components/footer.jsp" %>
     </body>
 
     </html>
@@ -299,13 +219,13 @@
                         type: "POST",
                         data: param,
                         success: function (data) {
-                            if(confirm("정말 수정하시겠습니까?")){
-                            if (data.result == "success") {
-                                alert("수정이 완료되었습니다!");
-                                location.href = "board-list.do"
-                            } else {
-                                alert("오류발생");
-                            }
+                            if (confirm("정말 수정하시겠습니까?")) {
+                                if (data.result == "success") {
+                                    alert("수정이 완료되었습니다!");
+                                    history.back();
+                                } else {
+                                    alert("오류발생");
+                                }
                             }
                         }
                     });
@@ -337,7 +257,7 @@
                 });
 
             }
-            
+
         });
 
         app.mount('#app');
