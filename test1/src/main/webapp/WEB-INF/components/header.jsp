@@ -7,7 +7,7 @@
             </a>
         </div>
         <h1 class="logo">
-            <a href="/main-list.do" >Team Project</a>
+            <a href="/main-list.do" >준비 완료</a>
         </h1>
         <nav>
             <ul>
@@ -58,10 +58,6 @@
             </div>
         </div>
     
-        <!-- <script src="https://unpkg.com/vue@3"></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
-        
-    
     </header>
 </div>
 
@@ -74,7 +70,8 @@
         status: "${sessionStatus}",
         nickname: "${sessionNickname}",
         name: "${sessionName}",
-        point: "${sessionPoint}"  // 이 부분에서 sessionPoint를 잘 넘기고 있는지 확인
+        point: "${sessionPoint}",  // 이 부분에서 sessionPoint를 잘 넘기고 있는지 확인
+
     };
     
     let showLogoutMenu = false;  // 조건을 true/false로 변경
@@ -91,47 +88,6 @@
         }
     }
 
-    
-
-    
-        // const headerApp = Vue.createApp({
-        //     data() {
-        //         // const initialShowMenu = window.sessionData.showLogoutMenu === 'true' 
-        //         //                     ? true
-        //         //                     : window.sessionData.showLogoutMenu === 'false'
-        //         //                         ? false
-        //         //                         : !!window.sessionData.showLogoutMenu;
-                
-        //         return {
-        //             id : window.sessionData.id,
-        //             nickname : window.sessionData.nickname,
-        //             showLogoutMenu : initialShowMenu,
-        //             status : window.sessionData.status,
-        //             point : window.sessionData.point,
-        //             showLogoutMenu: false,
-        //         }
-        //     },
-            
-        //     computed:{
-        //         isLoggedIn() {
-        //             return this.nickname !== "";
-        //         },
-        //         gradeLabel() {
-        //             switch (this.status) {
-        //                 case 'A': return '👑 ';
-        //                 case 'S': return '✨ ';
-        //                 case 'U': return '🙂 ';
-        //                 default: return '❓ 미지정';
-        //             }
-        //         }
-        //     },
-            
-        //     methods : {
-                
-        //     }
-        // });
-
-        // headerApp.mount('#app-header');    
 </script>
 
 

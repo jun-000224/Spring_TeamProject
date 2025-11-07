@@ -37,8 +37,13 @@
 	<update id="updateStatus" parameterType="hashmap">
 		UPDATE USERS
 		SET
-			STATUS = 'S',
-			END_SUBS = SYSDATE + 30
+				STATUS = 'S',
+				<if test='status == "U"'>
+					END_SUBS = SYSDATE + #{subsDay}
+				</if>
+				<if test='status == "S"'>
+					END_SUBS = END_SUBS + #{subsDay}
+				</if>
 		WHERE USER_ID = #{userId}
 	</update>
 	

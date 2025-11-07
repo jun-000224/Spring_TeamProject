@@ -158,9 +158,9 @@
     </style>
 </head>
 <body>
+        <%@ include file="../components/header.jsp" %>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <%@ include file="../components/header.jsp" %>
         
         <div class="field">
             <div class="infoField">
@@ -213,9 +213,9 @@
             
         </div>
 
-        <%@ include file="../components/footer.jsp" %> 
          
     </div>
+        <%@ include file="../components/footer.jsp" %> 
 </body>
 </html>
 

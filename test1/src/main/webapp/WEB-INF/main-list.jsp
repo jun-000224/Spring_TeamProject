@@ -474,8 +474,21 @@ h2 {
                     <div>
                         <h2>추천 게시글</h2>
                     </div>
+
+
+
+                    <br>
+                    <main>
+                        <div class="table-wrapper">
+                            <table class="centered-table">
+                                <div id="google_translate_element">
+                                </div>
+                            </table>
+                        </div>
+                    </main>
+                    
                 </div>
-            </div>
+                <%@ include file="components/footer.jsp" %>
         </div>
         <%@ include file="components/footer.jsp" %>
     </body>
