@@ -18,7 +18,7 @@
                 gap: 10px;
                 margin-bottom: 20px;
             }
- 
+
             .tab-buttons button {
                 padding: 8px 16px;
                 border: 1px solid #ccc;
@@ -35,13 +35,24 @@
                 border-color: #4a90e2;
             }
 
+
+
             .card-grid {
-                display: flex;
+                display: grid;
+                grid-template-columns: repeat(3, 300px);
+                /* 카드 너비 고정 */
+                gap: 24px;
+                justify-content: center;
+                /* 카드들을 가운데로 정렬 */
+                padding: 20px;
+                box-sizing: border-box;
+                width: 100%;
+                margin: 0 auto;
+
                 flex-direction: row;
-                gap: 16px;
                 overflow-x: auto;
-                padding-bottom: 10px;
                 scroll-snap-type: x mandatory;
+                padding-bottom: 10px;
             }
 
             .card {
@@ -108,6 +119,14 @@
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
                 animation: fadeIn 0.3s ease;
                 font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+            }
+
+            /* 글씨체 동일 */
+            input,
+            textarea {
+                font-family: inherit;
+
+                font-size: 14px;
             }
 
             /* 애니메이션 */
@@ -273,7 +292,7 @@
                 align-items: center;
                 /* 수평 중앙 정렬 */
                 justify-content: center;
-                /* 수직 중앙 정렬 (필요 시) */
+                /* 수직 중앙 정렬  */
                 text-align: center;
                 padding: 40px 20px;
             }
@@ -284,6 +303,75 @@
                 gap: 10px;
                 margin-bottom: 20px;
                 flex-wrap: wrap;
+            }
+
+            .chat-style {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                padding: 10px;
+            }
+
+            .chat-input-wrapper {
+                background-color: #f5f7fa;
+                border-radius: 20px;
+                padding: 8px 12px;
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            }
+
+            .chat-input,
+            .chat-textarea {
+                width: 100%;
+                border: none;
+                background: transparent;
+                font-size: 14px;
+                line-height: 1.5;
+                resize: none;
+                outline: none;
+            }
+
+            .chat-textarea {
+                min-height: 80px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 16px;
+                margin-top: 24px;
+                font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+            }
+
+            .page-btn {
+                background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                color: white;
+                border: none;
+                padding: 10px 18px;
+                border-radius: 30px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+            }
+
+            .page-btn:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 14px rgba(108, 92, 231, 0.3);
+            }
+
+            .page-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .page-indicator {
+                font-size: 15px;
+                font-weight: 500;
+                color: #555;
             }
         </style>
     </head>
@@ -296,44 +384,53 @@
                     <h2>📝 나의 작성글 / 💬 답글</h2>
 
                     <div class="tab-buttons">
-                        <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">📝 작성글</button>
-                        <button :class="{ active: activeTab === 'comments' }" @click="activeTab = 'comments'">💬
-                            답글</button>
+                        <button :class="{ active: activeTab === 'posts' }"
+                            @click="activeTab = 'posts'; currentPage = 1">📝 작성글</button>
+                        <button :class="{ active: activeTab === 'comments' }"
+                            @click="activeTab = 'comments'; currentPage = 1">💬 답글</button>
                     </div>
+
 
                     <!-- 게시글 카드 -->
                     <div v-if="activeTab === 'posts'" class="card-grid">
-                        <div class="card" v-for="post in myPosts" :key="post.BOARDNO" @click="openModal(post)">
+                        <div class="card" v-for="post in paginatedPosts" :key="post.BOARDNO" @click="openModal(post)">
                             <div class="card-header">
                                 <h4>{{ post.TITLE || '제목 없음' }}</h4>
                                 <p class="date">{{ post.CDATETIME || '날짜 없음' }}</p>
                             </div>
                             <p class="preview">
-                                {{ post.CONTENTS ? post.CONTENTS.slice(0, 60) + '...' : '내용 없음' }}
+                                {{ post.CONTENTS ? stripTags(post.CONTENTS).slice(0, 60) + '...' : '내용 없음' }}
                             </p>
                             <p class="nickname">작성자: {{ post.USER_ID || '알 수 없음' }}</p>
                         </div>
                         <p v-if="myPosts.length === 0">작성한 게시글이 없습니다.</p>
                     </div>
 
-
                     <!-- 답글 카드 -->
                     <div v-if="activeTab === 'comments'" class="card-grid">
-                        <div class="card" v-for="comment in myComments" :key="comment.commentNo"
+                        <div class="card" v-for="comment in paginatedComments" :key="comment.commentNo"
                             @click="openModal(comment)">
                             <div class="card-header">
-                                <h4>답글 </h4>
+                                <h4>답글</h4>
                                 <p class="date">{{ comment.CDATETIME || '날짜 없음' }}</p>
                             </div>
                             <p class="preview">
-                                {{ comment.COMMENT_CONTENT ? comment.COMMENT_CONTENT.slice(0, 60) + '...' : '내용 없음' }}
-                            </p>>
+                                {{ comment.COMMENT_CONTENT ? stripTags(comment.COMMENT_CONTENT).slice(0, 60) + '...' :
+                                '내용 없음' }}
                             </p>
                             <p class="nickname">작성자: {{ comment.USER_ID || '알 수 없음' }}</p>
-
                         </div>
                         <p v-if="myComments.length === 0">작성한 답글이 없습니다.</p>
                     </div>
+
+                    <!-- 페이징 버튼 -->
+                    <div class="pagination" v-if="totalPages > 1">
+                        <button class="page-btn" @click="prevPage" :disabled="currentPage === 1"> 이전</button>
+                        <span class="page-indicator">{{ currentPage }} / {{ totalPages }}</span>
+                        <button class="page-btn" @click="nextPage" :disabled="currentPage === totalPages">다음 </button>
+                    </div>
+
+
 
 
 
@@ -389,6 +486,32 @@
                             </div>
                         </div>
                     </div>
+                    <div v-if="showEditModal" class="modal-overlay" @click.self="closeModal">
+                        <div class="modal-card">
+                            <div class="modal-header">
+                                <h2 class="modal-title">
+                                    {{ modalType === 'post' ? '게시글 수정' : '댓글 수정' }}
+                                </h2>
+                            </div>
+
+                            <div class="modal-body chat-style">
+                                <div v-if="modalType === 'post'" class="chat-input-wrapper">
+                                    <input v-model="editForm.title" placeholder="제목" class="chat-input" />
+                                </div>
+                                <div class="chat-input-wrapper">
+                                    <textarea v-model="editForm.contents" placeholder="내용을 입력하세요"
+                                        class="chat-textarea"></textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button class="btn" @click="submitEdit">💾 저장</button>
+                                <button class="btn" @click="closeEditModal">❌ 닫기</button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <br>
                 <br>
@@ -410,11 +533,53 @@
                     title: '',
                     contents: '',
                     showEditModal: false,
+                    editForm: {
+                        boardNo: '',
+                        commentNo: '',
+                        title: '',
+                        contents: ''
+                    },
+                    modalType: '',
+                    selectedItem: null,
+                    currentPage: 1,
+                    itemsPerPage: 6
+
 
 
                 };
             },
+
+            computed: {
+                paginatedPosts() {
+                    const start = (this.currentPage - 1) * this.itemsPerPage;
+                    return this.myPosts.slice(start, start + this.itemsPerPage);
+                },
+                paginatedComments() {
+                    const start = (this.currentPage - 1) * this.itemsPerPage;
+                    return this.myComments.slice(start, start + this.itemsPerPage);
+                },
+                totalPages() {
+                    return this.activeTab === 'posts'
+                        ? Math.ceil(this.myPosts.length / this.itemsPerPage)
+                        : Math.ceil(this.myComments.length / this.itemsPerPage);
+                }
+            },
             methods: {
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                    }
+                },
+                prevPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                    }
+                },
+                stripTags(html) {
+                    const div = document.createElement("div");
+                    div.innerHTML = html;
+                    return div.textContent || div.innerText || "";
+                },
 
                 editComment(item) {
                     const newContent = prompt("댓글 내용을 수정하세요:", item.CONTENTS);
@@ -430,6 +595,7 @@
                             success: () => {
                                 alert("댓글이 수정되었습니다.");
                                 this.fetchMyComments(); //갱신
+                                this.showEditModal = false; // 모달 닫기
                                 this.closeModal();
 
                             },
@@ -441,11 +607,46 @@
                 },
 
                 editItem(item) {
-                    if (this.modalType === 'post') {
-                        this.editPost(item);
-                    } else if (this.modalType === 'comment') {
-                        this.editComment(item);
+                    this.selectedItem = item;
+
+                    if (item.TITLE !== undefined) {
+                        this.modalType = 'post';
+                        this.editForm.boardNo = item.BOARDNO;
+                        this.editForm.title = item.TITLE;
+                        this.editForm.contents = this.stripTags(item.CONTENTS);
+                    } else {
+                        this.modalType = 'comment';
+                        this.editForm.commentNo = item.COMMENTNO;
+                        this.editForm.contents = this.stripTags(item.COMMENT_CONTENT);
                     }
+
+                    this.showEditModal = true;
+                },
+                submitEdit() {
+                    if (this.modalType === 'post') {
+                        this.updatePost(this.editForm.boardNo, this.editForm.title, this.editForm.contents);
+                    } else if (this.modalType === 'comment') {
+                        this.updateComment(this.editForm.commentNo, this.editForm.contents);
+                    }
+                },
+                closeModal() {
+                    this.selectedItem = null;
+                    this.showEditModal = false;
+                    this.editForm = {
+                        boardNo: '',
+                        commentNo: '',
+                        title: '',
+                        contents: ''
+                    };
+                },
+                closeEditModal() {
+                    this.showEditModal = false;
+                    this.editForm = {
+                        boardNo: '',
+                        commentNo: '',
+                        title: '',
+                        contents: ''
+                    };
                 },
                 deleteItem(item) {
                     if (this.modalType === 'post') {
@@ -471,6 +672,21 @@
                         }
                     });
                 },
+                fetchMyPosts() {
+                    $.ajax({
+                        url: '/getMyPosts.dox',
+                        type: 'POST',
+                        data: { userId: this.userId },
+                        dataType: 'json',
+                        success: (res) => {
+                            this.myPosts = res.posts;
+                        },
+                        error: (err) => {
+                            console.error('게시글 다시 불러오기 실패:', err);
+                        }
+                    });
+                },
+
                 fetchMyPosts() {
                     $.ajax({
                         url: '/getMyPosts.dox',
@@ -547,6 +763,58 @@
                         });
                     }
                 },
+                updatePost(boardNo, title, contents) {
+                    $.ajax({
+                        url: '/api/post/update',
+                        type: 'POST',
+                        data: {
+                            boardNo,
+                            title,
+                            contents
+                        },
+                        success: () => {
+                            alert("게시글이 수정되었습니다.");
+                            this.fetchMyPosts(); // 게시글 목록 갱신
+                            this.showEditModal = false; // 모달 닫기
+                            this.selectedItem = null;
+                            this.editForm = {
+                                boardNo: '',
+                                commentNo: '',
+                                title: '',
+                                contents: ''
+                            };
+                        },
+                        error: (err) => {
+                            console.error("❌ 게시글 수정 실패:", err.responseJSON || err.responseText);
+                        }
+                    });
+                },
+
+                updateComment(commentNo, contents) {
+                    $.ajax({
+                        url: '/api/comment/update',
+                        type: 'POST',
+                        data: { commentNo, contents },
+                        success: () => {
+                            alert("댓글이 수정되었습니다.");
+                            this.fetchMyComments(); // 목록 갱신
+
+                            // 댓글 수정 모달 닫기
+                            this.showEditModal = false;
+                            this.selectedItem = null;
+                            this.editForm = {
+                                boardNo: '',
+                                commentNo: '',
+                                title: '',
+                                contents: ''
+                            };
+                        },
+                        error: (err) => {
+                            console.error("❌ 댓글 수정 실패:", err.responseJSON || err.responseText);
+                        }
+                    });
+                }
+                ,
 
 
                 // 게시글 / 댓글 리스트
@@ -559,7 +827,7 @@
                         this.modalType = 'post';
 
                         $.ajax({
-                            url: '/api/comment/list', // ✅ 백엔드에 있는 경로
+                            url: '/api/comment/list', // 
                             type: 'GET',
                             data: { boardNo: item.BOARDNO },
                             dataType: 'json',
@@ -573,9 +841,7 @@
                         });
 
                     }
-                }
-
-                ,
+                },
                 closeModal() {
                     this.selectedItem = null;
                     document.body.style.overflow = '';
@@ -591,7 +857,7 @@
                     dataType: 'json',
                     success(res) {
 
-                        console.log("💬 답글 데이터:", res.comments); // ✅ 여기!
+                        console.log("💬 답글 데이터:", res.comments);
                         self.myComments = res.comments;
                     }
                 });
@@ -602,7 +868,7 @@
                     data: { userId: self.userId },
                     dataType: 'json',
                     success(res) {
-                        console.log("📌 게시글 데이터:", res.posts); // ✅ 여기
+                        console.log("📌 게시글 데이터:", res.posts);
                         self.myPosts = res.posts;
                     },
                     error(err) {
