@@ -182,11 +182,9 @@
                     <p>방문 예정일: {{ poi.reservDate }} </p>
                 </div>
             </div>
-            
-        </div> <%-- #app 닫는 태그 --%>
-    </div> <%-- .wrap 닫는 태그 --%>
-    
-    <%-- 🛑 [수정] footer.jsp는 wrap 밖으로 이동 --%>
+            <div><button @click ="fnSave">저장하기</button></div>
+        </div>
+    </div> 
     <%@ include file="components/footer.jsp" %>
 </body>
 
