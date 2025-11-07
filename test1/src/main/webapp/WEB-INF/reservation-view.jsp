@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
@@ -23,7 +23,6 @@
 
 
     <style>
-        /* 🛑 [수정] UI 업그레이드 스타일 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f4f7f6;
@@ -64,14 +63,14 @@
             color: #555;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 10px; 
         }
         .info-list li strong {
             color: #333;
-            width: 120px;
+            width: 120px; 
             flex-shrink: 0;
         }
-        .info-list input[type="text"] {
+        .info-list input[type="text"] { 
             font-size: 1em;
             padding: 8px;
             border: 1px solid #ccc;
@@ -79,39 +78,37 @@
             flex-grow: 1;
         }
         
-        /* 🛑 [수정] 예산 현황판 스타일 (줄바꿈 해결) */
+
         .budget-status-main {
             display: flex;
-            flex-direction: column; /* 세로 배치 */
+            flex-direction: column; 
         }
         .budget-total {
             font-size: 1.2em;
             font-weight: bold;
             color: #333;
-            margin-bottom: 15px; /* 현황판과 분리 */
+            margin-bottom: 15px; 
         }
         .budget-status-wrap {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4개 카테고리 그리드 */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 15px;
-            padding: 15px; /* 현황판 자체 패딩 */
+            padding: 15px; 
             background: #f9f9f9;
             border-radius: 8px;
         }
-        
-        /* 🛑 [수정] 아이템 내부 스타일 (세로쓰기 방지) */
         .budget-status-item {
             flex: 1;
             background: #fff;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 10px 5px; /* 패딩 조정 */
+            padding: 10px 5px; 
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            min-height: 70px; /* 크기 확보 */
+            min-height: 70px; 
         }
         .budget-status-item .label {
-            font-size: 0.8em; /* 폰트 축소 */
+            font-size: 0.8em; 
             color: #555;
             display: block;
             margin-bottom: 5px;
@@ -130,33 +127,74 @@
             color: #888;
         }
 
+        /* 지도 및 상세 목록 */
         #map-container {
-            width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 8px; margin-top: 15px;
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 15px;
         }
         .poi-item {
-            background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
-        .poi-item p { margin: 0; line-height: 1.6; }
-        .poi-item p:first-child strong { font-size: 1.2em; color: #2c3e50; }
+        .poi-item p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        .poi-item p:first-child strong {
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
         
+        /* 저장 버튼 */
         .save-button-wrap {
-            text-align: center; margin-top: 30px;
+            text-align: center;
+            margin-top: 30px;
         }
         .save-button-wrap button {
-            padding: 12px 40px; font-size: 1.2em; font-weight: bold; background-color: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s;
+            padding: 12px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
         .save-button-wrap button:hover {
             background-color: #2980b9;
         }
         
+        /* 날짜 탭 스타일 */
         .date-tabs {
-            display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #ddd;
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
         }
         .tab-btn {
-            padding: 10px 15px; border: none; background: #f0f0f0; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 0.95em; color: #555; position: relative; bottom: -2px;
+            padding: 10px 15px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            font-size: 0.95em;
+            color: #555;
+            position: relative;
+            bottom: -2px;
         }
         .tab-btn.active {
-            background: #fff; border: 2px solid #ddd; border-bottom: 2px solid #fff; font-weight: bold; color: #3498db;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-bottom: 2px solid #fff;
+            font-weight: bold;
+            color: #3498db;
         }
     </style>
 </head>
@@ -177,8 +215,8 @@
                         <input type="text" v-model='reservation.packname' placeholder="코스 별칭을 입력하세요">
                     </li>
                     <li><strong>여행 기간</strong> {{ formatDate(reservation.startDate) }} ~ {{ formatDate(reservation.endDate) }}</li>
-                    <li><strong>방문 예정 장소</strong>{{ reservation.pois ? reservation.pois.length : 0 }}지점</li>
-                    <li><strong>테마</strong> {{ reservation.themNum }}</li>
+                    <li><strong>방문 예정 장소</strong> 총 {{ poiList ? poiList.length : 0 }}지점</li>
+                    <li><strong>테마</strong> {{ displayThemes }}</li>
                 </ul>
             </div>
             
@@ -273,10 +311,32 @@
                 map: null,
                 
                 itineraryByDate: {}, 
-                activeDate: null     
+                activeDate: null,
+                
+                // 🛑 [추가] 테마 옵션 (reservation.jsp에서 복사)
+                themeOptions: [
+                    { code: 'FAMILY', label: '가족' }, { code: 'FRIEND', label: '친구' },
+                    { code: 'COUPLE', label: '연인' }, { code: 'LUXURY', label: '호화스러운' },
+                    { code: 'BUDGET', label: '가성비' }, { code: 'HEALING', label: '힐링' },
+                    { code: 'UNIQUE', label: '이색적인' }, { code: 'ADVENTURE', label: '모험' },
+                    { code: 'QUIET', label: '조용한' }
+                ]
             };
         },
+        // 🛑 [추가] computed 속성 (테마 번역용)
+        computed: {
+            displayThemes() {
+                if (!this.reservation.themNum) return "선택 안 함";
+                const codes = this.reservation.themNum.split(','); 
+                
+                return codes.map(code => {
+                    const theme = this.themeOptions.find(t => t.code === code.trim()); // 공백 제거
+                    return theme ? theme.label : code; 
+                }).join(', ');
+            }
+        },
         methods: {
+            // (나머지 methods 생략)
             fnUpdatePackname() {
                 let self = this;
                 if (!self.reservation.packname || self.reservation.packname.trim() === "") {
@@ -285,7 +345,7 @@
                 }
 
                 $.ajax({
-                    url: '/api/reservation/update/packname',
+                    url: '/api/reservation/update/packname', 
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
