@@ -233,12 +233,15 @@ public class MemberService {
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			Member member = memberMapper.memberLogin(map);
+			Point point = pointMapper.recentPoint(map);
 
 			if(member != null) {
 				session.setAttribute("sessionId", member.getUserId());
 				session.setAttribute("sessionName", member.getName());
 				session.setAttribute("sessionNickname", member.getNickname());
 				session.setAttribute("sessionStatus", member.getStatus());
+				
+				session.setAttribute("sessionPoint", point.getTotalPoint());
 				
 				resultMap.put("msg", "로그인되었습니다.");
 				resultMap.put("result", "success");
