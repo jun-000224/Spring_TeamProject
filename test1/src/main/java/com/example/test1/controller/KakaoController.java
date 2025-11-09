@@ -70,7 +70,7 @@ public class KakaoController {
 //	    System.out.println(code);
 		
 		String code = (String) map.get("code");
-		System.out.println("인가코드 : " + code);
+//		System.out.println("인가코드 : " + code);
 	    if (code == null || code.isEmpty()) {
 	        System.out.println("⚠️ Kakao 인가 코드가 없습니다. 요청 중단");
 	        resultMap.put("error", "인가 코드가 없습니다.");
@@ -85,7 +85,7 @@ public class KakaoController {
 
 		Map<String, Object> responseBody = response.getBody();
 		
-		System.out.println(responseBody);
+//		System.out.println(responseBody);
 		
 		String accessToken = (String) responseBody.get("access_token");
 	    String refreshToken = (String) responseBody.get("refresh_token");
