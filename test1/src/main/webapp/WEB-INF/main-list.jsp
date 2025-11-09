@@ -488,7 +488,7 @@ h2 {
                     </main>
                     
                 </div>
-                <%@ include file="components/footer.jsp" %>
+                <!-- <%@ include file="components/footer.jsp" %> -->
         </div>
         <%@ include file="components/footer.jsp" %>
     </body>
@@ -759,6 +759,13 @@ h2 {
         },
         mounted() {
             let self = this;
+
+            //이 부분이 빠져서 카카오 로그인시 로그인 처리가 안됨
+            const queryParams = new URLSearchParams(window.location.search);
+            window.code = queryParams.get('code') || '';
+            if (window.code != null) {
+                fnKakao();
+            }
 
             self.init();
             self.fnList();
