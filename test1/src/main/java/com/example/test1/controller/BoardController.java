@@ -296,7 +296,12 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 	
-	
+	@RequestMapping(value = "/bestList.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String bestList(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.bestList(map);
+	    return new Gson().toJson(resultMap);
+	}
 	
 }
 

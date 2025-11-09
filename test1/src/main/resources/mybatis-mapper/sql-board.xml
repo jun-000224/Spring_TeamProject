@@ -330,4 +330,10 @@
 		WHERE BOARDNO = #{boardNo} 
 	</select>
 	
+	<select id="bestList" parameterType="hashmap" resultType="com.example.test1.model.Board">
+	 	SELECT  * FROM TBL_BOARD
+		ORDER BY FAV DESC
+		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
+	</select>
+	
 </mapper>
