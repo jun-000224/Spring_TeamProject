@@ -29,7 +29,6 @@ public class PoiRecommendation {
         this.firstimage = poi.getFirstimage();
         this.firstimage2 = poi.getFirstimage2();
         
-        // [수정] poi.getAreacode() (소문자) 호출
         this.areaCode = poi.getAreacode();
         this.sigunguCode = poi.getSigungucode();
     }

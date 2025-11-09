@@ -28,206 +28,33 @@
       background-color: #f4f7f6;
       color: #333;
     }
-
-    .page-title {
-      font-size: 2.25rem;
-      font-weight: 700;
-      color: #2c3e50;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-    }
-
-    .panel {
-      background: #ffffff;
-      border: 1px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .panel h2,
-    .panel h3 {
-      margin-top: 0;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-    }
-
-    .info-list {
-      list-style-type: none;
-      padding-left: 0;
-      margin: 0;
-    }
-
-    .info-list li {
-      font-size: 1.1em;
-      line-height: 2;
-      color: #555;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .info-list li strong {
-      color: #333;
-      width: 120px;
-      flex-shrink: 0;
-    }
-
-    .info-list input[type="text"] {
-      font-size: 1em;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      flex-grow: 1;
-    }
-
-    .budget-status-main {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .budget-total {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 15px;
-    }
-
-    .budget-status-wrap {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 8px;
-    }
-
-    .budget-status-item {
-      flex: 1;
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 10px 5px;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-      min-height: 70px;
-    }
-
-    .budget-status-item .label {
-      font-size: 0.8em;
-      color: #555;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .budget-status-item .amount {
-      font-size: 1.2em;
-      font-weight: 600;
-      color: #3498db;
-      display: block;
-    }
-
-    .budget-status-item .amount .current {
-      color: #d9480f;
-    }
-
-    .budget-status-item .amount .total {
-      font-size: 0.8em;
-      color: #888;
-    }
-
-    #map-container {
-      width: 100%;
-      height: 440px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
-
-    .poi-item {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 10px;
-    }
-
-    .poi-item p {
-      margin: 0;
-      line-height: 1.6;
-    }
-
-    .poi-item p:first-child strong {
-      font-size: 1.2em;
-      color: #2c3e50;
-    }
-
-    .save-button-wrap {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .save-button-wrap button {
-      padding: 12px 40px;
-      font-size: 1.2em;
-      font-weight: bold;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .save-button-wrap button:hover {
-      background-color: #2980b9;
-    }
-
-    .date-tabs {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 15px;
-      border-bottom: 2px solid #ddd;
-    }
-
-    .tab-btn {
-      padding: 10px 15px;
-      border: none;
-      background: #f0f0f0;
-      cursor: pointer;
-      border-radius: 6px 6px 0 0;
-      font-size: 0.95em;
-      color: #555;
-      position: relative;
-      bottom: -2px;
-    }
-
-    .tab-btn.active {
-      background: #fff;
-      border: 2px solid #ddd;
-      border-bottom: 2px solid #fff;
-      font-weight: bold;
-      color: #3498db;
-    }
-
-    .route-toolbar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-
-    .route-summary {
-      font-size: 14px;
-      color: #444;
-      padding: 6px 10px;
-      background: #f5f7fa;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-    }
+    .page-title { font-size: 2.25rem; font-weight: 700; color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }
+    .panel { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+    .panel h2, .panel h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .info-list { list-style-type: none; padding-left: 0; margin: 0; }
+    .info-list li { font-size: 1.1em; line-height: 2; color: #555; display: flex; align-items: center; gap: 10px; }
+    .info-list li strong { color: #333; width: 120px; flex-shrink: 0; }
+    .info-list input[type="text"] { font-size: 1em; padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex-grow: 1; }
+    .budget-status-main { display: flex; flex-direction: column; }
+    .budget-total { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 15px; }
+    .budget-status-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 15px; background: #f9f9f9; border-radius: 8px; }
+    .budget-status-item { flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 5px; text-align: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); min-height: 70px; }
+    .budget-status-item .label { font-size: 0.8em; color: #555; display: block; margin-bottom: 5px; }
+    .budget-status-item .amount { font-size: 1.2em; font-weight: 600; color: #3498db; display: block; }
+    .budget-status-item .amount .current { color: #d9480f; }
+    .budget-status-item .amount .total { font-size: 0.8em; color: #888; }
+    #map-container { width: 100%; height: 440px; border: 1px solid #ddd; border-radius: 8px; margin-top: 10px; }
+    .poi-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+    .poi-item p { margin: 0; line-height: 1.6; }
+    .poi-item p:first-child strong { font-size: 1.2em; color: #2c3e50; }
+    .save-button-wrap { text-align: center; margin-top: 30px; }
+    .save-button-wrap button { padding: 12px 40px; font-size: 1.2em; font-weight: bold; background-color: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background-color: 0.2s; }
+    .save-button-wrap button:hover { background-color: #2980b9; }
+    .date-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid #ddd; }
+    .tab-btn { padding: 10px 15px; border: none; background: #f0f0f0; cursor: pointer; border-radius: 6px 6px 0 0; font-size: 0.95em; color: #555; position: relative; bottom: -2px; }
+    .tab-btn.active { background: #fff; border: 2px solid #ddd; border-bottom: 2px solid #fff; font-weight: bold; color: #3498db; }
+    .route-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .route-summary { font-size: 14px; color: #444; padding: 6px 10px; background: #f5f7fa; border: 1px solid #e5e7eb; border-radius: 6px; }
   </style>
 </head>
 
@@ -570,7 +397,7 @@
 
       setActiveDate(date) {
         this.activeDate = date;
-        // 날짜 바꾸면 경로 요약/라인은 초기화(원하면 자동 갱신하도록 바꿔도 됨)
+        // 날짜 바꾸면 경로 요약/라인은 초기화
         this.clearRoute();
       }
     },
@@ -608,5 +435,4 @@
   app.mount('#app');
 </script>
 </body>
-
 </html>

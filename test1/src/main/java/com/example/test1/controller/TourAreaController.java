@@ -22,7 +22,7 @@ public class TourAreaController {
         return ResponseEntity.ok(service.listSido());
     }
 
-    /** 시/군/구 (예: /api/areas/sigungu?areaCode=1) */
+    /** 시/군/구 (이런 방식으로 >> /api/areas/sigungu?areaCode=1) */
     @GetMapping("/sigungu")
     public ResponseEntity<List<Area>> sigungu(@RequestParam String areaCode) {
         return ResponseEntity.ok(service.listSigungu(areaCode));
