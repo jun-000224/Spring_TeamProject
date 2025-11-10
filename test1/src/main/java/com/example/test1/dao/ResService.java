@@ -57,8 +57,8 @@ public class ResService {
 
     // -------- 코스명 업데이트 --------
     @Transactional
-    public boolean updatePackname(Long resNum, String packName) {
-        return resMapper.updatePackname(resNum, packName) > 0;
+    public boolean updatePackname(Long resNum, String packName ,String userId) {
+        return resMapper.updatePackname(resNum, packName, userId) > 0;
     }
 
     // -------- 여행 포기(예약 삭제) --------

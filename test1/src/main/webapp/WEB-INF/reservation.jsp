@@ -401,7 +401,7 @@
               draggedDate: null,
               draggedIndex: null,
               dragOverDate: null,
-              dragOverIndex: null
+              dragOverIndex: null,
             }
           },
 
