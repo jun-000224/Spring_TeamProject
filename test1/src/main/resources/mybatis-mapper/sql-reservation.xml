@@ -3,25 +3,35 @@
 
 <mapper namespace="com.example.test1.mapper.ResMapper">
 
+    <!-- 예약 INSERT -->
     <insert id="insertReservation" parameterType="com.example.test1.model.Reservation">
-        
-        <selectKey keyProperty="resNum" resultType="String" order="BEFORE"> 
+        <selectKey keyProperty="resNum" resultType="String" order="BEFORE">
             SELECT RES_SEQ.NEXTVAL FROM DUAL
         </selectKey>
-        
         INSERT INTO ADMIN.RESERVATION (
             RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, START_DATE, END_DATE,
             FOOD_BUDGET, ACCOM_BUDGET, ETC_BUDGET, ACT_BUDGET
-        )
-        VALUES (
-            #{resNum}, #{userId, jdbcType=VARCHAR}, #{packname}, #{price}, #{areaNum}, #{themNum}, #{descript, jdbcType=VARCHAR}, #{startDate}, #{endDate},
-            #{foodBudget}, #{accomBudget}, #{etcBudget}, #{actBudget}
+        ) VALUES (
+            #{resNum},
+            #{userId, jdbcType=VARCHAR},
+            #{packname, jdbcType=VARCHAR},
+            #{price, jdbcType=NUMERIC},
+            #{areaNum, jdbcType=VARCHAR},
+            #{themNum, jdbcType=VARCHAR},
+            #{descript, jdbcType=VARCHAR},
+            #{startDate, jdbcType=VARCHAR},
+            #{endDate, jdbcType=VARCHAR},
+            TRUNC(#{foodBudget,  jdbcType=NUMERIC}),
+            TRUNC(#{accomBudget, jdbcType=NUMERIC}),
+            TRUNC(#{etcBudget,   jdbcType=NUMERIC}),
+            TRUNC(#{actBudget,   jdbcType=NUMERIC})
         )
     </insert>
 
+    <!-- 예약 조회 -->
     <select id="selectReservationByResNum" parameterType="Long" resultType="com.example.test1.model.Reservation">
-        SELECT 
-            RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT, 
+        SELECT
+            RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT,
             RDATETIME, STATUS, DEADLINE, START_DATE, END_DATE,
             FOOD_BUDGET AS foodBudget,
             ACCOM_BUDGET AS accomBudget,
@@ -31,27 +41,30 @@
         WHERE RES_NUM = #{resNum}
     </select>
 
+    <!-- POI INSERT -->
     <insert id="insertPoi" parameterType="com.example.test1.model.reservation.Poi">
         INSERT INTO ADMIN.POI (
             POI_ID, CONTENT_ID, TYPE_ID, RES_NUM, RESERV_DATE, RATING, CONTENT, PLACE_NAME
-        ) 
-        VALUES (
-            POI_SEQ.NEXTVAL, 
-            #{contentId}, 
-            #{typeId}, 
-            #{resNum}, 
-            #{reservDate}, 
-            #{rating, jdbcType=INTEGER},  
+        ) VALUES (
+            POI_SEQ.NEXTVAL,
+            #{contentId},
+            #{typeId},
+            #{resNum},
+            #{reservDate},
+            #{rating, jdbcType=INTEGER},
             #{content, jdbcType=CLOB},
             #{placeName, jdbcType=VARCHAR}
         )
     </insert>
 
+    <!-- 예약별 POI 조회 -->
     <select id="selectPoisByResNum" parameterType="Long" resultType="com.example.test1.model.reservation.Poi">
         SELECT
-            T.POI_ID, T.CONTENT_ID, T.TYPE_ID, T.RES_NUM, TO_CHAR(T.RESERV_DATE, 'YYYY-MM-DD') AS reservDate, T.RATING, T.CONTENT,
+            T.POI_ID, T.CONTENT_ID, T.TYPE_ID, T.RES_NUM,
+            TO_CHAR(T.RESERV_DATE, 'YYYY-MM-DD') AS reservDate,
+            T.RATING, T.CONTENT,
             T.PLACE_NAME AS placeName,
-            A.MAPY AS mapY,  
+            A.MAPY AS mapY,
             A.MAPX AS mapX
         FROM ADMIN.POI T
         LEFT JOIN ADMIN.ATTR A
@@ -59,5 +72,22 @@
         WHERE T.RES_NUM = #{resNum}
         ORDER BY T.RESERV_DATE ASC, T.POI_ID ASC
     </select>
+
+    <!-- ▼ 추가: 코스명 업데이트 -->
+    <update id="updatePackname">
+        UPDATE ADMIN.RESERVATION
+           SET PACKNAME = #{packName, jdbcType=VARCHAR}
+         WHERE RES_NUM = #{resNum}
+    </update>
+
+    <!-- ▼ 추가: 자식(POI) 삭제 -->
+    <delete id="deletePoisByResNum">
+        DELETE FROM ADMIN.POI WHERE RES_NUM = #{resNum}
+    </delete>
+
+    <!-- ▼ 추가: 부모(RESERVATION) 삭제 -->
+    <delete id="deleteReservation">
+        DELETE FROM ADMIN.RESERVATION WHERE RES_NUM = #{resNum}
+    </delete>
 
 </mapper>
