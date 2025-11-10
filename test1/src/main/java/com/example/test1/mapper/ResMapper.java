@@ -10,17 +10,23 @@ import java.util.List;
 @Mapper
 public interface ResMapper {
 
+    // 예약 단건 조회
     Reservation selectReservationByResNum(@Param("resNum") Long resNum);
 
+    // 예약/POI 저장
     int insertReservation(Reservation reservation);
-
     int insertPoi(Poi poi);
 
+    // 예약별 POI 목록
     List<Poi> selectPoisByResNum(@Param("resNum") Long resNum);
 
-    int updatePackname(@Param("resNum") Long resNum, @Param("packName") String packName);
+    // 코스명/메모 업데이트 (DESCRIPT 포함)
+    int updatePackname(@Param("resNum") Long resNum,
+                       @Param("packName") String packName,
+                       @Param("userId") String userId,
+                       @Param("descript") String descript);
 
+    // 삭제
     int deleteReservation(@Param("resNum") Long resNum);
-
     int deletePoisByResNum(@Param("resNum") Long resNum);
 }

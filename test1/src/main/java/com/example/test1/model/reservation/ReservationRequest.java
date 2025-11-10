@@ -15,6 +15,7 @@ public class ReservationRequest {
     private Map<String, Integer> budgetWeights;
     private List<RegionDto> regions;
     private Map<String, List<PoiDto>> itinerary;
+    private String desecript;
 
     @Data
     public static class RegionDto {
