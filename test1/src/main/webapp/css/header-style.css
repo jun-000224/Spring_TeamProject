@@ -21,7 +21,6 @@ header {
 .logo a {
     /* 로고를 <a>로 감쌌을 때 클릭 영역을 확보 */
     display: block;
-	margin-left: -300px;
 }
 
 .logo img {

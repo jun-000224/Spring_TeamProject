@@ -277,8 +277,6 @@
                 display: flex;
                 align-items: center;
                 text-align: center;
-                max-width: 1200px;
-                margin: 0 auto 25px;
             }
 
             .filter-box label {
@@ -317,6 +315,24 @@
                 font-size: 32px;
                 vertical-align: middle;
             }
+            .middle{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                max-width: 1200px;
+                margin: 0 auto 30px;
+
+            }
+            .middle button{
+                background-color: #1976d2;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 8px 14px;
+                font-size: 0.9em;
+                cursor: pointer;
+                transition: background-color 0.25s;
+            }
         </style>
     </head>
     <body>
@@ -333,20 +349,23 @@
                 <h2>📋 게시글 목록</h2>
             </div>
 
-            <div class="filter-box">
-                <label for="tag">태그 필터</label>
-                <select id="tag" v-model="tag" @change="fnList">
-                    <option value="">전체</option>
-                    <option value="가족">가족</option>
-                    <option value="친구">친구</option>
-                    <option value="연인">연인</option>
-                    <option value="호화스러운">호화스러운</option>
-                    <option value="가성비">가성비</option>
-                    <option value="힐링">힐링</option>
-                    <option value="이색적인">이색적인</option>
-                    <option value="모험">모험</option>
-                    <option value="조용한">조용한</option>
-                </select>
+            <div class="middle">
+                <div class="filter-box">
+                    <label for="tag">태그 필터</label>
+                    <select id="tag" v-model="tag" @change="fnList">
+                        <option value="">전체</option>
+                        <option value="가족">가족</option>
+                        <option value="친구">친구</option>
+                        <option value="연인">연인</option>
+                        <option value="호화스러운">호화스러운</option>
+                        <option value="가성비">가성비</option>
+                        <option value="힐링">힐링</option>
+                        <option value="이색적인">이색적인</option>
+                        <option value="모험">모험</option>
+                        <option value="조용한">조용한</option>
+                    </select>
+                </div>
+                <button @click="fnadd">글쓰러가기</button>
             </div>
 
             <div class="card-container">
@@ -532,9 +551,14 @@
                     history.back();
                 },
                 getRandomImage() {
-                    const index = Math.floor(Math.random() * this.randomImages.length);
-                    return this.randomImages[index];
+                    let self=this;
+                    const index = Math.floor(Math.random() * self.randomImages.length);
+                    return self.randomImages[index];
                 },
+                fnadd(){
+                    let self =this;
+                    pageChange("/myReservation.do",{});
+                }
             },
             mounted() {
                 let self = this;

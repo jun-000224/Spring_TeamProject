@@ -512,7 +512,16 @@
         });
       }
     },
-    mounted(){ this.fnInfo(); }
+    mounted(){
+      let self=this;
+
+      if (self.userId == "") {
+            alert("로그인 후 이용해 주세요");
+            location.href = "/member/login.do";
+            return;
+          }
+       self.fnInfo(); 
+      }
   });
   app.mount('#app');
 </script>

@@ -253,7 +253,7 @@ body {
     <div class="day-num">{{ selectedDay }}일차 - {{ positionsByDay[selectedDay][0].day }}</div>
 
     <div v-for="item in positionsByDay[selectedDay]" :key="item.title" class="day-item-con" @click="openModal(item)">
-      <img :src="item.firstimage !=''? item.firstimage:'https://placehold.co/320x240'" alt="이미지">
+      <img :src="item.firstimage || getRandomImage()" alt="이미지">
       <div class="item-md">
         <div>
           <div class="item-title">{{ item.title }}</div>
@@ -272,7 +272,7 @@ body {
 
   <div v-if="modalFlg" class="modal-overlay" @click.self="closeModal">
     <div class="modal">
-      <img :src="selectedItem.firstimage !='' ? selectedItem.firstimage : 'https://placehold.co/600x260' ">
+      <img :src="selectedItem.firstimage || getRandomImage()">
       <h3>{{ selectedItem.title }}</h3>
       <p style="margin-bottom:15px;">{{ selectedItem.overview }}</p>
       <h4>평점을 선택해주세요</h4>
@@ -317,7 +317,15 @@ body {
                 reviewText:"",
                 selectedDay:1,
                 contentId:"",
-                title:""
+                title:"",
+                randomImages: [
+                        "/img/defaultImg01.jpg",
+                        "/img/defaultImg02.jpg",
+                        "/img/defaultImg03.jpg",
+                        "/img/defaultImg04.jpg",
+                        "/img/defaultImg05.jpg",
+                        "/img/defaultImg06.jpg",
+                    ],
             };
         },
         methods: {
@@ -470,6 +478,11 @@ body {
          fnbck() {
                 history.back();
           },
+          getRandomImage() {
+                    let self=this;
+                    const index = Math.floor(Math.random() * self.randomImages.length);
+                    return self.randomImages[index];
+                },
 
         }, // methods
         mounted() {
