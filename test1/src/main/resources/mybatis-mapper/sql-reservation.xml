@@ -3,7 +3,7 @@
 
 <mapper namespace="com.example.test1.mapper.ResMapper">
 
-    <!-- 예약 INSERT -->
+    <!-- 예약 INSERT (DESCRIPT 포함) -->
     <insert id="insertReservation" parameterType="com.example.test1.model.Reservation">
         <selectKey keyProperty="resNum" resultType="String" order="BEFORE">
             SELECT RES_SEQ.NEXTVAL FROM DUAL
@@ -16,7 +16,7 @@
             #{userId, jdbcType=VARCHAR},
             #{packname, jdbcType=VARCHAR},
             #{price, jdbcType=NUMERIC},
-            #{areaNum, jdbcType=VARCHAR},
+            #{areaNum, jdbcType=VARCHAR},   <!-- ✅ 컬럼이 문자형이면 VARCHAR -->
             #{themNum, jdbcType=VARCHAR},
             #{descript, jdbcType=VARCHAR},
             #{startDate, jdbcType=VARCHAR},
@@ -28,7 +28,7 @@
         )
     </insert>
 
-    <!-- 예약 조회 -->
+    <!-- 예약 단건 조회 -->
     <select id="selectReservationByResNum" parameterType="Long" resultType="com.example.test1.model.Reservation">
         SELECT
             RES_NUM, USER_ID, PACKNAME, PRICE, AREANUM, THEMNUM, DESCRIPT,
@@ -73,19 +73,21 @@
         ORDER BY T.RESERV_DATE ASC, T.POI_ID ASC
     </select>
 
-    <!-- ▼ 추가: 코스명 업데이트 -->
+    <!-- 코스명/메모 업데이트 -->
     <update id="updatePackname">
         UPDATE ADMIN.RESERVATION
-           SET PACKNAME = #{packName, jdbcType=VARCHAR} , USER_ID= #{userId}
-         WHERE RES_NUM = #{resNum}
+           SET PACKNAME = #{packName, jdbcType=VARCHAR},
+               USER_ID  = #{userId,  jdbcType=VARCHAR},
+               DESCRIPT = #{descript, jdbcType=VARCHAR}
+         WHERE RES_NUM  = #{resNum}
     </update>
 
-    <!-- ▼ 추가: 자식(POI) 삭제 -->
+    <!-- 자식(POI) 삭제 -->
     <delete id="deletePoisByResNum">
         DELETE FROM ADMIN.POI WHERE RES_NUM = #{resNum}
     </delete>
 
-    <!-- ▼ 추가: 부모(RESERVATION) 삭제 -->
+    <!-- 부모(RESERVATION) 삭제 -->
     <delete id="deleteReservation">
         DELETE FROM ADMIN.RESERVATION WHERE RES_NUM = #{resNum}
     </delete>

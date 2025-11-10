@@ -55,10 +55,10 @@ public class ResService {
         return reservation;
     }
 
-    // -------- 코스명 업데이트 --------
+    // -------- 코스명/메모 업데이트 --------
     @Transactional
-    public boolean updatePackname(Long resNum, String packName ,String userId) {
-        return resMapper.updatePackname(resNum, packName, userId) > 0;
+    public boolean updatePackname(Long resNum, String packName, String userId, String descript) {
+        return resMapper.updatePackname(resNum, packName, userId, descript) > 0;
     }
 
     // -------- 여행 포기(예약 삭제) --------
