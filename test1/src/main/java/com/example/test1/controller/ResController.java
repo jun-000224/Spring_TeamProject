@@ -30,7 +30,7 @@ public class ResController {
     private String kakaoAppKey;
 
     // =========================
-    // 예약 저장
+    // 예약 저장 (기존 로직)
     // =========================
     @PostMapping("/api/reservation/save")
     @ResponseBody
@@ -39,7 +39,7 @@ public class ResController {
             Reservation reservation = createReservation(request);
             reservation.setUserId("999");
 
-            // DTO 게터명이 getDesecript 로 온 상태라면 그대로 사용
+            // descript 저장
             reservation.setDescript(request.getDesecript());
 
             Long totalPrice = calculateTotalPrice(request);
@@ -85,26 +85,42 @@ public class ResController {
     }
 
     // =========================
-    // 코스명(별칭) + 메모(descript) 저장
+    // (신규) 결제 금액 조회: accom + food 합계
+    // =========================
+    @GetMapping("/api/reservation/pay/amount")
+    @ResponseBody
+    public ResponseEntity<?> getPayAmount(@RequestParam("resNum") Long resNum) {
+        try {
+            Long amount = resService.getPayAmount(resNum);
+            if (amount == null) amount = 0L;
+            return ResponseEntity.ok(Map.of("amount", amount));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "결제 금액 조회 실패", "error", e.getMessage()));
+        }
+    }
+
+    // =========================
+    // 코스명(별칭)/메모 저장
     // =========================
     @PostMapping("/api/reservation/update/packname")
     @ResponseBody
     public ResponseEntity<?> updatePackname(@RequestBody Map<String, Object> body) {
         try {
-            Long resNum     = body.get("resNum")    == null ? null : Long.valueOf(body.get("resNum").toString());
-            String packName = body.get("packName")  == null ? null : body.get("packName").toString();
-            String userId   = body.get("userId")    == null ? null : body.get("userId").toString();
-            String descript = body.get("descript")  == null ? null : body.get("descript").toString(); // ✅ 추가
+            Long resNum = body.get("resNum") == null ? null : Long.valueOf(body.get("resNum").toString());
+            String packName = body.get("packName") == null ? null : body.get("packName").toString();
+            String userId = body.get("userId") == null ? null : body.get("userId").toString();
+            String descript = body.get("descript") == null ? "" : body.get("descript").toString();
 
             if (resNum == null || packName == null || packName.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("message", "resNum/packName 누락"));
             }
 
-            boolean ok = resService.updatePackname(resNum, packName.trim(), userId, descript); // ✅ 4개 인자
+            boolean ok = resService.updatePackname(resNum, packName.trim(), userId, descript);
             return ok ? ResponseEntity.ok(Map.of("message", "코스명/메모 저장 완료"))
                       : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "코스명 저장 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of("message", "코스명/메모 저장 실패", "error", e.getMessage()));
         }
     }
 
