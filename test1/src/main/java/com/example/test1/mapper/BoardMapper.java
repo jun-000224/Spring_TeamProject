@@ -18,7 +18,9 @@ public interface BoardMapper {
 	//게시글 상세보기
 	Board selectBoard(HashMap<String , Object> map);
 	
+	//베스트 게시물
 	
+	List<Board> bestList(HashMap<String , Object> map);
 	//댓글 목록
 	List<Comment> selectCommentList(HashMap<String , Object> map);
 	

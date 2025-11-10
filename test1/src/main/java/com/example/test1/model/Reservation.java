@@ -22,7 +22,6 @@ public class Reservation {
 	private String endDate; // 여행 종료 날짜
 	private String status; // 결제 상태
     
-	// 🛑 예산 관련 필드는 Float 타입
 	private Float foodBudget;    // 식사 예산
 	private Float accomBudget;   // 숙박 예산
 	private Float etcBudget;     // 기타 예산
