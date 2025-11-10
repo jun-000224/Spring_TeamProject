@@ -17,4 +17,7 @@ public class Member {
 	private String gender;
 	private int cnt;
 	private String endSubs;
+	
+	private String storUrl;
+	private int mediaId;
 }

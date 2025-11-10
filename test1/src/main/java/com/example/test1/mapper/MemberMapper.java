@@ -35,4 +35,12 @@ public interface MemberMapper {
 	//카카오 최초 로그인 시, 자동 가입
 	int kakaoMemberAdd(HashMap<String, Object> map);
 	
+	//프로필 사진 업로드
+	int insertProfileImg(HashMap<String, Object> map);
+	
+	//프로필 사진 업데이트
+	int updateProfileImg(HashMap<String, Object> map);
+	
+	//프로필 사진 경로 가져오기
+	Member profileImgPath(HashMap<String, Object> map);
 }
