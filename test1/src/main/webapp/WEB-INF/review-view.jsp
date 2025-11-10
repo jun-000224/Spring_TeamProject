@@ -223,7 +223,7 @@
                     class="day-item-con"
                     @click="fnView(item.contentId)"
                 >
-                    <img :src="item.firstimage" alt="이미지" />
+                    <img :src="item.firstimage || getRandomImage()" alt="이미지" />
                     <div class="item-md">
                         <div>
                             <div class="item-title">{{ item.title }}</div>
@@ -250,6 +250,14 @@
                 info: [],
                 positionsByDay: {},
                 selectedDay: 1,
+                randomImages: [
+                        "/img/defaultImg01.jpg",
+                        "/img/defaultImg02.jpg",
+                        "/img/defaultImg03.jpg",
+                        "/img/defaultImg04.jpg",
+                        "/img/defaultImg05.jpg",
+                        "/img/defaultImg06.jpg",
+                    ],
             };
         },
         methods: {
@@ -278,7 +286,8 @@
                                 day: item.day,
                                 rating: item.rating,
                             }));
-                            console.log(days);
+                            console.log(data);
+                            
                         }
                         self.selectedDay = days[0];
                         console.log(self.selectedDay);
@@ -308,6 +317,18 @@
                     success: function (data) {},
                 });
             },
+            getRandomImage() {
+                    if (!this.shuffled) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    // 하나 꺼내기 (없으면 다시 섞기)
+                    if (this.shuffled.length === 0) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    return this.shuffled.pop();
+                },
         },
         mounted() {
             let self = this;
