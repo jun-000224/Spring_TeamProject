@@ -546,13 +546,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="swiper-button-next review-button-next"></div>
-            <div class="swiper-button-prev review-button-prev"></div>
-          </div>
-
-          <!-- Swiper 컨트롤 -->
+                <!-- <%@ include file="components/footer.jsp" %> -->
         </div>
         <div>
           <h2>추천 게시글</h2>
@@ -796,81 +790,113 @@
               1024: { slidesPerView: 2 },
               1440: { slidesPerView: 3 },
             },
-          });
-        }
-      },
-      fnResList() {
-        let self = this;
-        $.ajax({
-          url: "/review-list.dox",
-          dataType: "json",
-          type: "POST",
-          data: {
-            userId: self.userId,
-            pageSize: self.pageSize,
-            page: (self.page - 1) * self.pageSize,
-          },
-          success: function (data) {
-            self.list = data.list;
-          },
-        });
-      },
-      fnBestList() {
-        let self = this;
-        $.ajax({
-          url: "/bestList.dox",
-          dataType: "json",
-          type: "POST",
-          data: {
-            userId: self.userId,
-            pageSize: self.pageSize,
-            page: (self.page - 1) * self.pageSize,
-          },
-          success: function (data) {
-            console.log(data);
-            self.bestList = data.list;
-          },
-        });
-      },
-      fnThumnail() {
-        let self = this;
-        $.ajax({
-          url: "/thumbnail.dox",
-          dataType: "json",
-          type: "GET",
-          data: {},
-          success: function (data) {
-            console.log(data);
-            self.thumbnailMap = data.list;
-          },
-        });
-      },
-      fnDetail(item) {
-        // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
-        console.log(item);
+            // ✅ Swiper 슬라이더 초기화
+            initSwiper() {
+                let self = this;
 
-        pageChange("review-view.do", { resNum: item });
-      },
-      fnboardDetail(item) {
-        // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
-        console.log(item);
+                // 메인 배너 슬라이더
+                if (!self.mainSwiper) {
+                    self.mainSwiper = new Swiper(".swiper-container", {
+                        loop: true,
+                        autoplay: { delay: 3000, disableOnInteraction: false },
+                        pagination: { el: ".swiper-pagination", clickable: true },
+                        navigation: {
+  nextEl: " .swiper-button-next",
+  prevEl: " .swiper-button-prev",
+},
+                    });
+                }
 
-        pageChange("board-view.do", { boardNo: item });
-      },
-      toggleLike(item) {
-        let self = this;
+                // 후기 슬라이더 (추천 게시글)
+                if (!self.reviewSwiper) {
+                    self.reviewSwiper = new Swiper(".review-slider", {
+                        loop: true,
+                        autoplay: { delay: 4000, disableOnInteraction: false },
+                        slidesPerView: 3,
+                        spaceBetween: 20,
+                        pagination: { el: ".swiper-pagination", clickable: true },
+                        navigation: {
+                            nextEl: ".swiper-button-next",
+                            prevEl: ".swiper-button-prev",
+                        },
+                        breakpoints: {
+                            640: { slidesPerView: 1 },
+                            1024: { slidesPerView: 2 },
+                            1440: { slidesPerView: 3 },
+                        },
+                    });
+                }
+            },
+            fnList() {
+                let self = this;
+                $.ajax({
+                    url: "/review-list.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        userId: self.userId,
+                        pageSize: self.pageSize,
+                        page: (self.page - 1) * self.pageSize,
+                    },
+                    success: function (data) {
+                        self.list = data.list;
+                    },
+                });
+            },
+            fnThumnail() {
+                let self = this;
+                $.ajax({
+                    url: "/thumbnail.dox",
+                    dataType: "json",
+                    type: "GET",
+                    data: {},
+                    success: function (data) {
+                        console.log(data);
+                        self.thumbnailMap = data.list;
+                    },
+                });
+            },
+            fnDetail(item) {
+                // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
+                console.log(item);
+                
+                pageChange("review-view.do", { resNum: item });
+            },
+            toggleLike(item) {
+                let self = this;
 
-        param = {
-          userId: self.userId,
-          boardNo: item.boardNo,
-        };
-        $.ajax({
-          url: "review-favorite.dox",
-          dataType: "json",
-          type: "POST",
-          data: param,
-          success: function (data) {
-            item.liked = data.liked;
+                param = {
+                    userId: self.userId,
+                    boardNo: item.boardNo,
+                };
+                $.ajax({
+                    url: "review-favorite.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        item.liked = data.liked;
+                        self.fnList();
+                    },
+                });
+                console.log(item);
+            },
+            getRandomImage() {
+                const index = Math.floor(Math.random() * this.randomImages.length);
+                return this.randomImages[index];
+            },
+        },
+        mounted() {
+            let self = this;
+
+            //이 부분이 빠져서 카카오 로그인시 로그인 처리가 안됨
+            const queryParams = new URLSearchParams(window.location.search);
+            window.code = queryParams.get('code') || '';
+            if (window.code != null) {
+                fnKakao();
+            }
+
+            self.init();
             self.fnList();
           },
         });
