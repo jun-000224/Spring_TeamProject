@@ -323,6 +323,7 @@
             fnSub : function () {
                 let self = this;
                 let userId = self.sessionId;
+                let status = self.status;
 
                 let popup = window.open(
                     "/myInfo/subscribe.do",
@@ -336,7 +337,8 @@
                 }
 
                 setTimeout(function () {
-                    popup.postMessage({ userId: userId }, window.location.origin);
+                    popup.postMessage({ userId: userId, status : status}, 
+                    window.location.origin);
                     // console.log("보낸 세션 : ", userId);
                 }, 500);
             },

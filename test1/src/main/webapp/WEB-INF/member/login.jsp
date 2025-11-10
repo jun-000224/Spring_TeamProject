@@ -304,8 +304,8 @@
     </head>
 
     <body>
+    <%@ include file="../components/header.jsp" %>
         <div id="app">
-            <%@ include file="../components/header.jsp" %>
 
                 <div class="body">
                     <div class="loginField">
@@ -359,8 +359,8 @@
                     </div>
                 </div>
 
-                <%@ include file="../components/footer.jsp" %>
         </div>
+    <%@ include file="../components/footer.jsp" %>
 
         <script>
             const app = Vue.createApp({

@@ -327,4 +327,45 @@ public class MemberService {
 		return resultMap;
 	}
 	
+	public HashMap<String, Object> addProfileImg(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		int cnt = memberMapper.insertProfileImg(map);
+		if(cnt >0) {
+			resultMap.put("result", "success");
+		} else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> updateProfileImg(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		int cnt = memberMapper.updateProfileImg(map);
+		
+		if(cnt >0) {
+			resultMap.put("result", "success");
+			System.out.println("success");
+		} else {
+			resultMap.put("result", "fail");
+			System.out.println("fail");
+		}
+		
+		return resultMap;
+	}
+	
+	public HashMap<String, Object> profileImgPath(HashMap<String, Object> map){
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		
+		Member profileImgPath = memberMapper.profileImgPath(map);
+		
+		if(profileImgPath != null) {
+			resultMap.put("result", "success");
+			resultMap.put("info", profileImgPath);
+		} 
+
+		return resultMap;
+	}
 }

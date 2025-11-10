@@ -106,8 +106,8 @@ public class SmsController {
         String ranStr= randomNumber();
         message.setFrom("01046548947");
         	//api 키 소유자 번호 입력
-        message.setTo("01082667938");
-//        message.setTo(phone);
+//        message.setTo("01082667938");
+        message.setTo(phone);
         	//수신자 번호는 자유
         message.setText("[본인 인증] 인증번호 " + ranStr + "를 화면에 입력해주세요.");
         

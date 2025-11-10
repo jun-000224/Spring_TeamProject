@@ -276,7 +276,6 @@
                 console.log(self.sellItem);
                 console.log(self.sellPrice);
                 console.log(self.sellTag);
-                self.fnStatusUp();
                 IMP.request_pay({
 				    pg: "html5_inicis",
 				    pay_method: "card",

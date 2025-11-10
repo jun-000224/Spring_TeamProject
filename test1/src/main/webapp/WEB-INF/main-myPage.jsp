@@ -76,10 +76,6 @@
                 padding-top: 2px;
             }
 
-
-
-
-
             .logout-dropdown li:hover {
                 background-color: #f0f0f0;
             }
@@ -138,7 +134,7 @@
                 <div class="mypage-container">
 
                     <div class="profile-card">
-                        <img src="/images/default-profile.png" alt="프로필 이미지 넣는곳" class="profile-img">
+                        <img :src="profileImgPath" alt="프로필 이미지 넣는곳" class="profile-img">
                         <div class="profile-info">
                             <h3>{{ nickname }} {{ gradeLabel }} 님</h3>
                             <p>
@@ -155,9 +151,9 @@
                         <a href="/myReservation.do" class="menu-item">
                             <i class="fas fa-calendar-check"></i><br>내 예약 확인
                         </a>
-                        <a href="/myCommunity.do" class="menu-item">
+                        <!-- <a href="/myCommunity.do" class="menu-item">
                             <i class="fas fa-comments"></i><br>내 커뮤니티
-                        </a>
+                        </a> -->
                         <!-- <a href="/changePassword.do" class="menu-item">
                             <i class="fas fa-key"></i><br>비밀번호 수정
                             </a> -->
@@ -173,8 +169,6 @@
                     </div>
                 </div>
  
-                
-        {{status}}, {{sessionstatus}}
         </div>
         <%@ include file="components/footer.jsp" %>
     </body>
@@ -186,7 +180,7 @@
             data() {
                 return {
                     // id: "${sessionId}",
-                    sessionstatus: "${sessionStatus}",
+                    // sessionstatus: "${sessionStatus}",
                     // nickname: "${sessionNickname}",
                     // name: "${sessionName}",
                     // point: "${sessionPoint}",
@@ -198,7 +192,9 @@
                     name: window.sessionData.name,
                     point: window.sessionData.point,
 
-                    gradeLabel : window.sessionData.gradeLabel
+                    gradeLabel : window.sessionData.gradeLabel,
+
+                    profileImgPath : ""
                 };
             },
             // computed: {
@@ -233,11 +229,32 @@
                 // goToMyPage() {
                 //     location.href = "/main-myPage.do";
                 // }
+                fnProfilePath : function () {
+                    let self = this;
+                    let param = {
+                        userId : self.id
+                    };
+                    $.ajax({
+                        url:"/member/profilePath.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: param,
+                        success: function (data){
+                            console.log(data.info);
+                            if(data.info.storUrl != null){
+                                self.profileImgPath = data.info.storUrl;
+                                // console.log("no");
+                            } else {
+                                self.profileImgPath = "/img/profile/default_profile.jpg"
+                            }
+                        }
+                    })
+                }
             },
 
             mounted() {
                 let self = this;
-
+                self.fnProfilePath();
                 
 
                 // $.ajax({

@@ -82,23 +82,23 @@ public class MypageService {
 	}
 	
 	//탈퇴 전 확인(임시)(sms인증 복구 시 지울 예정)
-	public HashMap<String, Object> mypageTemp(HashMap<String, Object> map) {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		
-		Mypage mypage = mypageMapper.mypageConfirm(map);
-
-		if(mypage != null) {
-			resultMap.put("info", mypage);
-			resultMap.put("msg", "확인되었습니다.");
-			resultMap.put("result", "success");
-		} else {
-			resultMap.put("msg", "오류가 발생했습니다.");
-			resultMap.put("result", "fail");
-		}
-		
-		
-		return resultMap;
-	}
+//	public HashMap<String, Object> mypageTemp(HashMap<String, Object> map) {
+//		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		
+//		Mypage mypage = mypageMapper.mypageConfirm(map);
+//
+//		if(mypage != null) {
+//			resultMap.put("info", mypage);
+//			resultMap.put("msg", "확인되었습니다.");
+//			resultMap.put("result", "success");
+//		} else {
+//			resultMap.put("msg", "오류가 발생했습니다.");
+//			resultMap.put("result", "fail");
+//		}
+//		
+//		
+//		return resultMap;
+//	}
 	
 	public HashMap<String, Object> updateStatus(HashMap<String, Object> map){
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();

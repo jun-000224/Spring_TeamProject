@@ -103,14 +103,14 @@ public class MypageController {
 		return new Gson().toJson(resultMap);
 	}
 	
-	@RequestMapping(value = "/mypage/temp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String mypageTemp(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap = mypageService.mypageTemp(map);
-		
-		return new Gson().toJson(resultMap);
-	}
+//	@RequestMapping(value = "/mypage/temp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+//	@ResponseBody
+//	public String mypageTemp(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
+//		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+//		resultMap = mypageService.mypageTemp(map);
+//		
+//		return new Gson().toJson(resultMap);
+//	}
 	
 	@RequestMapping(value = "/mypage/statusUp.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody

@@ -1,9 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <div id = "app-header">
     <header>
-            <h1 class="logo">
-                <a href="/main-list.do" >준비 완료</a>
-            </h1>
+            <div class="logo">
+                <a href="/main-list.do" >
+                    <img src="/img/logo/projectLogo.jpg" alt="">
+                </a>
+            </div>
         <nav>
             <ul>
                 <li class="main-menu"><a href="/reservation.do">여행하기</a></li>
