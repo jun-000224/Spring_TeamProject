@@ -28,20 +28,21 @@
 		WHERE USER_ID = #{userId}
 	</delete>
 	
-	<select id="mypageConfirm" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
+	<!--<select id="mypageConfirm" parameterType="hashmap" resultType="com.example.test1.model.Mypage">
 		SELECT *
 		FROM USERS 
 		WHERE USER_ID = #{userId} AND PHONE = #{phone}
-	</select>
+	</select>-->
 	
 	<update id="updateStatus" parameterType="hashmap">
 		UPDATE USERS
 		SET
-				STATUS = 'S',
 				<if test='status == "U"'>
+					STATUS = 'S',
 					END_SUBS = SYSDATE + #{subsDay}
 				</if>
 				<if test='status == "S"'>
+					STATUS = 'S',
 					END_SUBS = END_SUBS + #{subsDay}
 				</if>
 		WHERE USER_ID = #{userId}
