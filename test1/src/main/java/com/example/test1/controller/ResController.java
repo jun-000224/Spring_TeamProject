@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,22 @@ public class ResController {
     private String kakaoAppKey;
 
     // =========================
-    // 예약 저장 (기존 로직)
+    // 예약 저장 (세션 userId 적용)
     // =========================
     @PostMapping("/api/reservation/save")
     @ResponseBody
-    public ResponseEntity<?> saveReservation(@RequestBody ReservationRequest request) {
+    public ResponseEntity<?> saveReservation(HttpSession session,
+                                             @RequestBody ReservationRequest request) {
         try {
+            // 1) 세션에서 userId 확보
+            String userId = (String) session.getAttribute("userId");
+            if (userId == null || userId.isBlank()) {
+                return ResponseEntity.status(401).body(Map.of("message", "로그인이 필요합니다."));
+            }
+
+            // 2) Reservation 생성 및 세팅
             Reservation reservation = createReservation(request);
-            reservation.setUserId("999");
+            reservation.setUserId(userId);
 
             Long totalPrice = calculateTotalPrice(request);
             reservation.setPrice(String.valueOf(totalPrice));
@@ -50,13 +59,15 @@ public class ResController {
                 reservation.setPackname("임시 패키지명");
             }
 
+            // 3) POI 생성 및 저장
             List<Poi> pois = createPoiList(request);
             Long resNum = resService.saveNewReservation(reservation, pois);
 
             return ResponseEntity.ok(Map.of("resNum", resNum, "message", "일정 저장 성공"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "일정 저장 실패", "error", e.getMessage()));
         }
     }
 
@@ -96,10 +107,12 @@ public class ResController {
             }
 
             boolean ok = resService.updatePackname(resNum, packName.trim());
-            return ok ? ResponseEntity.ok(Map.of("message", "코스명 저장 완료"))
-                      : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
+            return ok
+                    ? ResponseEntity.ok(Map.of("message", "코스명 저장 완료"))
+                    : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "코스명 저장 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "코스명 저장 실패", "error", e.getMessage()));
         }
     }
 
@@ -114,15 +127,17 @@ public class ResController {
             if (resNum == null) return ResponseEntity.badRequest().body(Map.of("message", "resNum 누락"));
 
             boolean ok = resService.deleteReservationCascade(resNum); // POI → RESERVATION 순서 삭제
-            return ok ? ResponseEntity.ok(Map.of("message", "예약 삭제 완료"))
-                      : ResponseEntity.status(404).body(Map.of("message", "삭제 대상 없음"));
+            return ok
+                    ? ResponseEntity.ok(Map.of("message", "예약 삭제 완료"))
+                    : ResponseEntity.status(404).body(Map.of("message", "삭제 대상 없음"));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "삭제 실패", "error", e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message", "삭제 실패", "error", e.getMessage()));
         }
     }
 
     // =========================
-    // 자동차 길찾기 (이미 구현됨)
+    // 자동차 길찾기
     // =========================
     @PostMapping("/api/route/build")
     @ResponseBody
@@ -169,8 +184,11 @@ public class ResController {
 
     private void setAreaNumFromRequest(Reservation reservation, ReservationRequest request) {
         if (request.getRegions() != null && !request.getRegions().isEmpty()) {
-            try { reservation.setAreaNum(request.getRegions().get(0).getSidoCode()); }
-            catch (Exception e) { reservation.setAreaNum("99"); }
+            try {
+                reservation.setAreaNum(request.getRegions().get(0).getSidoCode());
+            } catch (Exception e) {
+                reservation.setAreaNum("99");
+            }
         } else {
             reservation.setAreaNum("99");
         }
@@ -243,6 +261,7 @@ public class ResController {
         private Long resNum;
         private String day;
         private List<RoutePoiLite> pois;
+
         @Data
         private static class RoutePoiLite {
             private Long contentId;
