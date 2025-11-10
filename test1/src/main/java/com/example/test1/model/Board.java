@@ -28,4 +28,6 @@ public class Board {
 	
 	private String liked;
 	private int resNum;
+	private int price;
+	private String Iduser;
 }

@@ -303,5 +303,12 @@ public class BoardController {
 	    return new Gson().toJson(resultMap);
 	}
 	
+	@RequestMapping(value = "/boardFav.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String fav(@RequestParam HashMap<String, Object> map) throws Exception {
+	    HashMap<String, Object> resultMap = boardService.boardFav(map);
+	    return new Gson().toJson(resultMap);
+	}
+	
 }
 

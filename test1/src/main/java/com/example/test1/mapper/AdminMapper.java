@@ -25,7 +25,7 @@ public interface AdminMapper {
 
     List<HashMap<String, Object>> selectReportList(HashMap<String, Object> param);
     // 내 게시글 조회
-    List<HashMap<String, Object>> selectMyPosts(String userId);
+    List<HashMap<String, Object>> selectMyPosts(Map<String, Object> param);
     // 내 댓글 조회
 	List<HashMap<String, Object>> selectMyComments(String userId);
    
@@ -42,7 +42,7 @@ public interface AdminMapper {
 	HashMap<String, Object> selectBoardDetail(String boardNo);
 	List<MainBoard> selectByBoardNo(String boardNo);
 
-	
+	String selectUserStatus(String userId);
 
 
 }

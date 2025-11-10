@@ -27,6 +27,7 @@
     <style>
       /* CSS는 분리된 .css 파일을 사용 */
       /* 하단 고정 버튼 스타일 */
+      .page-title2 { font-size:2.25rem; font-weight:700; color:#2c3e50; border-bottom:3px solid var(--brand); padding-bottom:10px; margin-bottom:20px; }
       .fixed-bottom-bar {
         position: fixed;
         bottom: 0;
@@ -52,7 +53,7 @@
 
       <%@ include file="components/header.jsp" %>
         <div class="wrap" style="padding-bottom: 80px;">
-          <h1 class="page-title">예약하기</h1>
+          <h1 class="page-title2">예약하기</h1>
           <div class="grid two-col">
             <section class="panel">
               <h3>테마 선택 <span class="desc">복수 선택 가능</span></h3>
@@ -401,7 +402,7 @@
               draggedDate: null,
               draggedIndex: null,
               dragOverDate: null,
-              dragOverIndex: null
+              dragOverIndex: null,
             }
           },
 
@@ -907,44 +908,44 @@
               const poiPrice = this.selectedPoi.price || 0;
               const poiType = this.selectedPoi.typeId;
 
-              let newCategoryTotal = 0;
+              // 각 카테고리별 현재 지출/한도/명칭 계산
+              let currentSpent = 0;
               let categoryLimit = 0;
               let categoryName = '';
-              let spentRef = null;
 
-              if (poiType === 32) {
-                spentRef = 'spentAccom';
-                newCategoryTotal = this.spentAccom + poiPrice;
+              if (poiType === 32) {             // 숙박
+                currentSpent = this.spentAccom;
                 categoryLimit = this.accomBudgetLimit;
                 categoryName = '숙박';
-              } else if (poiType === 39) { // [수정] 카페(40) 제거
-                spentRef = 'spentFood';
-                newCategoryTotal = this.spentFood + poiPrice;
+              } else if (poiType === 39) {      // 식당
+                currentSpent = this.spentFood;
                 categoryLimit = this.foodBudgetLimit;
-                categoryName = '식당'; // [수정] 식당 및 카페 -> 식당
-              } else if (poiType === 12) {
-                spentRef = 'spentActivity';
-                newCategoryTotal = this.spentActivity + poiPrice;
+                categoryName = '식당';
+              } else if (poiType === 12) {      // 체험/관광
+                currentSpent = this.spentActivity;
                 categoryLimit = this.activityBudgetLimit;
                 categoryName = '체험 및 관광';
               }
 
-              if (categoryName && categoryLimit > 0 && newCategoryTotal > categoryLimit) {
-                if (!confirm(`'${categoryName}' 예산(${categoryLimit.toLocaleString()}원)을 초과합니다. (초과액: ${(newCategoryTotal - categoryLimit).toLocaleString()}원)\n그래도 추가하시겠습니까?`)) {
-                  return;
-                }
+              // 🔒 예산 초과 불가: 남은 예산보다 큰 항목은 추가 자체를 금지
+              const remain = Math.max(categoryLimit - currentSpent, 0);
+              if (categoryName && categoryLimit > 0 && poiPrice > remain) {
+                alert(`'${categoryName}' 남은 예산을 초과하여 추가할 수 없습니다.\n남은 예산: ${remain.toLocaleString()}원, 항목 금액: ${poiPrice.toLocaleString()}원`);
+                return;
               }
 
-              if (spentRef) this[spentRef] = newCategoryTotal;
+              // 예산 범위 이내면 지출 누적 및 일정 추가
+              if (poiType === 32) this.spentAccom += poiPrice;
+              else if (poiType === 39) this.spentFood += poiPrice;
+              else if (poiType === 12) this.spentActivity += poiPrice;
 
               if (!this.itinerary[this.activeDate]) {
                 this.itinerary[this.activeDate] = [];
               }
               this.itinerary[this.activeDate].push({ ...this.selectedPoi, price: poiPrice });
+
               this.selectedPoi = null;
-              if (this.infowindow) {
-                this.infowindow.close();
-              }
+              if (this.infowindow) this.infowindow.close();
             },
 
             removePoiFromItinerary(date, index) {

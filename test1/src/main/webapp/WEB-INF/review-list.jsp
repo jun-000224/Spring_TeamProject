@@ -315,15 +315,14 @@
                 font-size: 32px;
                 vertical-align: middle;
             }
-            .middle{
+            .middle {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 max-width: 1200px;
                 margin: 0 auto 30px;
-
             }
-            .middle button{
+            .middle button {
                 background-color: #1976d2;
                 color: white;
                 border: none;
@@ -551,14 +550,21 @@
                     history.back();
                 },
                 getRandomImage() {
-                    let self=this;
-                    const index = Math.floor(Math.random() * self.randomImages.length);
-                    return self.randomImages[index];
+                    if (!this.shuffled) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    // 하나 꺼내기 (없으면 다시 섞기)
+                    if (this.shuffled.length === 0) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    return this.shuffled.pop();
                 },
-                fnadd(){
-                    let self =this;
-                    pageChange("/myReservation.do",{});
-                }
+                fnadd() {
+                    let self = this;
+                    pageChange("/myReservation.do", {});
+                },
             },
             mounted() {
                 let self = this;

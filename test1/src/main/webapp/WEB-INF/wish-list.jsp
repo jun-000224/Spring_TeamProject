@@ -15,19 +15,18 @@
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
         />
-        
+
         <script src="/js/page-change.js"></script>
-        <link rel="stylesheet" href="/css/main-style.css">
-        <link rel="stylesheet" href="/css/common-style.css">
-        <link rel="stylesheet" href="/css/header-style.css">
-        <link rel="stylesheet" href="/css/main-images.css">
+        <link rel="stylesheet" href="/css/main-style.css" />
+        <link rel="stylesheet" href="/css/common-style.css" />
+        <link rel="stylesheet" href="/css/header-style.css" />
+        <link rel="stylesheet" href="/css/main-images.css" />
 
         <style>
             body {
                 font-family: "Noto Sans KR", sans-serif;
                 background-color: #f6f7fb;
                 margin: 0;
-                padding: 40px 20px;
             }
 
             h2 {
@@ -204,7 +203,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin-top: 40px;
+                margin: 40px 0px;
                 gap: 8px;
                 font-family: "Noto Sans KR", sans-serif;
             }
@@ -427,7 +426,7 @@
                                 <div class="card-desc">{{ item.descript }}</div>
                                 <div class="card-info">
                                     💰 {{ Number(item.price).toLocaleString() }}원 <br />
-                                    👤 {{ item.userId }}
+                                    👤 {{ item.Iduser }}
                                 </div>
 
                                 <div class="card-footer">
@@ -506,7 +505,8 @@
                         self.list = data.list;
                         self.totalPages = Math.ceil(data.cnt / self.pageSize);
                         let group = Math.floor((self.page - 1) / self.pageGroupSize);
-                        console.log(self.page, self.pageGroupSize);
+                        console.log(data);
+                        
 
                         self.pageGroupStart = group * self.pageGroupSize + 1;
                         self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
@@ -577,6 +577,17 @@
             let self = this;
             self.fnList();
             self.fnThumnail();
+
+            window.addEventListener("popstate", () => {
+                self.fnList();
+                self.fnThumnail();
+            });
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    self.fnList();
+                    self.fnThumnail();
+                }
+            });
         },
     });
 

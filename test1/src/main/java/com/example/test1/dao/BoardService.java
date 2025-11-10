@@ -372,6 +372,20 @@ try {
 		return resultMap;
 	
 	}
+
+	public HashMap<String, Object> boardFav(HashMap<String, Object> map) {
+		// TODO Auto-generated method stub
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+try {
+			
+			int cnt = boardMapper.boardFav(map);
+			resultMap.put("result", "success");
+		} catch (Exception e) {
+			// TODO: handle exception
+			resultMap.put("result", "fail");
+		}
+		return resultMap;
+	}
 	
 	
 	

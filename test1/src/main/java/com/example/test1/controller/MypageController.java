@@ -2,9 +2,11 @@ package com.example.test1.controller;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,12 @@ public class MypageController {
 	@Autowired
 	MypageService mypageService;
 	
-	
+	@Value("${kakao_javascript_key}")
+    private String kakaoAppKey;
 	
 	@RequestMapping("/myReservation.do") 
-    public String myReservation(Model model) throws Exception{
-
+    public String myReservation(Model model , @RequestParam HashMap<String, Object> map ,HttpServletRequest request) throws Exception{
+		request.setAttribute("kakaoAppKey", kakaoAppKey);
     return "/myReservation";
 	      
 	}
@@ -117,5 +120,6 @@ public class MypageController {
 		
 		return new Gson().toJson(resultMap);
 	}
+	
 
 }

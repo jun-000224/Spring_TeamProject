@@ -15,11 +15,16 @@
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
         />
+        <script
+            type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"
+        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
         <script src="/js/page-change.js"></script>
-        <link rel="stylesheet" href="/css/main-style.css">
-        <link rel="stylesheet" href="/css/common-style.css">
-        <link rel="stylesheet" href="/css/header-style.css">
-        <link rel="stylesheet" href="/css/main-images.css">
+        <link rel="stylesheet" href="/css/main-style.css" />
+        <link rel="stylesheet" href="/css/common-style.css" />
+        <link rel="stylesheet" href="/css/header-style.css" />
+        <link rel="stylesheet" href="/css/main-images.css" />
 
         <style>
             .page-title {
@@ -191,10 +196,92 @@
                 font-size: 1.1em;
                 /* color: #1976d2; */
             }
+            #map-container {
+                width: 80%;
+                height: 500px;
+                margin: 0 auto 30px;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 999;
+            }
+            .panel {
+                background: #fff;
+                padding: 20px;
+                border-radius: 12px;
+                width: 80%;
+                max-width: 900px;
+                max-height: 90%;
+                overflow-y: auto;
+            }
+            .modal-close-btn {
+                background: none;
+                border: none;
+                font-size: 24px;
+                font-weight: bold;
+                cursor: pointer;
+                color: #555;
+                transition: 0.3s;
+            }
+
+            .modal-close-btn:hover {
+                color: #1976d2;
+            }
+            .panel-btn{
+                display: flex;
+                justify-content: space-between
+            }
+           .route-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.route-toolbar .btn {
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.95em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.route-toolbar .btn:hover {
+    background-color: #045abd;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+}
+
+.route-toolbar .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.route-toolbar .route-summary {
+    font-size: 0.9em;
+    color: #333;
+    margin-left: 10px;
+}
         </style>
     </head>
     <body>
-      <%@ include file="components/header.jsp" %>
+        <%@ include file="components/header.jsp" %>
         <div id="app">
             <div class="page-title">
                 <div class="back-btn">
@@ -206,8 +293,8 @@
                 <h2>📋 내 예약 목록</h2>
             </div>
 
-            <div class="card-container" v-for="item in list">
-                <div class="card">
+            <div class="card-container">
+                <div class="card" v-for="item in list">
                     <div class="item-box">
                         <div class="card-header">{{ item.packname }}</div>
                         <div class="card-theme" v-for="tag in item.themNum.split(',')" :key="tag">
@@ -222,12 +309,34 @@
                     </div>
                     <div class="card-btn">
                         <button @click="fnadd(item.resNum)">후기작성하기</button>
+
+                        <button v-if="status == 'S'" @click="fninfo(item)">지도보기</button>
                         <div class="card-footer">
                             <span>{{ item.rdatetime }}</span>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div v-if="modalFlg" class="modal-overlay" @click.self="closeModal">
+    <div class="panel">
+        <div class="panel-btn">
+            <h2>🗺️ 여행 경로 지도</h2>
+            <button class="modal-close-btn" @click="closeModal">✖</button>
+        </div>
+        <div class="route-toolbar">
+            <button id="btnBuildRoute" @click="buildCarRoute" class="btn ghost">차량 경로 보기</button>
+            <button v-if="routePolyline" @click="clearRoute" class="btn ghost">경로 지우기</button>
+            <div v-if="routeSummary" class="route-summary">
+                총 거리: {{ (routeSummary.distance / 1000).toFixed(1) }} km · 예상 소요:
+                {{ Math.round(routeSummary.duration / 60) }} 분
+                <span v-if="routeSummary.toll">· 톨비: {{ routeSummary.toll.toLocaleString() }}원</span>
+            </div>
+        </div>
+        <div id="map-container">지도 로딩 중...</div>
+    </div>
+</div>
+
             <!-- 페이지네이션 -->
             <div class="pagination">
                 <!-- 이전 그룹 -->
@@ -250,8 +359,8 @@
                     <span>▶</span>
                 </a>
             </div>
-          </div>
-          <%@ include file="components/footer.jsp" %>
+        </div>
+        <%@ include file="components/footer.jsp" %>
     </body>
 </html>
 
@@ -261,6 +370,7 @@
             return {
                 // 변수 - (key : value)
                 sessionId: "${sessionId}",
+                status:window.sessionData.status,
                 list: {},
                 page: 1,
                 pageSize: 5,
@@ -268,6 +378,18 @@
                 totalPages: 0,
                 pageGroupStart: 1,
                 pageGroupEnd: 10,
+                modalFlg: false,
+
+                routePolyline: null,
+                routeSummary: null,
+                markers: [],
+                poiList: [],
+                kakaoAppKey: "${kakaoAppKey}",
+
+                info: [],
+                positionsByDay: {},
+                selectedItem: {},
+                selectedDay: 1,
             };
         },
         methods: {
@@ -314,16 +436,170 @@
                 if (self.page > self.totalPages) self.page = self.totalPages;
                 self.fnList();
             },
-        }, // methods
+            fninfo(item) {
+                let self = this;
+                $.ajax({
+                    url: "/share.dox",
+                    type: "GET",
+                    data: { resNum: item.resNum },
+                    success: function (data) {
+                        self.info = data;
+                        const days = Object.keys(data)
+                            .map((k) => parseInt(k))
+                            .sort((a, b) => a - b);
+                        for (let i = 0; i < days.length; i++) {
+                            const day = days[i];
+                            const dayList = data[day];
+                            self.positionsByDay[day] = [];
+                            for (let j = 0; j < dayList.length; j++) {
+                                const item = dayList[j];
+                                self.positionsByDay[day].push({
+                                    title: item.title,
+                                    lat: parseFloat(item.mapy),
+                                    lng: parseFloat(item.mapx),
+                                    addr1: item.addr1,
+                                    contentId: item.contentid,
+                                });
+                            }
+                        }
+                        self.selectedDay = days[0];
+                        const firstDayPois = self.positionsByDay[self.selectedDay];
+                        self.openModal(firstDayPois);
+                    },
+                });
+            },
+            openModal(item) {
+                this.modalFlg = true;
+                console.log(item);
+
+                setTimeout(() => this.initializeMap(item), 300);
+            },
+            closeModal() {
+                this.modalFlg = false;
+                this.clearMarkers();
+                this.clearRoute();
+            },
+            initializeMap(pois) {
+                if (!window.kakao || !kakao.maps) {
+                    document.getElementById("map-container").innerText = "Kakao Map API 로드 실패.";
+                    return;
+                }
+                const container = document.getElementById("map-container");
+
+                if (!pois || pois.length === 0) {
+                    container.innerText = "지도에 표시할 장소가 없습니다.";
+                    return;
+                }
+
+                const options = {
+                    center: new kakao.maps.LatLng(pois[0].lat, pois[0].lng),
+                    level: 7,
+                };
+                this.map = new kakao.maps.Map(container, options);
+
+                const bounds = new kakao.maps.LatLngBounds();
+                this.clearMarkers();
+
+                pois.forEach((p) => {
+                    const pos = new kakao.maps.LatLng(p.lat, p.lng);
+                    const marker = new kakao.maps.Marker({ position: pos });
+                    marker.setMap(this.map);
+                    this.markers.push(marker);
+                    console.log(p.title);
+
+                    const info = new kakao.maps.InfoWindow({
+                        content: '<div style="padding:25px;">' + (p.title || p.contentId) + "</div>",
+                    });
+                    kakao.maps.event.addListener(marker, "mouseover", () => info.open(this.map, marker));
+                    kakao.maps.event.addListener(marker, "mouseout", () => info.close());
+
+                    bounds.extend(pos);
+                });
+
+                this.map.setBounds(bounds);
+
+                // Vue 렌더링 후 지도 리사이즈
+                setTimeout(() => {
+                    kakao.maps.event.trigger(this.map, "resize");
+                    this.map.setBounds(bounds);
+                }, 500);
+            },
+            clearMarkers() {
+                if (!this.markers) return;
+                this.markers.forEach((m) => m.setMap(null));
+                this.markers = [];
+            },
+            groupPoisByDate(pois) {
+                this.positionsByDay = {};
+                pois.forEach((p) => {
+                    const day = p.day || 1;
+                    if (!this.positionsByDay[day]) this.positionsByDay[day] = [];
+                    this.positionsByDay[day].push(p);
+                });
+            },
+            async buildCarRoute() {
+                const pois = this.positionsByDay[this.selectedDay] || [];
+                const valid = pois.filter((p) => p.lat && p.lng);
+                if (valid.length < 2) {
+                    alert("경로를 그릴 최소 2개 지점이 필요합니다.");
+                    return;
+                }
+                try {
+                    const payload = {
+                        resNum: this.resNum,
+                        day: this.selectedDay,
+                        pois: valid.map((p) => ({
+                            contentId: p.contentId,
+                            name: p.title || "",
+                            x: Number(p.lng),
+                            y: Number(p.lat),
+                        })),
+                    };
+                    const resp = await $.ajax({
+                        url: "/api/route/build",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(payload),
+                    });
+                    if (resp.points) this.drawPolyline(resp.points);
+                    this.routeSummary = resp.summary || null;
+                } catch (e) {
+                    console.error(e);
+                    alert("경로 계산에 실패했습니다.");
+                }
+            },
+            drawPolyline(points) {
+                if (!this.map) return;
+                if (this.routePolyline) {
+                    this.routePolyline.setMap(null);
+                    this.routePolyline = null;
+                }
+                if (!points || points.length === 0) return;
+                const path = points.map((pt) => new kakao.maps.LatLng(pt.y, pt.x));
+                this.routePolyline = new kakao.maps.Polyline({ path, strokeWeight: 5, strokeOpacity: 0.9 });
+                this.routePolyline.setMap(this.map);
+                const bounds = new kakao.maps.LatLngBounds();
+                path.forEach((latlng) => bounds.extend(latlng));
+                this.map.setBounds(bounds);
+            },
+            clearRoute() {
+                if (this.routePolyline) {
+                    this.routePolyline.setMap(null);
+                    this.routePolyline = null;
+                }
+                this.routeSummary = null;
+            },
+        },
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             if (self.sessionId == "") {
-            alert("로그인 후 이용해 주세요");
-            location.href = "/member/login.do";
-            return;
-          }
+                alert("로그인 후 이용해 주세요");
+                location.href = "/member/login.do";
+                return;
+            }
             self.fnList();
+
             window.addEventListener("popstate", () => {
                 self.fnList();
             });

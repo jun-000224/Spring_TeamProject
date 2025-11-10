@@ -40,10 +40,10 @@
             .card-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 300px);
-                /* 카드 너비 고정 */
+
                 gap: 24px;
                 justify-content: center;
-                /* 카드들을 가운데로 정렬 */
+
                 padding: 20px;
                 box-sizing: border-box;
                 width: 100%;
@@ -58,7 +58,7 @@
             .card {
                 background: rgba(255, 255, 255, 0.7);
                 backdrop-filter: blur(4px);
-                /* ✅ 배경 흐림 */
+
                 border-radius: 16px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
                 padding: 20px;
@@ -290,9 +290,9 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                /* 수평 중앙 정렬 */
+
                 justify-content: center;
-                /* 수직 중앙 정렬  */
+
                 text-align: center;
                 padding: 40px 20px;
             }
@@ -373,6 +373,38 @@
                 font-weight: 500;
                 color: #555;
             }
+
+            .tab-buttons select {
+                appearance: none;
+                background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+                color: white;
+                font-size: 15px;
+                font-weight: 600;
+                padding: 10px 16px;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                outline: none;
+                text-align: center;
+                min-width: 180px;
+            }
+
+            .tab-buttons select:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+            }
+
+            .tab-buttons select:focus {
+                box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.5);
+            }
+
+            .tab-buttons option {
+                background-color: white;
+                color: #333;
+                font-weight: 500;
+            }
         </style>
     </head>
 
@@ -384,19 +416,35 @@
                     <h2>📝 나의 작성글 / 💬 답글</h2>
 
                     <div class="tab-buttons">
-                        <button :class="{ active: activeTab === 'posts' }"
-                            @click="activeTab = 'posts'; currentPage = 1">📝 작성글</button>
-                        <button :class="{ active: activeTab === 'comments' }"
-                            @click="activeTab = 'comments'; currentPage = 1">💬 답글</button>
-                    </div>
+                        <button :class="{ active: activeTab === 'posts' }" @click="switchToPosts">📝 작성글</button>
 
+                        <button :class="{ active: activeTab === 'comments' }" @click="switchToComments">💬 답글</button>
+                    </div>
+                    <div class="tab-buttons">
+                        <select v-model="selectedBoardType" @change="filterPostsByType(); filterCommentsByType();">
+
+                            <option value="">전체 게시판</option>
+                            <option value="Q">질문 게시판</option>
+                            <option value="F">자유 게시판</option>
+                            <option value="SQ">문의 게시판</option>
+                            <option v-if="userStatus === 'A'" value="N">공지 게시판</option>
+
+                        </select>
+                    </div>
 
                     <!-- 게시글 카드 -->
                     <div v-if="activeTab === 'posts'" class="card-grid">
                         <div class="card" v-for="post in paginatedPosts" :key="post.BOARDNO" @click="openModal(post)">
                             <div class="card-header">
-                                <h4>{{ post.TITLE || '제목 없음' }}</h4>
-                                <p class="date">{{ post.CDATETIME || '날짜 없음' }}</p>
+                                <h4>
+                                    {{ post.TITLE || '제목 없음' }}
+
+                                </h4>
+                                <p class="date">{{ post.CDATETIME || '날짜 없음' }}
+                                    <span style="color: #888; font-size: 14px;">[{{ getBoardTypeLabel(post.TYPE)
+                                        }}]</span>
+
+                                </p>
                             </div>
                             <p class="preview">
                                 {{ post.CONTENTS ? stripTags(post.CONTENTS).slice(0, 60) + '...' : '내용 없음' }}
@@ -411,8 +459,15 @@
                         <div class="card" v-for="comment in paginatedComments" :key="comment.commentNo"
                             @click="openModal(comment)">
                             <div class="card-header">
-                                <h4>답글</h4>
-                                <p class="date">{{ comment.CDATETIME || '날짜 없음' }}</p>
+                                <h4>
+                                    답글
+                                </h4>
+
+                                <p class="date">{{ comment.CDATETIME || '날짜 없음' }}
+
+                                    <span style="color: #888; font-size: 14px;">[{{
+                                        getBoardTypeLabel(comment.BOARD_TYPE) }}]</span>
+                                </p>
                             </div>
                             <p class="preview">
                                 {{ comment.COMMENT_CONTENT ? stripTags(comment.COMMENT_CONTENT).slice(0, 60) + '...' :
@@ -420,7 +475,7 @@
                             </p>
                             <p class="nickname">작성자: {{ comment.USER_ID || '알 수 없음' }}</p>
                         </div>
-                        <p v-if="myComments.length === 0">작성한 답글이 없습니다.</p>
+                        <p v-if="filteredComments.length === 0">작성한 답글이 없습니다.</p>
                     </div>
 
                     <!-- 페이징 버튼 -->
@@ -442,9 +497,11 @@
                                 <h2 class="modal-title">
                                     {{ modalType === 'post' ? selectedItem.TITLE : selectedItem.BOARD_TITLE || '제목 없음'
                                     }}
+
                                 </h2>
                                 <div class="meta-info">
                                     <span class="date">{{ selectedItem.CDATETIME }}</span>
+
                                     <span class="author">작성자: {{ selectedItem.USER_ID || '알 수 없음' }}</span>
                                 </div>
                             </div>
@@ -542,8 +599,12 @@
                     modalType: '',
                     selectedItem: null,
                     currentPage: 1,
-                    itemsPerPage: 6
-
+                    itemsPerPage: 6,
+                    selectedBoardType: '', // 선택된 게시판 타입
+                    filteredPosts: [],     // 필터링된 게시글
+                    filteredComments: [],
+                    myPosts: [],           // 전체 내 게시글
+                    userStatus: ''
 
 
                 };
@@ -552,19 +613,119 @@
             computed: {
                 paginatedPosts() {
                     const start = (this.currentPage - 1) * this.itemsPerPage;
-                    return this.myPosts.slice(start, start + this.itemsPerPage);
+                    const paginated = this.filteredPosts.slice(start, start + this.itemsPerPage);
+                    console.log(" 페이지 게시글:", paginated);
+                    return paginated;
                 },
                 paginatedComments() {
                     const start = (this.currentPage - 1) * this.itemsPerPage;
-                    return this.myComments.slice(start, start + this.itemsPerPage);
+                    return this.filteredComments.slice(start, start + this.itemsPerPage);
                 },
                 totalPages() {
                     return this.activeTab === 'posts'
-                        ? Math.ceil(this.myPosts.length / this.itemsPerPage)
+                        ? Math.ceil(this.filteredPosts.length / this.itemsPerPage)
                         : Math.ceil(this.myComments.length / this.itemsPerPage);
-                }
+                },
+
+
             },
             methods: {
+                switchToComments() {
+                    this.activeTab = 'comments';
+                    this.filterCommentsByType(); 
+                },
+                switchToPosts() {
+                    this.activeTab = 'posts';
+                    this.selectedBoardType = '';
+                    this.filterPostsByType();    
+                },
+                getBoardTypeLabel(type) {
+                    if (!type || typeof type !== 'string') return '전체게시판';
+
+                    switch (type.trim().toUpperCase()) {
+                        case 'Q': return '질문게시판';
+                        case 'F': return '자유게시판';
+                        case 'SQ': return '문의게시판';
+                        case 'N': return '공지게시판';
+                        default: return '전체게시판';
+                    }
+                },
+                fetchUserInfo() {
+                    $.ajax({
+                        url: '/getUserInfo.dox',
+                        type: 'POST',
+                        data: { userId: this.userId },
+                        dataType: 'json',
+                        success: (res) => {
+                            console.log(" 로그인한 사용자 상태:", this.userStatus);
+                            this.userStatus = res.status;
+                        }
+                    });
+                },
+                filterCommentsByType() {
+                    const type = this.selectedBoardType?.trim().toUpperCase();
+
+                    if (!type || type === '') {
+                        this.filteredComments = this.myComments;
+                    } else {
+                        this.filteredComments = this.myComments.filter(comment =>
+                            comment.BOARD_TYPE?.trim().toUpperCase() === type
+                        );
+                    }
+
+                    this.currentPage = 1;
+                }
+                ,
+                filterPostsByType() {
+                    const type = this.selectedBoardType?.trim().toUpperCase();
+                    const isCommentTab = this.activeTab === 'comments';
+
+                    if (isCommentTab) {
+                        const commentedBoardNos = this.myComments.map(comment => String(comment.BOARDNO));
+                        this.filteredPosts = this.myPosts.filter(post =>
+                            commentedBoardNos.includes(String(post.BOARDNO))
+                        );
+                    } else if (!type || type === '') {
+                        this.filteredPosts = this.myPosts;
+                    } else {
+                        this.filteredPosts = this.myPosts.filter(post =>
+                            post.TYPE?.trim().toUpperCase() === type
+                        );
+                    }
+
+                    console.log(" 게시판 타입:", type);
+                    console.log(" 게시글:", this.filteredPosts);
+                    this.currentPage = 1;
+                }
+                ,
+                fetchMyPosts() {
+                    const param = {
+                        userId: this.userId
+                    };
+
+
+                    if (this.selectedBoardType === 'N') {
+                        param.boardType = 'N';
+                    }
+                    $.ajax({
+                        url: '/getMyPosts.dox',
+                        type: 'POST',
+                        data: { userId: this.userId, boardType: this.selectedBoardType },
+                        dataType: 'json',
+                        success: (res) => {
+                            this.myPosts = res.posts;
+                            this.userStatus = res.status;
+                            console.log(" userStatus:", this.userStatus);
+                            this.filteredPosts = res.posts; // 전체 게시판 초기화
+                            console.log(" myPosts:", this.myPosts);
+                            console.log(" filteredPosts:", this.filteredPosts);
+                            this.filterPostsByType();
+                        },
+                        error: (err) => {
+                            console.error('게시글 불러오기 실패:', err);
+                        }
+                    });
+                },
                 nextPage() {
                     if (this.currentPage < this.totalPages) {
                         this.currentPage++;
@@ -595,7 +756,7 @@
                             success: () => {
                                 alert("댓글이 수정되었습니다.");
                                 this.fetchMyComments(); //갱신
-                                this.showEditModal = false; // 모달 닫기
+                                this.showEditModal = false;
                                 this.closeModal();
 
                             },
@@ -660,47 +821,20 @@
                 },
                 fetchMyComments() {
                     $.ajax({
-                        url: '/getMyComments.dox', // 
+                        url: '/getMyComments.dox',
                         type: 'POST',
                         data: { userId: this.userId },
                         dataType: 'json',
                         success: (res) => {
-                            this.myComments = res.comments; //
+                            this.myComments = res.comments;
+                            this.filterCommentsByType(); // 
                         },
                         error: (err) => {
                             console.error('댓글 목록 불러오기 실패:', err);
                         }
                     });
-                },
-                fetchMyPosts() {
-                    $.ajax({
-                        url: '/getMyPosts.dox',
-                        type: 'POST',
-                        data: { userId: this.userId },
-                        dataType: 'json',
-                        success: (res) => {
-                            this.myPosts = res.posts;
-                        },
-                        error: (err) => {
-                            console.error('게시글 다시 불러오기 실패:', err);
-                        }
-                    });
-                },
-
-                fetchMyPosts() {
-                    $.ajax({
-                        url: '/getMyPosts.dox',
-                        type: 'POST',
-                        data: { userId: this.userId },
-                        dataType: 'json',
-                        success: (res) => {
-                            this.myPosts = res.posts;
-                        },
-                        error: (err) => {
-                            console.error('게시글 다시 불러오기 실패:', err);
-                        }
-                    });
-                },
+                }
+                ,
                 // 게시글 수정
                 editPost(item) {
                     const newTitle = prompt("제목을 수정하세요:", item.TITLE);
@@ -750,7 +884,7 @@
                         $.ajax({
                             url: '/api/comment/delete',
                             type: 'POST',
-                            data: { commentNo }, // ✅ 정확한 키 이름과 값이 들어가야 함
+                            data: { commentNo },
                             success: () => {
                                 alert("댓글이 삭제되었습니다.");
                                 this.closeModal();
@@ -844,11 +978,14 @@
                 },
                 closeModal() {
                     this.selectedItem = null;
+                    this.fetchUserInfo();
                     document.body.style.overflow = '';
                 },
 
             },
             mounted() {
+                this.fetchMyPosts();
+                this.fetchMyComments();
                 const self = this;
                 $.ajax({
                     url: '/getMyComments.dox',
@@ -857,7 +994,7 @@
                     dataType: 'json',
                     success(res) {
 
-                        console.log("💬 답글 데이터:", res.comments);
+                        console.log(" 답글 데이터:", res.comments);
                         self.myComments = res.comments;
                     }
                 });
@@ -868,7 +1005,7 @@
                     data: { userId: self.userId },
                     dataType: 'json',
                     success(res) {
-                        console.log("📌 게시글 데이터:", res.posts);
+                        console.log(" 게시글 데이터:", res.posts);
                         self.myPosts = res.posts;
                     },
                     error(err) {

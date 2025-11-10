@@ -188,7 +188,7 @@
 	</insert>
 	
 	<select id="whishList" parameterType="hashmap" resultType="com.example.test1.model.Board">
-		SELECT * FROM FAV F
+		SELECT f.*,R2.*,R2.USER_ID as Iduser FROM FAV F
 		INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
 		INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
 		WHERE R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}
@@ -335,5 +335,11 @@
 		ORDER BY FAV DESC
 		OFFSET 0 ROWS FETCH NEXT 6 ROWS ONLY
 	</select>
+	<update id="boardFav" parameterType="hashmap">
+   UPDATE TBL_BOARD
+    SET FAV = FAV +1
+    WHERE BOARDNO= #{boardNo}
+</update>
+	
 	
 </mapper>

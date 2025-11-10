@@ -402,7 +402,6 @@
                 color: #e53935;
             }
 
-
             /* ================================
                ✅ 제목
             ================================ */
@@ -494,54 +493,54 @@
                                     </div>
                                     <!-- 뒷면 -->
                                     <div class="card-back">
-                                      <div class="card-body">
-                                        <div class="card-box">
-                                            <div>
-                                                <div
-                                                    class="card-theme"
-                                                    v-for="tag in item.themNum.split(',')"
-                                                    :key="tag"
-                                                >
-                                                    {{ tag }}
+                                        <div class="card-body">
+                                            <div class="card-box">
+                                                <div>
+                                                    <div
+                                                        class="card-theme"
+                                                        v-for="tag in item.themNum.split(',')"
+                                                        :key="tag"
+                                                    >
+                                                        {{ tag }}
+                                                    </div>
+                                                </div>
+                                                <div style="display: flex">
+                                                    <span
+                                                        class="material-symbols-outlined"
+                                                        :class="{ liked: item.liked }"
+                                                        @click.stop="toggleLike(item)"
+                                                    >
+                                                        favorite
+                                                    </span>
+                                                    <div>{{ item.fav }}</div>
                                                 </div>
                                             </div>
-                                            <div style="display: flex">
-                                                <span
-                                                    class="material-symbols-outlined"
-                                                    :class="{ liked: item.liked }"
-                                                    @click.stop="toggleLike(item)"
-                                                >
-                                                    favorite
-                                                </span>
-                                                <div>{{ item.fav }}</div>
+
+                                            <div class="card-box">
+                                                <div class="card-title">{{ item.packname }}</div>
+                                                <div class="card-cnt">
+                                                    <span class="material-symbols-outlined">visibility</span>
+                                                    <div>{{ item.cnt }}</div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="card-box">
-                                            <div class="card-title">{{ item.packname }}</div>
-                                            <div class="card-cnt">
-                                                <span class="material-symbols-outlined">visibility</span>
-                                                <div>{{ item.cnt }}</div>
+                                            <div class="card-desc">{{ item.descript }}</div>
+
+                                            <div class="card-info">
+                                                💰 {{ Number(item.price).toLocaleString() }}원 <br />
+                                                👤 {{ item.userId }}
                                             </div>
-                                        </div>
 
-                                        <div class="card-desc">{{ item.descript }}</div>
-
-                                        <div class="card-info">
-                                            💰 {{ Number(item.price).toLocaleString() }}원 <br />
-                                            👤 {{ item.userId }}
-                                        </div>
-
-                                        <div class="card-footer">
-                                            <button @click.stop="fnDetail(item.resNum)">상세보기</button>
+                                            <div class="card-footer">
+                                                <button @click.stop="fnDetail(item.resNum)">상세보기</button>
+                                            </div>
                                         </div>
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
                             </div>
-                            <div class="swiper-button-next review-button-next"></div>
-                            <div class="swiper-button-prev review-button-prev"></div>
+                        </div>
+                        <div class="swiper-button-next review-button-next"></div>
+                        <div class="swiper-button-prev review-button-prev"></div>
                     </div>
                     <div>
                         <h2>추천 게시글</h2>
@@ -557,6 +556,10 @@
                                     <div class="card-cnt">
                                         <div class="card-info">👤 {{ item.userId }}</div>
                                         <div style="display: flex">
+                                            <div style="display: flex; margin-right: 20px">
+                                                <span class="material-symbols-outlined"> thumb_up </span>
+                                                <div>{{ item.fav }}</div>
+                                            </div>
                                             <div style="display: flex">
                                                 <span class="material-symbols-outlined">visibility</span>
                                                 <div>{{ item.cnt }}</div>
@@ -651,7 +654,7 @@
 
                         // 인포윈도우로 장소에 대한 설명을 표시합니다
                         var infowindow = new kakao.maps.InfoWindow({
-                            content: '<div style="width:150px;text-align:center;padding:6px 0;">우리회사</div>',
+                            content: '<div style="width:150px;text-align:center;padding:3px 0;">내 위치</div>',
                         });
                         infowindow.open(self.map, marker);
 
@@ -868,8 +871,16 @@
                 console.log(item);
             },
             getRandomImage() {
-                const index = Math.floor(Math.random() * this.randomImages.length);
-                return this.randomImages[index];
+                if (!this.shuffled) {
+                    this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                }
+
+                // 하나 꺼내기 (없으면 다시 섞기)
+                if (this.shuffled.length === 0) {
+                    this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                }
+
+                return this.shuffled.pop();
             },
         },
         mounted() {
