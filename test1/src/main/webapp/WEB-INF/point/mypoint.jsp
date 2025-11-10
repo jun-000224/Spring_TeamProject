@@ -41,7 +41,7 @@
         }
         .circleTest{
             margin: 10px auto;
-            border: 1px solid black;
+            border: 1px solid rgb(218, 218, 218);
             border-radius: 50%;
             width: 200px;
             height: 200px;
@@ -52,6 +52,10 @@
             align-items: center;
 
             margin-bottom: 30px;
+
+            overflow: hidden;
+            background-color: #f0f0f0;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .userNick{
             font-size: 20px;
@@ -130,18 +134,39 @@
         .rP{
             margin-left: 10%;
         }
+        /* .profile-card {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        } */
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+            object-position: center;
+            display: block; 
+            border-radius: 50%;   
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
+<%@ include file="../components/header.jsp" %>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-        <%@ include file="../components/header.jsp" %>
 
         <div class="field">
             <div class="mainField">
                 <div class="leftField">
-                    <div class="circleTest">
-                        profileImage
+                    <div class="circleTest profile-card">
+                        <img :src="profileImgPath" alt="프로필 이미지 넣는곳" class="profile-img">
                     </div>
                     <div class="infoField">
                         <div>
@@ -257,8 +282,9 @@
             </div>
         </div>
         
-        <%@ include file="../components/footer.jsp" %>
     </div>
+    
+<%@ include file="../components/footer.jsp" %>
 </body>
 </html>
 
@@ -277,7 +303,9 @@
                 showAll : false,
 
                 info : {},
-                list : []
+                list : [],
+
+                profileImgPath : ""
             };
         },
         computed : {
@@ -324,13 +352,36 @@
                         self.list = data.list;
                     }
                 });
-            }
+            },
+
+            fnProfilePath : function () {
+                    let self = this;
+                    let param = {
+                        userId : self.id
+                    };
+                    $.ajax({
+                        url:"/member/profilePath.dox",
+                        dataType: "json",
+                        type: "POST",
+                        data: param,
+                        success: function (data){
+                            console.log(data.info);
+                            if(data.info.storUrl != null){
+                                self.profileImgPath = data.info.storUrl;
+                                // console.log("no");
+                            } else {
+                                self.profileImgPath = "/img/profile/default_profile.jpg"
+                            }
+                        }
+                    })
+                }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.fnPointRecent();
             self.fnPointIncdec();
+            self.fnProfilePath();
         }
     });
 

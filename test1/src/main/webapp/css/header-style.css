@@ -24,8 +24,9 @@ header {
 }
 
 .logo img {
-    height: 36px; /* 로고 크기 설정 */
-    content: url('1.png'); /* Trip.com 로고 플레이스홀더 */
+    height: 80px; /* 로고 크기 설정 */
+    /*content: url('1.png');*/ 
+	/* Trip.com 로고 플레이스홀더 */
 }
 
 /* ================================== */

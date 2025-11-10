@@ -41,7 +41,7 @@ public class TourParsingUtil {
     public long generateDummyPrice(long seed, int min, int max) {
         // contentId를 시드로 사용해 난수 생성기를 초기화하여, 같은 POI는 항상 같은 값을 반환합니다.
         Random rand = new Random(seed);
-        
+         
         // min ~ max 범위의 난수를 생성
         long range = (long)max - min + 1;
         long dummyPrice = min + (long)(rand.nextDouble() * range);

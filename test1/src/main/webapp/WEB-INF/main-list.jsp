@@ -874,6 +874,13 @@
         },
         mounted() {
             let self = this;
+
+            const queryParams = new URLSearchParams(window.location.search);
+            window.code = queryParams.get('code') || '';
+            if (window.code != null) {
+                fnKakao();
+            }
+
             self.init();
             self.fnResList();
             self.fnThumnail();
