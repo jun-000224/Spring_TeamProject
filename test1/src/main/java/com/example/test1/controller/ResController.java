@@ -90,12 +90,12 @@ public class ResController {
         try {
             Long resNum = body.get("resNum") == null ? null : Long.valueOf(body.get("resNum").toString());
             String packName = body.get("packName") == null ? null : body.get("packName").toString();
-
+            String userId = body.get("userId") == null ? null : body.get("userId").toString();
             if (resNum == null || packName == null || packName.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("message", "resNum/packName 누락"));
             }
 
-            boolean ok = resService.updatePackname(resNum, packName.trim());
+            boolean ok = resService.updatePackname(resNum, packName.trim(),userId);
             return ok ? ResponseEntity.ok(Map.of("message", "코스명 저장 완료"))
                       : ResponseEntity.status(404).body(Map.of("message", "대상 예약이 없습니다."));
         } catch (Exception e) {

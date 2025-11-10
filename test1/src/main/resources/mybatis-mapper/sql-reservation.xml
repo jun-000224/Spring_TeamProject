@@ -76,7 +76,7 @@
     <!-- ▼ 추가: 코스명 업데이트 -->
     <update id="updatePackname">
         UPDATE ADMIN.RESERVATION
-           SET PACKNAME = #{packName, jdbcType=VARCHAR}
+           SET PACKNAME = #{packName, jdbcType=VARCHAR} , USER_ID= #{userId}
          WHERE RES_NUM = #{resNum}
     </update>
 

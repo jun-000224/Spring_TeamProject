@@ -18,7 +18,7 @@ public interface ResMapper {
 
     List<Poi> selectPoisByResNum(@Param("resNum") Long resNum);
 
-    int updatePackname(@Param("resNum") Long resNum, @Param("packName") String packName);
+    int updatePackname(@Param("resNum") Long resNum, @Param("packName") String packName , @Param("userId") String userId);
 
     int deleteReservation(@Param("resNum") Long resNum);
 

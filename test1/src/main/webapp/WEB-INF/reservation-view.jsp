@@ -182,6 +182,7 @@
     const app = Vue.createApp({
       data() {
         return {
+          userId:"${sessionId}",
           reservation: {
             resNum: 0,
             packName: "사용자 지정 코스 이름",
@@ -292,6 +293,7 @@
 
         // 저장하기 클릭 시: 코스명 먼저 저장 -> 완료되면 페이지 이동
         fnSave() {
+          let self=this;
           const name = (this.reservation.packname || '').trim();
           if (name.length === 0) {
             if (!confirm('코스 이름이 비어 있습니다. 그대로 저장/이동할까요?')) return;
@@ -300,7 +302,7 @@
             url: '/api/reservation/update/packname',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ resNum: this.reservation.resNum, packName: name })
+            data: JSON.stringify({ resNum: this.reservation.resNum, packName: name ,userId:self.userId})
           });
 
           // 성공/실패와 무관하게 최종 페이지로 이동 (성공 시 메시지 후 이동)
