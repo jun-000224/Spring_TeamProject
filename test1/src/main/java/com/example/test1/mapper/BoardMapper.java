@@ -97,6 +97,8 @@ public interface BoardMapper {
 	//notice view 상세보기
 	Board noticeView(HashMap<String , Object> map);
 
+	int boardFav(HashMap<String, Object> map);
+
 	
 	
 }

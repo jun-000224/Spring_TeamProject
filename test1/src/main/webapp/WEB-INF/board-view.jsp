@@ -204,7 +204,32 @@
     }
     .modal textarea{ min-height:130px; resize:none; line-height:1.6 }
     .modal_actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px }
-
+    /* 추천 버튼 */
+.like-btn {
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: #9aa3af;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+.like-btn:hover {
+  color: var(--brand);
+  transform: translateY(-1px);
+}
+.like-btn.active {
+  color: var(--brand);
+  cursor: default;
+}
+.like-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
     /* Responsive */
     @media (max-width: 900px){
       #comment tr{ grid-template-columns:120px 1fr auto auto auto }
@@ -222,13 +247,22 @@
       <div class="crumb">커뮤니티 <span class="dot"></span> 게시글</div>
       <div class="title">{{ info.title }}</div>
       <div class="meta">
-        <span>작성자 {{ info.userId }}</span>
-        <span class="dot"></span>
-        <span>조회수 {{ info.cnt }}</span>
-        <!-- 신고: 시선 분산을 위해 옅은 회색 링크형 + 아이콘 제거 -->
-        <button v-if="!boardReportCheck" class="subtle-action" @click="fnReport(info.userId)">신고</button>
-        <button v-else class="subtle-action" disabled>신고 완료</button>
-      </div>
+  <span>작성자 {{ info.userId }}</span>
+  <span class="dot"></span>
+  <span>조회수 {{ info.cnt }}</span>
+  <span class="dot"></span>
+  
+  <!-- 👍 추천 버튼 -->
+  <button 
+    class="like-btn" 
+    @click="fnLike" >
+    👍 {{ info.fav }}
+  </button>
+
+  <!-- 신고 -->
+  <button v-if="!boardReportCheck" class="subtle-action" @click="fnReport(info.userId)">신고</button>
+  <button v-else class="subtle-action" disabled>신고 완료</button>
+</div>
     </div>
 
     <!-- 본문 카드 -->
@@ -508,6 +542,16 @@
             }
           },
           error:()=> alert("서버와 통신 중 오류가 발생했습니다.")
+        });
+      },
+      fnLike(){
+        const self=this;
+        const param = { boardNo:self.boardNo };
+        $.ajax({
+          url:"/boardFav.dox", type:"POST", dataType:"json", data:param,
+          success(){
+            self.fnInfo();
+          }
         });
       }
     },

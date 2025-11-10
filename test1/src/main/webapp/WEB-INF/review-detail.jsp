@@ -217,7 +217,7 @@
                 </div>
                 <div>
                     <div>
-                        <img :src="info.firstimage" alt="" />
+                        <img :src="info.firstimage || getRandomImage()" alt="" />
                     </div>
                     <div class="info-con">
                         <h3>{{ info.title }}</h3>
@@ -285,6 +285,14 @@
                     reviewImgList: [],
                     isModalOpen: false,
                     selectedImages: [],
+                     randomImages: [
+                        "/img/defaultImg01.jpg",
+                        "/img/defaultImg02.jpg",
+                        "/img/defaultImg03.jpg",
+                        "/img/defaultImg04.jpg",
+                        "/img/defaultImg05.jpg",
+                        "/img/defaultImg06.jpg",
+                    ],
                 };
             },
             methods: {
@@ -337,6 +345,18 @@
                 },
                 fnbck() {
                     history.back();
+                },
+                getRandomImage() {
+                    if (!this.shuffled) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    // 하나 꺼내기 (없으면 다시 섞기)
+                    if (this.shuffled.length === 0) {
+                        this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+                    }
+
+                    return this.shuffled.pop();
                 },
             },
             mounted() {
