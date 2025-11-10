@@ -55,6 +55,12 @@ public class ResService {
         return reservation;
     }
 
+    // -------- (신규) 결제 금액 조회 --------
+    public Long getPayAmount(Long resNum) {
+        Long amount = resMapper.selectPayAmount(resNum);
+        return amount == null ? 0L : amount;
+    }
+
     // -------- 코스명/메모 업데이트 --------
     @Transactional
     public boolean updatePackname(Long resNum, String packName, String userId, String descript) {

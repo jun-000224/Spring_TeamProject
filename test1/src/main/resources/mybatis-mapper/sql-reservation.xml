@@ -16,7 +16,7 @@
             #{userId, jdbcType=VARCHAR},
             #{packname, jdbcType=VARCHAR},
             #{price, jdbcType=NUMERIC},
-            #{areaNum, jdbcType=VARCHAR},   <!-- ✅ 컬럼이 문자형이면 VARCHAR -->
+            #{areaNum, jdbcType=VARCHAR},
             #{themNum, jdbcType=VARCHAR},
             #{descript, jdbcType=VARCHAR},
             #{startDate, jdbcType=VARCHAR},
@@ -71,6 +71,14 @@
             ON T.CONTENT_ID = A.CONTENT_ID
         WHERE T.RES_NUM = #{resNum}
         ORDER BY T.RESERV_DATE ASC, T.POI_ID ASC
+    </select>
+
+    <!-- (신규) 결제 금액 조회: 숙박 + 식비 -->
+    <select id="selectPayAmount" parameterType="Long" resultType="long">
+        SELECT
+            NVL(ACCOM_BUDGET, 0) + NVL(FOOD_BUDGET, 0) AS amount
+        FROM ADMIN.RESERVATION
+        WHERE RES_NUM = #{resNum}
     </select>
 
     <!-- 코스명/메모 업데이트 -->

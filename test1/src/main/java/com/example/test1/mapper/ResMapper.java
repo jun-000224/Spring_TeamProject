@@ -20,6 +20,9 @@ public interface ResMapper {
     // 예약별 POI 목록
     List<Poi> selectPoisByResNum(@Param("resNum") Long resNum);
 
+    // (신규) 결제 금액 조회 : accom + food
+    Long selectPayAmount(@Param("resNum") Long resNum);
+
     // 코스명/메모 업데이트 (DESCRIPT 포함)
     int updatePackname(@Param("resNum") Long resNum,
                        @Param("packName") String packName,
