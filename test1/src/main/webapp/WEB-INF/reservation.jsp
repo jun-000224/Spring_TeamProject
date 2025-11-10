@@ -386,7 +386,7 @@
               endDate: null,
               selectionState: 'start',
               showBoardModal: false,
-              boardUrl: ctx + '/board-view.do',
+              boardUrl: ctx + '/board-list.do',
               mapInstance: null,
               geocoder: null,
               markers: [],
