@@ -104,34 +104,43 @@
 	        B.BOARDNO,
 	        B.USER_ID,
 	        B.TITLE,
-	        DBMS_LOB.SUBSTR(B.CONTENTS, 4000, 1) AS CONTENTS,
+	        DBMS_LOB.SUBSTR(B.CONTENTS, 2000, 1) AS CONTENTS,
+	        B.TYPE,
 	        TO_CHAR(B.CDATETIME, 'YYYY-MM-DD') AS CDATETIME,
 	        (
 	            SELECT COUNT(*) 
 	            FROM TBL_COMMENT C 
 	            WHERE C.BOARDNO = B.BOARDNO
-	        ) AS COMMENT_COUNT  <!-- ✅ 댓글 수 포함 -->
+	        ) AS COMMENT_COUNT
 	    FROM TBL_BOARD B
+	    INNER JOIN USERS U ON B.USER_ID = U.USER_ID 
 	    WHERE B.USER_ID = #{userId}
+	    <if test="boardType == 'N'">
+	        AND U.STATUS = 'A' <!--공지 게시판일 때만 조건 적용 -->
+	    </if>
 	    ORDER BY B.CDATETIME DESC
 	</select>
 
 
 
+
 	<!-- 내 댓글 조회 + 게시글 정보 포함 -->
 	<select id="selectMyComments" resultType="hashMap">
-	    SELECT 
-	        C.COMMENTNO,
-	        C.USER_ID,
-	        C.CONTENTS AS COMMENT_CONTENT,  <!-- ✅ 댓글 내용 별칭 -->
-	        TO_CHAR(C.CDATETIME, 'YYYY-MM-DD') AS CDATETIME,
-	        B.TITLE AS BOARD_TITLE,
-	        DBMS_LOB.SUBSTR(B.CONTENTS, 4000, 1) AS BOARD_CONTENTS
-	    FROM TBL_COMMENT C
-	    JOIN TBL_BOARD B ON C.BOARDNO = B.BOARDNO
-	    WHERE C.USER_ID = #{userId}
-	    ORDER BY C.CDATETIME DESC
+	SELECT 
+	    C.COMMENTNO,
+	    C.USER_ID,
+	    C.BOARDNO, 
+	    C.CONTENTS AS COMMENT_CONTENT,
+	    TO_CHAR(C.CDATETIME, 'YYYY-MM-DD') AS CDATETIME,
+	    B.TITLE AS BOARD_TITLE,
+	    DBMS_LOB.SUBSTR(B.CONTENTS, 4000, 1) AS BOARD_CONTENTS,
+	    B.TYPE AS BOARD_TYPE  
+	FROM TBL_COMMENT C
+	JOIN TBL_BOARD B ON C.BOARDNO = B.BOARDNO
+	WHERE C.USER_ID = #{userId}
+	ORDER BY C.CDATETIME DESC
 	</select>
+
 
 	<!-- 게시글 삭제 -->
 	<delete id="deletePost">
@@ -194,5 +203,7 @@
 	    ORDER BY C.CDATETIME ASC
 	</select>
 
-
+	<select id="selectUserStatus" resultType="String">
+	    SELECT STATUS FROM USERS WHERE USER_ID = #{userId}
+	</select>
 </mapper>
