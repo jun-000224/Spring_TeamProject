@@ -53,8 +53,8 @@ public class AdminService {
     }
     
     // ✅ 내 게시글 조회
-    public List<HashMap<String, Object>> getMyPosts(String userId) {
-        return adminMapper.selectMyPosts(userId);
+    public List<HashMap<String, Object>> getMyPosts(Map<String, Object> param) {
+        return adminMapper.selectMyPosts(param);
     }
 
     // ✅ 내 댓글 조회
@@ -95,7 +95,9 @@ public class AdminService {
     public List<MainBoard> selectByBoardNo(String boardNo) {
         return adminMapper.selectCommentsByBoardNo(boardNo);
     }
-
+    public String getUserStatus(String userId) {
+        return adminMapper.selectUserStatus(userId);
+    }
     
 
 }

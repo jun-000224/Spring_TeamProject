@@ -140,12 +140,23 @@ public class AdminController {
 
     @ResponseBody
     @RequestMapping("/getMyPosts.dox")
-    public HashMap<String, Object> getMyPosts(@RequestParam String userId) {
-        List<HashMap<String, Object>> posts = adminService.getMyPosts(userId);
+    public HashMap<String, Object> getMyPosts(@RequestParam String userId,
+                                              @RequestParam(required = false) String boardType) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        if ("N".equals(boardType)) {
+            param.put("boardType", "N");
+        }
+
+        List<HashMap<String, Object>> posts = adminService.getMyPosts(param);
+        String status = adminService.getUserStatus(userId); // ✅ 사용자 상태 조회
+
         HashMap<String, Object> result = new HashMap<>();
         result.put("posts", posts);
+        result.put("status", status); // ✅ 사용자 상태 포함
         return result;
     }
+
 
     @ResponseBody
     @RequestMapping("/getMyComments.dox")
