@@ -11,8 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     rel="stylesheet"
 />
-<script type="text/javascript"
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoAppKey}&libraries=services"></script>
+
  <link rel="stylesheet" href="/css/main-style.css">
 <link rel="stylesheet" href="/css/common-style.css">
 <link rel="stylesheet" href="/css/header-style.css">
@@ -307,9 +306,11 @@ body {
 <%@ include file="components/footer.jsp" %>
 
 <!-- ✅ JSON 데이터를 안전하게 주입 -->
-
+</body>
+</html>
 
 <script>
+  
 const app = Vue.createApp({
   data() {
     return {
@@ -332,11 +333,6 @@ const app = Vue.createApp({
         "/img/defaultImg05.jpg",
         "/img/defaultImg06.jpg"
       ],
-      routePolyline: null,
-      routeSummary: null,
-      markers: [],
-      poiList: [],
-      kakaoAppKey: '${kakaoAppKey}'
     };
   },
   methods: {
@@ -369,12 +365,12 @@ const app = Vue.createApp({
                 rating: item.rating,
               });
             }
+            
           }
+          console.log(data);
           self.selectedDay = days[0];
             const firstDayPois = self.positionsByDay[self.selectedDay];
-            if (firstDayPois && firstDayPois.length > 0) {
-                self.initializeMap(firstDayPois);
-            }
+           
         }
       });
     },
@@ -451,119 +447,13 @@ const app = Vue.createApp({
       const index = Math.floor(Math.random() * this.randomImages.length);
       return this.randomImages[index];
     },
-     initializeMap(pois) {
-    if (!window.kakao || !kakao.maps) {
-        document.getElementById('map-container').innerText = 'Kakao Map API 로드 실패.';
-        return;
-    }
-    const container = document.getElementById('map-container');
-
-    if (!pois || pois.length === 0) {
-        container.innerText = "지도에 표시할 장소가 없습니다.";
-        return;
-    }
-
-    const options = { 
-        center: new kakao.maps.LatLng(pois[0].lat, pois[0].lng), 
-        level: 7 
-    };
-    this.map = new kakao.maps.Map(container, options);
-
-    const bounds = new kakao.maps.LatLngBounds();
-    this.clearMarkers();
-
-    pois.forEach(p => {
-        const pos = new kakao.maps.LatLng(p.lat, p.lng);
-        const marker = new kakao.maps.Marker({ position: pos });
-        marker.setMap(this.map);
-        this.markers.push(marker);
-      console.log(p.title);
-      
-        const info = new kakao.maps.InfoWindow({ content: '<div style="padding:25px;">' + (p.title || p.contentId) + '</div>' });
-        kakao.maps.event.addListener(marker, 'mouseover', () => info.open(this.map, marker));
-        kakao.maps.event.addListener(marker, 'mouseout', () => info.close());
-
-        bounds.extend(pos);
-    });
-
-    this.map.setBounds(bounds);
-
-    // Vue 렌더링 후 지도 리사이즈
-    setTimeout(() => {
-        kakao.maps.event.trigger(this.map, 'resize');
-        this.map.setBounds(bounds);
-    }, 500);
-},
-         clearMarkers() { if (!this.markers) return; this.markers.forEach(m => m.setMap(null)); this.markers = []; },
-    groupPoisByDate(pois) {
-      this.positionsByDay = {};
-      pois.forEach(p => {
-        const day = p.day || 1;
-        if (!this.positionsByDay[day]) this.positionsByDay[day] = [];
-        this.positionsByDay[day].push(p);
-      });
-    },
-    async buildCarRoute() {
-      const pois = this.positionsByDay[this.selectedDay] || [];
-      const valid = pois.filter(p => p.lat && p.lng);
-      if (valid.length < 2) {
-        alert('경로를 그릴 최소 2개 지점이 필요합니다.');
-        return;
-      }
-      try {
-        const payload = {
-          resNum: this.resNum,
-          day: this.selectedDay,
-          pois: valid.map(p => ({
-            contentId: p.contentId,
-            name: p.title || '',
-            x: Number(p.lng),
-            y: Number(p.lat)
-          }))
-        };
-        const resp = await $.ajax({
-          url: '/api/route/build',
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(payload)
-        });
-        if (resp.points) this.drawPolyline(resp.points);
-        this.routeSummary = resp.summary || null;
-      } catch (e) {
-        console.error(e);
-        alert('경로 계산에 실패했습니다.');
-      }
-    },
-    drawPolyline(points) {
-      if (!this.map) return;
-      if (this.routePolyline) { this.routePolyline.setMap(null); this.routePolyline = null; }
-      if (!points || points.length === 0) return;
-      const path = points.map(pt => new kakao.maps.LatLng(pt.y, pt.x));
-      this.routePolyline = new kakao.maps.Polyline({ path, strokeWeight: 5, strokeOpacity: 0.9 });
-      this.routePolyline.setMap(this.map);
-      const bounds = new kakao.maps.LatLngBounds();
-      path.forEach(latlng => bounds.extend(latlng));
-      this.map.setBounds(bounds);
-    },
-    clearRoute() { if (this.routePolyline) { this.routePolyline.setMap(null); this.routePolyline = null; } this.routeSummary = null; },
   },
   mounted() {
     let self=this;
 
     self.fninfo();
-     const waitForKakao = setInterval(() => {
-    if (window.kakao && window.kakao.maps) {
-      clearInterval(waitForKakao);
-      // ✅ DOM 안정화 후 지도 생성
-      setTimeout(() => {
-        this.initializeMap([{ lat: 37.7519, lng: 128.8760 }]);
-      }, 500);
-    }
-  }, 200);
-}
+  },
 });
 
 app.mount('#app');
 </script>
-</body>
-</html>
