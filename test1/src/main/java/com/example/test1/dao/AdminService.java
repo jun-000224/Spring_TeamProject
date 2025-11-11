@@ -98,6 +98,12 @@ public class AdminService {
     public String getUserStatus(String userId) {
         return adminMapper.selectUserStatus(userId);
     }
-    
+    public void updateUserStatus(HashMap<String, Object> param) throws Exception {
+        adminMapper.updateUserStatusDirect(param);
+    }
+    public List<HashMap<String, Object>> getAllUsers() throws Exception {
+        return adminMapper.selectAllUsers();
+    }
+
 
 }
