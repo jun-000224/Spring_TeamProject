@@ -217,6 +217,23 @@ public class AdminController {
         return new ObjectMapper().writeValueAsString(resultMap);
     }
 
+    @RequestMapping(value = "/user-status-update.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateUserStatus(@RequestBody HashMap<String, Object> param) throws Exception {
+        adminService.updateUserStatus(param);
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("result", "success");
+        return new ObjectMapper().writeValueAsString(resultMap);
+    }
+
+    
+    @RequestMapping(value = "/user-list.dox", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getAllUsers() throws Exception {
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("userList", adminService.getAllUsers());
+        return new ObjectMapper().writeValueAsString(resultMap);
+    }
 
 
 }

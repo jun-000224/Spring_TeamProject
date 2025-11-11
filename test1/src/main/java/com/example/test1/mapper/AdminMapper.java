@@ -44,5 +44,8 @@ public interface AdminMapper {
 
 	String selectUserStatus(String userId);
 
+	void updateUserStatusDirect(HashMap<String, Object> param);
+
+	List<HashMap<String, Object>> selectAllUsers();
 
 }

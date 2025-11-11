@@ -206,4 +206,31 @@
 	<select id="selectUserStatus" resultType="String">
 	    SELECT STATUS FROM USERS WHERE USER_ID = #{userId}
 	</select>
+	
+	
+	<update id="updateUserStatusDirect" parameterType="hashmap">
+	    UPDATE USERS
+	    SET STATUS = #{status, jdbcType=CHAR},
+	        UDATETIME = SYSDATE
+	    WHERE USER_ID = #{userId, jdbcType=VARCHAR}  <!-- ✅ 수정됨 -->
+	</update>
+
+
+
+	
+	
+	<select id="selectAllUsers" resultType="hashmap">
+	  SELECT 
+	    USER_ID AS userId,
+	    NAME AS name,
+	    NICKNAME AS nickname,
+	    PHONE AS phone,
+	    STATUS AS status,
+	    EMAIL AS email,
+	    GENDER AS gender,
+	    TO_CHAR(CDATETIME, 'YYYY-MM-DD') AS joinDate
+	  FROM USERS
+	  ORDER BY CDATETIME DESC
+	</select>
+
 </mapper>
