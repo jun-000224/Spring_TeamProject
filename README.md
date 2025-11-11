@@ -1,3 +1,6 @@
+
+![메인페이지](https://github.com/hee8144/image/blob/main/main.png)
+---
 <a name="top"></a>
 
 # 🌏 I'm Ready
@@ -41,17 +44,17 @@ I'm Ready는
 
 | 이름 | GitHub |
 |------|--------|
-| 이동준 | [](https://github.com/jun-000224) |
-| 박충현 | [](https://github.com/3y5adf) |
-| 하송화 | [](https://github.com/hasonghwa) |
+| 이동준 | [jun-000224](https://github.com/jun-000224) |
+| 박충현 | [3y5adf](https://github.com/3y5adf) |
+| 하송화 | [hasonghwa](https://github.com/hasonghwa) |
 | 김대근 | [](https://github.com/) |
-| 유희연 | [](https://github.com/hee8144) |
+| 유희연 | [hee8144](https://github.com/hee8144) |
 
 ---
 
 ## 🛠️ 사용 기술
 
-> 백엔드, 프론트엔드, DB, API 등을 조합하여 구성
+> 백엔드, 프론트엔드, DB, API 
 
 ![Spring Boot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white)
@@ -67,7 +70,6 @@ I'm Ready는
 ![Oracle](https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 
 ![RESTful API](https://img.shields.io/badge/RESTful-API-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
-
 
 ---
 
