@@ -14,4 +14,9 @@ public class Comment {
 	private String udateTime;
 	private String nickName;
 	private boolean reported;
+	
+	private String title;
+	private String storUrl;
+	
+	private String status;
 }

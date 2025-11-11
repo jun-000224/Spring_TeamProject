@@ -300,9 +300,10 @@
   </head>
 
   <body>
+    
+    <!-- 헤더 -->
+    <%@ include file="components/header.jsp" %>
     <div id="app">
-      <!-- 헤더 -->
-      <%@ include file="components/header.jsp" %>
 
       <!-- 검색/필터 -->
       <section class="board-filter">
@@ -323,7 +324,6 @@
             <option value="10">10개씩</option>
             <option value="15">15개씩</option>
           </select>
-
           <select v-model="type" @change="fnList" title="분류">
             <option value="">전체 분류</option>
             <option value="N">공지사항</option>
@@ -422,14 +422,14 @@
             if (t === "N ") return "type-N";
             if (t === "F ") return "type-F";
             if (t === "Q ") return "type-Q";
-            if (t === "SQ ") return "type-SQ";
+            if (t === "SQ") return "type-SQ";
             return "";
           },
           typeLabel(t) {
             if (t === "N ") return "공지";
             if (t === "F ") return "자유";
             if (t === "Q ") return "질문";
-            if (t === "SQ ") return "문의";
+            if (t === "SQ") return "문의";
             return "일반";
           },
           fnList() {

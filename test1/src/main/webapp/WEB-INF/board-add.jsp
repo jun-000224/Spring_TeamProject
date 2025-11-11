@@ -16,238 +16,447 @@
         <link rel="stylesheet" href="/css/header-style.css">
         <link rel="stylesheet" href="/css/main-images.css">
         <style>
-           /* =========================
+            /* =========================
 📘 게시글 기본 스타일
 ========================= */
-table {
-    width: 80%;
-    margin: 30px auto;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    font-family: 'Noto Sans KR', sans-serif;
-}
+            table {
+                width: 80%;
+                margin: 30px auto;
+                border-collapse: collapse;
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+                font-family: 'Noto Sans KR', sans-serif;
+            }
 
-th {
-    background-color: #0078FF;
-    color: white;
-    font-weight: 600;
-    padding: 14px;
-    font-size: 16px;
-    width: 140px;
-}
+            th {
+                background-color: #0078FF;
+                color: white;
+                font-weight: 600;
+                padding: 14px;
+                font-size: 16px;
+                width: 140px;
+            }
 
-td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #eee;
-    font-size: 16px;
-    color: #333;
-    text-align: left;
-}
+            td {
+                padding: 16px 20px;
+                border-bottom: 1px solid #eee;
+                font-size: 16px;
+                color: #333;
+                text-align: left;
+            }
 
-/* 제목 입력 */
-.input-title {
-    font-size: 17px;
-    padding: 8px 12px;
-    width: 95%;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
+            /* 제목 입력 */
+            .input-title {
+                font-size: 17px;
+                padding: 8px 12px;
+                width: 95%;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
 
-/* =========================
+            /* =========================
 📗 버튼 스타일
 ========================= */
-button {
-    background-color: #0078FF;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
+            button {
+                background-color: #0078FF;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-size: 15px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
 
-button:hover {
-    background-color: #005FCC;
-    transform: translateY(-1px);
-}
+            button:hover {
+                background-color: #005FCC;
+                transform: translateY(-1px);
+            }
 
-.cancel-btn {
-    background-color: #aaa;
-    margin-right: 20px;
-}
+            .cancel-btn {
+                background-color: #aaa;
+                margin-right: 20px;
+            }
 
-.cancel-btn:hover {
-    background-color: #888;
-}
+            .cancel-btn:hover {
+                background-color: #888;
+            }
 
-.button-container {
-    text-align: center;
-    margin: 30px 20px 20px 100px;
+            .button-container {
+                text-align: center;
+                margin: 30px 20px 20px 100px;
 
-}
+            }
 
-/* =========================
+            /* =========================
 💬 댓글 영역
 ========================= */
-.comment-section {
-    width: 80%;
-    margin: 60px auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-    padding: 25px 30px;
-}
+            .comment-section {
+                width: 80%;
+                margin: 60px auto;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+                padding: 25px 30px;
+            }
 
-.comment-section h3 {
-    font-size: 22px;
-    color: #0078FF;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #0078FF;
-    display: inline-block;
-    padding-bottom: 5px;
-}
+            .comment-section h3 {
+                font-size: 22px;
+                color: #0078FF;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #0078FF;
+                display: inline-block;
+                padding-bottom: 5px;
+            }
 
-/* 댓글 리스트 */
-#comment-list {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 25px;
-}
+            /* 댓글 리스트 */
+            #comment-list {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 25px;
+            }
 
-#comment-list tr {
-    border-bottom: 1px solid #eee;
-    transition: background 0.2s;
-}
+            #comment-list tr {
+                border-bottom: 1px solid #eee;
+                transition: background 0.2s;
+            }
 
-#comment-list tr:hover {
-    background: #f9fbff;
-}
+            #comment-list tr:hover {
+                background: #f9fbff;
+            }
 
-#comment-list td {
-    padding: 12px 10px;
-    font-size: 15px;
-}
+            #comment-list td {
+                padding: 12px 10px;
+                font-size: 15px;
+            }
 
-#comment-list .writer {
-    width: 150px;
-    font-weight: 600;
-    color: #0078FF;
-}
+            #comment-list .writer {
+                width: 150px;
+                font-weight: 600;
+                color: #0078FF;
+            }
 
-#comment-list .content {
-    flex: 1;
-}
+            #comment-list .content {
+                flex: 1;
+            }
 
-#comment-list .date {
-    width: 160px;
-    font-size: 13px;
-    color: #888;
-}
+            #comment-list .date {
+                width: 160px;
+                font-size: 13px;
+                color: #888;
+            }
 
-#comment-list .action {
-    width: 80px;
-    text-align: center;
-}
+            #comment-list .action {
+                width: 80px;
+                text-align: center;
+            }
 
-.delete-btn {
-    background-color: #e74c3c;
-}
+            .delete-btn {
+                background-color: #e74c3c;
+            }
 
-.delete-btn:hover {
-    background-color: #c0392b;
-}
+            .delete-btn:hover {
+                background-color: #c0392b;
+            }
 
-/* 댓글 입력 */
-#input-comment {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
-}
+            /* 댓글 입력 */
+            #input-comment {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-top: 1px solid #ddd;
+                padding-top: 20px;
+            }
 
-#input-comment textarea {
-    flex-grow: 1;
-    height: 80px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 14px;
-    resize: none;
-    transition: all 0.2s;
-}
+            #input-comment textarea {
+                flex-grow: 1;
+                height: 80px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 14px;
+                resize: none;
+                transition: all 0.2s;
+            }
 
-#input-comment textarea:focus {
-    border-color: #0078FF;
-    box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
-}
+            #input-comment textarea:focus {
+                border-color: #0078FF;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
+            }
 
-#input-comment button {
-    background-color: #0078FF;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
+            #input-comment button {
+                background-color: #0078FF;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                padding: 12px 20px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
 
-#input-comment button:hover {
-    background-color: #005FCC;
-}
+            #input-comment button:hover {
+                background-color: #005FCC;
+            }
+
+            .board-write {
+                width: 90%;
+                max-width: 950px;
+                margin: 40px auto 80px;
+                background: #fff;
+                border: 1px solid #d9e2ec;
+                border-radius: 10px;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+                padding: 30px 40px;
+                padding-top: 10px;
+            }
+
+            .board-write .write-header {
+                border-bottom: 1px solid #e0e6ef;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+
+            .board-write .write-header h2 {
+                font-size: 22px;
+                font-weight: 700;
+                color: #0078ff;
+            }
+
+            .board-write .form-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .board-write .form-row label {
+                width: 100px;
+                font-weight: 600;
+                color: #444;
+                text-align: right;
+            }
+
+            .board-write .form-row input,
+            .board-write .form-row select {
+                flex: 1;
+                border: 1px solid #cfd7e3;
+                border-radius: 6px;
+                padding: 9px 12px;
+                font-size: 15px;
+                transition: border-color 0.2s;
+            }
+
+            .board-write .form-row input:focus,
+            .board-write .form-row select:focus {
+                outline: none;
+                border-color: #0078ff;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
+            }
+
+            .board-write .title-box {
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            .board-write .title-box input {
+                width: 100%;
+                border: 1px solid #cfd7e3;
+                border-radius: 6px;
+                padding: 12px 14px;
+                font-size: 16px;
+                transition: border-color 0.2s;
+                box-sizing: border-box;
+            }
+
+            .board-write .title-box input:focus {
+                border-color: #0078ff;
+                outline: none;
+            }
+
+            .board-write .editor-wrapper {
+                margin-top: 20px;
+            }
+
+            .board-write #editor {
+                height: 350px;
+                border: 1px solid #cfd7e3;
+                border-radius: 8px;
+                background: #fff;
+                transition: border-color 0.2s;
+            }
+
+            .board-write #editor:focus-within {
+                border-color: #0078ff;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.2);
+            }
+
+            .board-write .info-text {
+                margin-top: 10px;
+                font-size: 13px;
+                color: #888;
+                line-height: 1.4;
+            }
+
+            .board-write .button-area {
+                text-align: center;
+                margin-top: 40px;
+                padding-top: 25px;
+                border-top: 1px solid #e5e9f0;
+            }
+
+            .board-write button {
+                background-color: #0078ff;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 0 10px;
+                transition: all 0.2s ease;
+            }
+
+            .board-write button:hover {
+                background-color: #005fcc;
+                transform: translateY(-1px);
+            }
+
+            .board-write .cancel-btn {
+                background-color: #a0a0a0;
+            }
+
+            .board-write .cancel-btn:hover {
+                background-color: #7a7a7a;
+            }
+
+            @media (max-width: 768px) {
+                .board-write {
+                    width: 95%;
+                    padding: 20px;
+                }
+
+                .board-write .form-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .board-write .form-row label {
+                    width: auto;
+                    text-align: left;
+                    margin-bottom: 5px;
+                }
+            }
+
+            .form-row-inline {
+                display: flex;
+                align-items: center;
+                gap: 5%;
+                /* 두 항목 사이 간격 */
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            /* 작성자 40%, 게시판 종류 60% */
+            .form-row-inline .writer-box {
+                flex: 0 0 15%;
+            }
+
+            .form-row-inline .board-type-box {
+                flex: 0 0 20%;
+            }
+
+            /* 입력창/셀렉트 기본 스타일 통일 */
+            .form-row-inline input,
+            .form-row-inline select {
+                width: 100%;
+                border: 1px solid #cfd7e3;
+                border-radius: 6px;
+                padding: 9px 12px;
+                font-size: 15px;
+                transition: border-color 0.2s;
+            }
+
+            .form-row-inline input:focus,
+            .form-row-inline select:focus {
+                border-color: #0078ff;
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 120, 255, 0.25);
+            }
+
+            /* 반응형: 모바일에서는 세로 정렬 */
+            @media (max-width: 768px) {
+                .form-row-inline {
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+                .form-row-inline .writer-box,
+                .form-row-inline .board-type-box {
+                    flex: 1 1 auto;
+                    width: 100%;
+                }
+            }
+
+            .idCell{
+                background-color: #0078ff;
+                color: white;
+                font-weight: bold;
+                border: 1px solid #0078ff;
+            }
         </style>
     </head>
 
     <body>
-        <div id="app">
-            <!-- html 코드는 id가 app인 태그 안에서 작업 -->
-             <%@ include file="components/header.jsp" %>
-            <table>
-                <tr>
-                    <th>제목</th>
-                    <td><input v-model="title" class="input-title"></td>
-                </tr>
-                <tr>
-                    <th>작성자</th>
-                    <td>{{userId}}</td>
-                </tr>
+        <%@ include file="components/header.jsp" %>
+            <div id="app">
 
-                <tr>
-                    <th>게시글 종류</th>
-                    <td>
-                        <select v-model="type">
-                            <option value="N">::공지사항::</option>
-                            <option value="F">::자유게시판::</option>
-                            <option value="Q">::질문게시판::</option>
-                            <option value="SQ">::문의게시판</option>
-                    </td>
+                <div class="board-write">
+                    <div class="write-header">
+                        <h2>게시글 작성</h2>
+                    </div>
 
-                    </select>
-                </tr>
+                    <div class="form-row-inline">
+                        <div class="form-item writer-box">
+                            <input class="idCell" type="text" v-model="userId" disabled>
+                        </div>
 
-                <tr>
-                    <th>내용</th>
+                        <div class="form-item board-type-box">
+                            <select v-model="type">
+                                <option v-if="sessionStatus==='A'" value="N">공지사항</option>
+                                <option value="F">자유게시판</option>
+                                <option value="Q">질문게시판</option>
+                                <option value="SQ">문의게시판</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <td style="height: 300px; padding: 30px;">
-                        <!-- <textarea v-model="contents" cols="50" rows="20"></textarea> -->
+                    <div class="title-box">
+                        <input v-model="title" placeholder="제목을 입력해주세요.">
+                    </div>
+
+                    <div class="info-text">
+                        ※ 비속어, 허위사실, 저작권 위반 게시물은 삭제될 수 있습니다.
+                    </div>
+
+                    <div class="editor-wrapper">
                         <div id="editor"></div>
-                    </td>
+                    </div>
 
-                </tr>
-            </table>
-            <div class="button-container">
-                <a href="board-list.do"><button class="cancel-btn">이전</button></a>
-                <button @click="fnAdd">저장</button>
+                    <div class="button-area">
+                        <a href="board-list.do"><button class="cancel-btn">취소</button></a>
+                        <button @click="fnAdd">등록</button>
+                    </div>
+                </div>
+
+
             </div>
-        </div>
+            <%@ include file="components/footer.jsp" %>
     </body>
-   <%@ include file="components/footer.jsp" %>
 
     </html>
 
@@ -259,9 +468,9 @@ button:hover {
                     title: "",
                     userId: "${sessionId}",
                     contents: "",
-                    type: "N",
+                    type: "F",
                     sessionId: "${sessionId}",
-                    
+                    sessionStatus: "${sessionStatus}"
 
                 };
             },
@@ -309,7 +518,7 @@ button:hover {
                 // 파일 업로드
                 upload: function (form) {
                     var self = this;
-                    
+
                     $.ajax({
                         url: "/fileUpload.dox"
                         , type: "POST"

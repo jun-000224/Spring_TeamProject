@@ -141,16 +141,59 @@
       border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
     }
     #comment tr{
-      display:grid; grid-template-columns:160px 1fr auto auto auto auto; /* 마지막은 신고 */
-      align-items:center; border-bottom:1px solid var(--line);
+      display: grid;
+      grid-template-columns: 80px 1fr auto auto; /* 프로필 | 작성자/내용 | 수정 | 신고 */
+      grid-template-rows: 30px 30px;             /* 1행: 작성자줄 / 2행: 내용줄 */
+      /* column-gap: 10px; */
+      /* row-gap: 5px; */
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      /* padding: 10px 0; */
+      column-gap: 1px;
+      row-gap: 3px;
+      padding: 6px 3px;
     }
+    #comment th, #comment td {
+      padding: 8px 10px;
+    }
+
+    #comment td.profile {
+      grid-row: 1 / span 2; /* 프로필은 세로로 2행 모두 차지 */
+      grid-column: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #comment td.writer {
+      grid-column: 2;
+      grid-row: 1;
+      font-weight: bold;
+    }
+
+    #comment td.content {
+      grid-column: 2;
+      grid-row: 2;
+      color: #444;
+    }
+
+    #comment td.edit {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    #comment td.report {
+      grid-column: 4;
+      grid-row: 1;
+    }
+
     #comment tr:last-child{ border-bottom:0 }
     #comment th, #comment td{ padding:14px 16px; font-size:14px }
     #comment th:nth-child(1){ font-weight:800; color:#2b3441 }
     #comment th:nth-child(2){ font-weight:500; color:#2b3441 }
     #comment tr:hover{ background:#FAFCFF }
 
-    .comment-text{ line-height:1.6; word-break:break-word }
+    .comment-text{ line-height:1.6; word-break:break-word; text-align: left; }
     .comment-input{
       width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px;
       transition: box-shadow .18s ease, border-color .18s ease;
@@ -159,7 +202,7 @@
       outline:none; border-color:var(--brand); box-shadow:0 0 0 4px rgba(24,144,255,.12);
     }
 
-    .comment-actions .btn{ padding:8px 12px; font-size:13px }
+    .comment-actions .btn{ padding:5px 8px; font-size:13px }
 
     /* 신고 셀: 링크형, 흐리게 */
     .comment-report-cell{
@@ -205,41 +248,52 @@
     .modal textarea{ min-height:130px; resize:none; line-height:1.6 }
     .modal_actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px }
     /* 추천 버튼 */
-.like-btn {
-  border: none;
-  background: transparent;
-  font-size: 15px;
-  color: #9aa3af;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
-  transition: color 0.2s ease, transform 0.15s ease;
-}
-.like-btn:hover {
-  color: var(--brand);
-  transform: translateY(-1px);
-}
-.like-btn.active {
-  color: var(--brand);
-  cursor: default;
-}
-.like-btn:disabled {
-  opacity: 0.6;
-  cursor: default;
-  transform: none;
-}
+    .like-btn {
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      color: #9aa3af;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      transition: color 0.2s ease, transform 0.15s ease;
+    }
+    .like-btn:hover {
+      color: var(--brand);
+      transform: translateY(-1px);
+    }
+    .like-btn.active {
+      color: var(--brand);
+      cursor: default;
+    }
+    .like-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      transform: none;
+    }
     /* Responsive */
     @media (max-width: 900px){
       #comment tr{ grid-template-columns:120px 1fr auto auto auto }
       .comment-report-cell{ grid-column: -2/-1; text-align:left; padding-left:16px }
     }
+
+    .mt-12{
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .profileImg{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
+<%@ include file="components/header.jsp" %>
 <div id="app">
-  <%@ include file="components/header.jsp" %>
 
   <div class="wrap">
     <!-- 상단: 크럼브 + 제목 + 메타 + 신고(링크형, 옆에) -->
@@ -297,22 +351,29 @@
     <div class="comment-card">
       <table id="comment">
         <tr v-for="(item, index) in commentList" :key="item.commentNo">
-          <th>{{ item.userId }}</th>
+          <td class="profile">
+            <img v-if="item.storUrl != null" :src="item.storUrl" alt="" class="profileImg">
+            <img v-else src="/img/profile/default_profile.jpg" alt="" class="profileImg">
+          </td>
+          <td class="writer">
+            {{ item.userId }}
+            <span>
+              <span v-if="item.status == 'U'">🙂</span>
+              <span v-else-if="item.status == 'S'">✨</span>
+              <span v-else-if="item.status == 'A'">👑</span>
+              <span v-else>❓</span>
+            </span>
+          </td>
 
-          <th class="comment-text">
-            <span v-if="editIndex !== index">{{ item.contents }}</span>
-            <input v-else class="comment-input" type="text" v-model="item.contents" />
-          </th>
+          <!-- 수정 -->
+          <td class="edit comment-actions" v-if="item.userId == userId || sessionStatus == 'A'">
+            <button class="btn btn-ghost" v-if="editIndex !== index" @click="editIndex = index">수정</button>
+            <button class="btn btn-primary" v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
+          </td>
 
           <!-- 삭제 -->
           <td class="comment-actions" v-if="item.userId == userId || sessionStatus == 'A'">
             <button class="btn btn-ghost" @click="fncRemove(item.commentNo)">삭제</button>
-          </td>
-
-          <!-- 수정 -->
-          <td class="comment-actions" v-if="item.userId == userId || sessionStatus == 'A'">
-            <button class="btn btn-ghost" v-if="editIndex !== index" @click="editIndex = index">수정</button>
-            <button class="btn btn-primary" v-else @click="fncUpdate(item.commentNo, item.contents)">완료</button>
           </td>
 
           <!-- 채택 -->
@@ -321,13 +382,14 @@
             <button
               v-else-if="info.userId == userId && item.userId !== userId && !adoptedExists && info.type == 'Q '"
               class="btn btn-success"
-              @click="fnAdopt(item.commentNo, item.userId)">
+              @click="fnAdopt(item.commentNo, item.userId)"
+              style="padding: 5px 8px;">
               채택하기
             </button>
           </td>
 
           <!-- 신고 (링크형, 흐리게) -->
-          <td class="comment-report-cell" v-if="item.userId != userId">
+          <td class="report comment-report-cell" v-if="item.userId != userId">
             <button
               v-if="!commentReportMap[item.commentNo]"
               class="subtle-action"
@@ -336,8 +398,16 @@
             </button>
             <button v-else class="subtle-action" disabled>신고 완료</button>
           </td>
+
+          <!-- 댓글 내용 -->
+          <td class="content comment-text">
+            <span v-if="editIndex !== index">{{ item.contents }}</span>
+            <input v-else class="comment-input" type="text" v-model="item.contents" />
+          </td>
         </tr>
       </table>
+
+      
     </div>
 
     <!-- 댓글 작성 -->
@@ -402,6 +472,7 @@
         userId: "${sessionId}",
         status : "${sessionStatus}",
         sessionStatus : window.sessionData ? window.sessionData.status : "${sessionStatus}",
+        gradeLabel : window.sessionData.gradeLabel,
 
         contents: "",
         editIndex: -1,
@@ -436,6 +507,7 @@
           dataType: "json",
           data: { boardNo: self.boardNo, userId: self.userId },
           success(data){
+            console.log(data);
             self.info = data.info;
             self.commentList = data.commentList.map(c => ({ ...c, reported: c.reported === true }));
             self.commentReportMap = {};
@@ -471,12 +543,21 @@
         pageChange("board-edit.do", { boardNo: self.boardNo });
       },
       fncRemove(commentNo){
+        let self = this;
         if(!confirm("정말로 삭제하시겠습니까?")) return;
         $.ajax({
-          url:"/view-cDelete.dox", type:"POST", dataType:"json", data:{ commentNo },
-          success(data){
-            if(data.result==="success"){ alert("삭제되었습니다!"); this.fnInfo(); }
-            else{ alert("오류발생"); }
+          url:"/view-cDelete.dox", 
+          type:"POST", 
+          dataType:"json", 
+          data:{ commentNo },
+          success(data) {
+            if(data.result === "success"){
+               alert("삭제되었습니다!"); 
+               self.fnInfo(); 
+              }
+            else{ 
+              alert("오류발생"); 
+            }
           }
         });
       },
