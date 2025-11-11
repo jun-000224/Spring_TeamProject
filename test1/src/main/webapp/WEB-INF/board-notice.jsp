@@ -317,27 +317,26 @@
           <button @click="fnList">검색</button>
         </div>
 
-        <div class="filter-row">
-          <select v-model="pageSize" @change="fnList" title="페이지 크기">
-            <option value="5">5개씩</option>
-            <option value="10">10개씩</option>
-            <option value="15">15개씩</option>
-          </select>
-
-          <select v-model="type" @change="fnList" title="분류">
-            <option value="">전체 분류</option>
-            <option value="N">공지사항</option>
-            <option value="F">자유게시판</option>
-            <option value="Q">질문게시판</option>
-            <option value="SQ">문의게시판</option>
-          </select>
-
-          <select v-model="order" @change="fnList" title="정렬">
-            <option value="num">번호순</option>
-            <!-- <option value="title">제목순</option> -->
-            <option value="time">최신순</option>
-            <option value="cnt">조회수</option>
-          </select>
+        <div hidden>
+            <div class="filter-row">
+              <select v-model="pageSize" @change="fnList" title="페이지 크기">
+                <option value="5">5개씩</option>
+                <option value="10">10개씩</option>
+                <option value="15">15개씩</option>
+              </select>
+              <select v-model="type" @change="fnList" title="분류">
+                <option value="">전체 분류</option>
+                <option value="N">공지사항</option>
+                <option value="F">자유게시판</option>
+                <option value="Q">질문게시판</option>
+                <option value="SQ">문의게시판</option>
+              </select>
+              <select v-model="order" @change="fnList" title="정렬">
+                <option value="num">번호순</option>
+                <option value="title">제목순</option>
+                <option value="cnt">조회수</option>
+              </select>
+            </div>
         </div>
       </section>
 
@@ -388,7 +387,7 @@
       </div>
 
       <!-- 글쓰기 버튼 -->
-      <div class="write-wrap">
+      <div class="write-wrap" v-if="sessionStatus==='A'">
         <a href="board-add.do" class="write-button-area button">
           <button class="write-btn" type="button">글쓰기</button>
         </a>
@@ -404,10 +403,11 @@
           return {
             list: [],
             searchOption: "all",
-            type: "",
-            order: "time",
+            type: "N",
+            order: "num",
             keyword: "",
             sessionId: "${sessionId}",
+            sessionStatus : "${sessionStatus}",
             page: 1,
             pageSize: 5,
             pageGroupSize: 10,

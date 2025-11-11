@@ -41,7 +41,11 @@
 
                     <ul id="logoutMenu" class="logout-dropdown" style="display: none;">
                         <li onclick="goToMyPage()">마이페이지</li>
-                        <li>내 포인트 : <%= userPoint %> P</li>
+                        <li>
+                            <a href="/point/myPoint.do">
+                                내 포인트 : <%= userPoint %> P
+                            </a>
+                        </li>
                         <li onclick="logout()">로그아웃</li>
                     </ul>
                 </div>

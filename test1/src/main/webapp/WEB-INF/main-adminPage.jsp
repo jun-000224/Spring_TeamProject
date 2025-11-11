@@ -422,8 +422,8 @@
     </head>
 
     <body>
+    <%@ include file="components/header.jsp" %>
         <div id="adminApp">
-            <%@ include file="components/header.jsp" %>
 
                 <div class="admin-info">
                     <p><strong>관리자:</strong> {{ name }} ({{ nickname }})</p>
