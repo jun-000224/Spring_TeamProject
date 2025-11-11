@@ -6,7 +6,8 @@
 	<select id="BoardList" parameterType="hashmap" resultType="com.example.test1.model.Board">
 		SELECT 
 		    B.*, 
-		    DECODE(TO_CHAR(CDATETIME, 'YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(CDATETIME,'HH24:MI:SS'),TO_CHAR(CDATETIME, 'YYYY-MM-DD')) AS CDATE, 
+		    DECODE(TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul','YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul',
+            'HH24:MI:SS'),TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul','YYYY-MM-DD')) AS CDATE, 
 		    NVL(CCNT, 0) AS COMMENTCNT
 		FROM TBL_BOARD B
 		LEFT JOIN (
@@ -17,7 +18,8 @@
 		WHERE 1=1
 		
 		<if test="type != '' and type != null">
-    	AND TYPE LIKE '%' || #{type} || '%'
+    	<!--AND TYPE LIKE '%' || #{type} || '%'-->
+    	AND TRIM(TYPE) = #{type}
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
@@ -58,7 +60,8 @@
 		
 		
 		<if test="type != '' and type != null">
-    	AND TYPE LIKE '%' || #{type} || '%'
+    	<!--AND TYPE LIKE '%' || #{type} || '%'-->
+    	AND TRIM(TYPE) = #{type}
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
@@ -86,9 +89,15 @@
 	</select>
 	
 	<select id="selectCommentList" parameterType="hashmap" resultType="com.example.test1.model.Comment">
-		SELECT C.*, C.NICKNAME
+		SELECT C.*, C.NICKNAME, T.TITLE, T.STOR_URL, STATUS
 		FROM TBL_BOARD B
 		INNER JOIN TBL_COMMENT C ON B.BOARDNO = C.BOARDNO
+		LEFT JOIN (
+		    SELECT *
+		    FROM MEDIA
+		    WHERE STOR_URL LIKE '%_profile%'
+		)T ON C.USER_ID = T.USER_ID
+		INNER JOIN USERS U ON C.USER_ID = U.USER_ID
 		WHERE C.BOARDNO = #{boardNo}
 		ORDER BY C.CDATETIME ASC
 	</select>
@@ -156,17 +165,23 @@
 	</select>
 	<!--채택하기-->
 	<insert id="givePoint" parameterType="hashmap">
-	INSERT INTO POINT
-	VALUES(#{userId},NVL((
-        SELECT POINT_TOTAL + POINT_GET - NVL(POINT_OUT, 0)
-        FROM POINT
-        WHERE USER_ID = #{userId}
-          AND POINT_DATE = (
-              SELECT MAX(POINT_DATE)
-              FROM POINT
-              WHERE USER_ID = #{userId}
-          )
-    ), 0) + 100 , 100, NULL, SYSDATE)
+	INSERT INTO POINT (USER_ID, POINT_TOTAL, POINT_GET, POINT_OUT, POINT_DATE)
+	 SELECT 
+        #{userId},
+        NVL((
+            SELECT POINT_TOTAL
+            FROM POINT
+            WHERE USER_ID = #{userId}
+              AND POINT_DATE = (
+                  SELECT MAX(POINT_DATE)
+                  FROM POINT
+                  WHERE USER_ID = #{userId}
+              )
+        ), 0) + 100,   
+        100,           
+        NULL,          
+        SYSDATE
+        FROM DUAL
 	</insert>
 	
 	<!-- 댓글 채택 상태 업데이트 -->

@@ -276,7 +276,8 @@
                         <div class="findBlock">
                             <label class="label">아이디</label>
                             <template v-if="!certifiFlg">
-                                <input type="text" class="input" v-model="id" @input="id = id.replace(/[^a-z0-9]/g,'')">
+                                <input type="text" class="input" v-model="id" @input="id = id.replace(/[^a-z0-9]/g,'')"
+                                placeholder="아이디를 입력하세요" autofocus="true">
                             </template>
                             <template v-else>
                                 {{ id }}
@@ -498,11 +499,14 @@
 
                     /* 문자 인증 전송 */
                     fnSms() {
+                        let param = {
+                            phone : self.phone1+self.phone2+self.phone3
+                        };
                         $.ajax({
                             url: "/send-one",
                             type: "POST",
                             dataType: "json",
-                            data: {},
+                            data: param,
                             success: (data) => {
                                 if (data.res && data.res.statusCode == "2000") {
                                     alert("문자 전송 완료");

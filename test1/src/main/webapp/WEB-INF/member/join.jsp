@@ -269,7 +269,8 @@
 
             <div class="field">
               <label class="label">닉네임</label>
-              <input type="text" class="input" v-model="nickname" placeholder="미입력 시 이름으로 설정됩니다">
+              <input type="text" class="input" v-model="nickname" placeholder="미입력 시 이름으로 설정됩니다"
+              @input="nickname = nickname.replace(/\s+/g, '')">
             </div>
           </div>
 
@@ -317,7 +318,8 @@
             
               <label class="label">주소<span class="req">*</span></label>
               <div class="row-inline">
-                <input type="text" class="input grow" v-model="addr" placeholder="주소 검색으로 입력" disabled>
+                <input v-if="addr===''" type="text" class="input grow" v-model="addr" placeholder="주소 검색으로 입력" disabled>
+                <input v-else type="text" class="input grow" v-model="addr" disabled style="background-color: rgb(136, 136, 136); color: white; font-weight: bold;" >
                 <button type="button" class="btn" @click="fnAddr">검색</button>
               </div>
             </div>

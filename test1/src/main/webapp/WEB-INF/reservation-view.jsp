@@ -92,6 +92,15 @@
     <div class="panel">
       <h3>예산 현황</h3>
       <div class="budget-total"><strong>총 예산:</strong> {{ formatPrice(reservation.price) }}원</div>
+      <div> 
+        사용 가능 포인트 : {{info.totalPoint}}
+      </div>
+      <div>
+        포인트 사용량 : 
+        <input type="number" v-model="usingPoint" :max="info.totalPoint" min="0" @input="limitPoint" style="width: 80px; text-align: right; height: 20px;">
+        <br>
+        <br>
+      </div>
       <div class="budget-status-wrap">
         <div class="budget-status-item"><span class="label">기타 예산</span><span class="amount">{{ formatPrice(reservation.etcBudget) }}원</span></div>
         <div class="budget-status-item"><span class="label">관광 및 활동 예산</span><span class="amount">{{ formatPrice(reservation.actBudget) }}원</span></div>
@@ -177,7 +186,9 @@
           { code: 'UNIQUE', label: '이색적인' }, { code: 'ADVENTURE', label: '모험' },
           { code: 'QUIET', label: '조용한' }
         ],
-        routePolyline: null, routeSummary: null, markers: []
+        routePolyline: null, routeSummary: null, markers: [],
+        info:{},
+        usingPoint: 0
       };
     },
     computed: {
@@ -250,9 +261,13 @@
           if(!(window.IMP && typeof window.IMP.request_pay==='function')){ alert('결제 모듈 초기화에 실패했습니다.'); return; }
           const self=this;
           window.IMP.request_pay({
-            pg:"html5_inicis", pay_method:"card",
+            pg:"html5_inicis", 
+            pay_method:"card",
             merchant_uid:"merchant_"+new Date().getTime(),
-            name:"여행 결제 (숙박+식비)", amount:1, buyer_tel:"010-0000-0000"
+            name:"여행 결제 (숙박+식비)", 
+            amount:payAmount - this.usingPoint, 
+            // amount:1,
+            buyer_tel:"010-0000-0000"
           }, async function(rsp){
             if(rsp.success){
               try{
@@ -284,7 +299,37 @@
         const grouped={}; sorted.forEach(p=>{ const d=this.formatDate(p.reservDate); if(!grouped[d]) grouped[d]=[]; grouped[d].push(p); });
         this.itineraryByDate=grouped; if(Object.keys(grouped).length>0) this.activeDate=Object.keys(grouped)[0];
       },
-      setActiveDate(d){ this.activeDate=d; this.clearRoute(); }
+      setActiveDate(d){ this.activeDate=d; this.clearRoute(); },
+
+      fnMemberPoint(){
+        let self = this;
+          let param = {
+            userId : self.userId
+          };
+          $.ajax({
+              url: "/point/recent.dox",
+              dataType: "json",
+              type: "POST",
+              data: param,
+              success: function (data) {
+                // console.log(data);
+                self.info = data.info;
+              }
+          });
+      },
+
+      limitPoint(){
+        let self = this;
+        self.usingPoint = Math.floor(self.usingPoint);
+
+        if(self.usingPoint > self.info.totalPoint){
+          self.usingPoint = self.info.totalPoint;
+        }
+        
+        if(self.usingPoint < 0 || isNaN(self.usingPoint)){
+          self.usingPoint = 0;
+        }
+      }
     },
     mounted(){
       this.reservation=JSON.parse('<c:out value="${reservationJson}" escapeXml="false" />');
@@ -299,6 +344,8 @@
       const validMapPois=this.poiList.filter(p=>p.mapY!=null && p.mapX!=null && !isNaN(p.mapY) && !isNaN(p.mapX));
       if(validMapPois.length>0) this.initializeMap(validMapPois);
       else document.getElementById('map-container').innerText='DB에 저장된 좌표 정보가 없습니다.';
+
+      this.fnMemberPoint();
     }
   });
 
