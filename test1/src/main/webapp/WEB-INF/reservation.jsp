@@ -49,9 +49,9 @@
   </head>
 
   <body>
+  <%@ include file="components/header.jsp" %>
     <div id="app">
 
-      <%@ include file="components/header.jsp" %>
         <div class="wrap" style="padding-bottom: 80px;">
           <h1 class="page-title2">예약하기</h1>
           <div class="grid two-col">

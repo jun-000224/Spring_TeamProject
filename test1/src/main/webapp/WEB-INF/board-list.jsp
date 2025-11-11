@@ -443,6 +443,8 @@
               pageSize: self.pageSize,
               page: (self.page - 1) * self.pageSize,
             };
+            console.log(self.keyword);
+            
             $.ajax({
               url: "board-list.dox",
               dataType: "json",
