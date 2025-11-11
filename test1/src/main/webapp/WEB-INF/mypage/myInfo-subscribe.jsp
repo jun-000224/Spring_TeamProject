@@ -123,7 +123,6 @@
             // 함수(메소드) - (key : function())
             fnSub: function () {
                 let self = this;
-                self.fnStatusUp();
                 IMP.request_pay({
 				    pg: "html5_inicis",
 				    pay_method: "card",

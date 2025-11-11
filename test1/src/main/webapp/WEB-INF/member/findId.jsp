@@ -257,7 +257,8 @@
                         <div class="findBlock">
                             <label class="label">이름</label>
                             <input type="text" class="input" v-model="name" placeholder="이름을 입력하세요" @input="onNameInput"
-                                @compositionstart="isComposing = true" @compositionend="onCompositionEnd">
+                                @compositionstart="isComposing = true" @compositionend="onCompositionEnd"
+                                autofocus="true">
                         </div>
 
                         <!-- 전화번호 -->
@@ -399,7 +400,9 @@
                     },
 
                     fnSms() {
-                        var param = {};
+                        var param = {
+                            phone : self.phone1+self.phone2+self.phone3
+                        };
                         $.ajax({
                             url: "/send-one",
                             dataType: "json",

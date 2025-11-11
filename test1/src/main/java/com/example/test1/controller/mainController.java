@@ -47,7 +47,7 @@ public class mainController {
 	@RequestMapping("/main-Notice.do") 
     public String Notice(Model model) throws Exception{ 
 		
-        return "main-Notice";
+        return "/board-notice";
     }	
 	
 //  --------------- 커뮤니티	
