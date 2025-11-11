@@ -165,17 +165,23 @@
 	</select>
 	<!--채택하기-->
 	<insert id="givePoint" parameterType="hashmap">
-	INSERT INTO POINT
-	VALUES(#{userId},NVL((
-        SELECT POINT_TOTAL + POINT_GET - NVL(POINT_OUT, 0)
-        FROM POINT
-        WHERE USER_ID = #{userId}
-          AND POINT_DATE = (
-              SELECT MAX(POINT_DATE)
-              FROM POINT
-              WHERE USER_ID = #{userId}
-          )
-    ), 0) + 100 , 100, NULL, SYSDATE)
+	INSERT INTO POINT (USER_ID, POINT_TOTAL, POINT_GET, POINT_OUT, POINT_DATE)
+	 SELECT 
+        #{userId},
+        NVL((
+            SELECT POINT_TOTAL
+            FROM POINT
+            WHERE USER_ID = #{userId}
+              AND POINT_DATE = (
+                  SELECT MAX(POINT_DATE)
+                  FROM POINT
+                  WHERE USER_ID = #{userId}
+              )
+        ), 0) + 100,   
+        100,           
+        NULL,          
+        SYSDATE
+        FROM DUAL
 	</insert>
 	
 	<!-- 댓글 채택 상태 업데이트 -->
