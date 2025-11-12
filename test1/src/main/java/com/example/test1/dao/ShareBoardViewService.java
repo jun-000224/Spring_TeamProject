@@ -263,8 +263,15 @@ public class ShareBoardViewService {
         return getTag(item, "firstimage");
     }   
 
-   
-    
+    public HashMap<String, Object> getResActive(HashMap<String, Object> map) {
+    	HashMap<String, Object> resultMap = new HashMap<String, Object>();
+    	List<Share> List = ShareBoardMapper.shareActive(map);
+    	resultMap.put("list", List);
+    	
+    	 Map<Integer, List<HashMap<String, Object>>> allInfoMap = fetchAllInfo(map);
+    	  resultMap.put("detail", allInfoMap);
+    	return resultMap;
+    }    
 
 	
 }

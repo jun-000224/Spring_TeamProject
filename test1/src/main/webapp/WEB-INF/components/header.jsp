@@ -63,7 +63,7 @@
         status: "<%= userStatus %>",
         nickname: "<%= userNickname %>",
         name: "<%= userName %>",
-        point: "<%= userPoint != null ? userPoint : 0 %>"
+        point: "<%= userPoint != null ? userPoint : 0 %>",
     };
     
     if(window.sessionData.id) {

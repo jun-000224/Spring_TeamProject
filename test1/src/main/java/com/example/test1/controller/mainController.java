@@ -59,10 +59,11 @@ public class mainController {
 	
 //  --------------- 여행하기	
 	@RequestMapping("/reservation.do") 
-    public String reservation(Model model) throws Exception{ 
-		
+    public String reservation(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
+		request.setAttribute("resNum", map.get("resNum"));
         return "reservation";
     }	
+	
 	
     @RequestMapping("/logout.do")
     public String logout(HttpSession session) {

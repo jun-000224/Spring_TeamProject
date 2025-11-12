@@ -18,6 +18,10 @@
 	    t.RESERV_DATE
 	</select>
 
+	<select id="shareActive" parameterType="hashmap" resultType="com.example.test1.model.Share">
+		SELECT R.*, TO_CHAR(START_DATE,'YYYY-MM-DD') AS sDate ,TO_CHAR(END_DATE,'YYYY-MM-DD') AS eDate FROM RESERVATION R
+		WHERE RES_NUM = ${resNum}
+	</select>
 </mapper>
 
 

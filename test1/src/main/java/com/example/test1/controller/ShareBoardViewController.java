@@ -66,4 +66,10 @@ public class ShareBoardViewController {
         return map;
     }
    
+    @GetMapping(value = "/active.dox", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HashMap<String, Object> getActive(@RequestParam Map<String,Object> params) {
+        return ShareBoardViewService.getResActive(new HashMap<>(params));
+    }
+    
 }

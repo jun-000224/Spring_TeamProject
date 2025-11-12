@@ -14,4 +14,11 @@ public class Share {
 	private String homepage;
 	private Double rating;
 	private String content;
+	
+	private String resNum;
+	private int price;
+	private String themnum;
+	private int areaNum;
+	private String sDate;
+	private String eDate;	
 }
