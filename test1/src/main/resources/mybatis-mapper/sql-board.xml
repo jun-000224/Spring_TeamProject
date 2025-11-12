@@ -84,12 +84,16 @@
 	
 	<select id="selectBoard" parameterType="hashmap" resultType="com.example.test1.model.Board">
 		SELECT *
-		FROM TBL_BOARD
+		FROM TBL_BOARD B
+		INNER JOIN (
+			SELECT *
+			FROM USERS
+		) U ON B.USER_ID = U.USER_ID
 		WHERE BOARDNO = #{boardNo}
 	</select>
 	
 	<select id="selectCommentList" parameterType="hashmap" resultType="com.example.test1.model.Comment">
-		SELECT C.*, C.NICKNAME, T.TITLE, T.STOR_URL, STATUS
+		SELECT C.*, U.NICKNAME AS USERNICK, T.TITLE, T.STOR_URL, STATUS
 		FROM TBL_BOARD B
 		INNER JOIN TBL_COMMENT C ON B.BOARDNO = C.BOARDNO
 		LEFT JOIN (
@@ -97,7 +101,10 @@
 		    FROM MEDIA
 		    WHERE STOR_URL LIKE '%_profile%'
 		)T ON C.USER_ID = T.USER_ID
-		INNER JOIN USERS U ON C.USER_ID = U.USER_ID
+		INNER JOIN (
+			SELECT *
+			FROM USERS
+		) U ON C.USER_ID = U.USER_ID
 		WHERE C.BOARDNO = #{boardNo}
 		ORDER BY C.CDATETIME ASC
 	</select>

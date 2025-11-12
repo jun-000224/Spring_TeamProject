@@ -17,7 +17,7 @@ public class Board {
 	private int commentNo;
 	private String cdate;
 	
-	
+	private String nickname;
 	
 	private String fileNo;
 	private String filePath;
