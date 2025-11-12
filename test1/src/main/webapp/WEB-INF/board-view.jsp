@@ -328,7 +328,7 @@
         </tr>
         <tr>
           <th>작성자</th>
-          <td>{{ info.userId }}</td>
+          <td>{{ info.nickname }}</td>
         </tr>
         <tr>
           <th>조회수</th>
@@ -356,7 +356,7 @@
             <img v-else src="/img/profile/default_profile.jpg" alt="" class="profileImg">
           </td>
           <td class="writer">
-            {{ item.userId }}
+            {{ item.userNick }}
             <span>
               <span v-if="item.status == 'U'">🙂</span>
               <span v-else-if="item.status == 'S'">✨</span>
@@ -507,7 +507,7 @@
           dataType: "json",
           data: { boardNo: self.boardNo, userId: self.userId },
           success(data){
-            //console.log(data);
+            // console.log(data);
             self.info = data.info;
             self.commentList = data.commentList.map(c => ({ ...c, reported: c.reported === true }));
             self.commentReportMap = {};

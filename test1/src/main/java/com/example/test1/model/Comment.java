@@ -12,7 +12,7 @@ public class Comment {
 	private String adopt;
 	private String cdateTime;
 	private String udateTime;
-	private String nickName;
+	private String userNick;
 	private boolean reported;
 	
 	private String title;
