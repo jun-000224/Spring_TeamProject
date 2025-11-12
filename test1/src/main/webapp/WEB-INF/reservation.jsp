@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true" %>
+
+
   <!DOCTYPE html>
   <html lang="ko">
 
@@ -387,7 +389,7 @@
               endDate: null,
               selectionState: 'start',
               showBoardModal: false,
-              boardUrl: ctx + '/board-list.do',
+              boardUrl: ctx + '/modalBoardList.do',
               mapInstance: null,
               geocoder: null,
               markers: [],
@@ -402,7 +404,10 @@
               draggedDate: null,
               draggedIndex: null,
               dragOverDate: null,
-              dragOverIndex: null,
+              dragOverIndex: null
+              ,
+
+              sessionId: "<%= userId %>"
             }
           },
 
@@ -1010,6 +1015,14 @@
           },
 
           async mounted() {
+            let self = this;
+            if(self.sessionId == "" || self.sessionId=="null"){
+              alert("로그인 후 이용해주세요.");
+              location.href="/member/login.do";
+              return;
+            }
+            // alert(window.sessionData.id);
+
             await this.loadSido();
             this.initMap();
           }
