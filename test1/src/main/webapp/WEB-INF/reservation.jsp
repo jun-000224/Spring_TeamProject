@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="true" %>
 
-
+<%
+    String resNum = String.valueOf(request.getAttribute("resNum"));
+%>
   <!DOCTYPE html>
   <html lang="ko">
 
@@ -64,7 +66,7 @@
                 <button v-for="item in themeOptions" :key="item.code" type="button"
                   :class="['theme-btn', { active: selectedThemes.includes(item.code) }]"
                   @click="toggleTheme(item.code)">
-                  {{ item.label }}
+                    {{ item.label }}
                 </button>
               </div>
               <div class="chips" v-if="selectedThemes.length">
@@ -404,10 +406,17 @@
               draggedDate: null,
               draggedIndex: null,
               dragOverDate: null,
-              dragOverIndex: null
-              ,
+              dragOverIndex: null,
 
+              //활용하기 
+              resNum:"<%= resNum %>",
+              list: {},
+              detail:{},
+              positionsByDay: {},
+              selectedDay: 1,
+              themes:"",
               sessionId: "<%= userId %>"
+    
             }
           },
 
@@ -1010,7 +1019,49 @@
             },
             isDragOver(date, index) {
               return this.dragOverDate === date && this.dragOverIndex === index;
-            }
+            },
+            //활용하기
+
+             fninfo() {
+                let self = this;
+                $.ajax({
+                    url: "/active.dox",
+                    type: "GET",
+                    data: { resNum: self.resNum },
+                    success(data) {
+                      console.log(data);
+                        self.list = data.list[0];
+                        self.detail = data.detail;
+
+                        self.themes = data.list[0].themnum;
+                        console.log(self.list);
+                        self.selectedThemes = self.themes.split(/[,/]/);
+                        self.currentSido = data.list[0].areaNum;
+                        self.startDate = data.list[0].sdate;
+                        self.endDate = data.list[0].edate;
+                        self.budget = data.list[0].price;
+                        const days = Object.keys(data)
+                            .map((k) => parseInt(k))
+                            .sort((a, b) => a - b);
+                        for (let day of days) {
+                            self.positionsByDay[day] = data[day].map((item) => ({
+                                title: item.title,
+                                lat: parseFloat(item.mapy),
+                                lng: parseFloat(item.mapx),
+                                dayNum: day,
+                                reserv_date: item.reserv_date,
+                                addr1: item.addr1,
+                                contentId: item.contentid,
+                                day: item.day,
+                            }));
+                            //console.log(data);
+                            
+                        }
+                        self.selectedDay = days[0];
+                        //console.log(self.selectedDay);
+                    },
+                });
+            },
 
           },
 
@@ -1021,8 +1072,9 @@
               location.href="/member/login.do";
               return;
             }
+            
             // alert(window.sessionData.id);
-
+            self.fninfo();
             await this.loadSido();
             this.initMap();
           }

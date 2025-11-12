@@ -415,6 +415,7 @@
                                 </div>
 
                                 <div class="card-footer">
+                                    <button @click.stop="fnActive(item.resNum)">활용하기</button>
                                     <button @click.stop="fnDetail(item.resNum)">상세보기</button>
                                 </div>
                             </div>
@@ -565,6 +566,10 @@
                     let self = this;
                     pageChange("/myReservation.do", {});
                 },
+                fnActive(resNum){
+                    let self=this;
+                    pageChange("/reservation.do", {resNum:resNum});
+                }
             },
             mounted() {
                 let self = this;
