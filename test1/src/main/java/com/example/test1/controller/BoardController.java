@@ -30,6 +30,11 @@ public class BoardController {
 
         return "/board-list";
     }
+	@RequestMapping("/modalBoardList.do") 
+    public String modalBoardList(Model model) throws Exception{ 
+
+        return "/board-list-modal";
+    }
 	@RequestMapping("/board-view.do") 
 	
     public String view(HttpServletRequest request, Model model, @RequestParam HashMap<String, Object> map) throws Exception{ 
