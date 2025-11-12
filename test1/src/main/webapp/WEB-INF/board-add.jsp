@@ -505,7 +505,7 @@
                                     alert("제목을 적어주세요");
                                 } else {
                                     alert("등록되었습니다.");
-                                    console.log(data);
+                                    //console.log(data);
                                     location.href = "board-list.do";
                                 }
 
@@ -526,7 +526,7 @@
                         , contentType: false
                         , data: form
                         , success: function (data) {
-                            console.log(data);
+                            //console.log(data);
                         }
                     });
                 }

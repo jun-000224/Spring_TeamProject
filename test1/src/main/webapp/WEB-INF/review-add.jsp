@@ -367,7 +367,7 @@ const app = Vue.createApp({
             }
             
           }
-          console.log(data);
+          //console.log(data);
           self.selectedDay = days[0];
             const firstDayPois = self.positionsByDay[self.selectedDay];
            

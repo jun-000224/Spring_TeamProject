@@ -614,7 +614,7 @@
                 paginatedPosts() {
                     const start = (this.currentPage - 1) * this.itemsPerPage;
                     const paginated = this.filteredPosts.slice(start, start + this.itemsPerPage);
-                    console.log(" 페이지 게시글:", paginated);
+                    //console.log(" 페이지 게시글:", paginated);
                     return paginated;
                 },
                 paginatedComments() {
@@ -657,7 +657,7 @@
                         data: { userId: this.userId },
                         dataType: 'json',
                         success: (res) => {
-                            console.log(" 로그인한 사용자 상태:", this.userStatus);
+                            //console.log(" 로그인한 사용자 상태:", this.userStatus);
                             this.userStatus = res.status;
                         }
                     });
@@ -693,8 +693,8 @@
                         );
                     }
 
-                    console.log(" 게시판 타입:", type);
-                    console.log(" 게시글:", this.filteredPosts);
+                    //console.log(" 게시판 타입:", type);
+                    //console.log(" 게시글:", this.filteredPosts);
                     this.currentPage = 1;
                 }
                 ,
@@ -715,10 +715,10 @@
                         success: (res) => {
                             this.myPosts = res.posts;
                             this.userStatus = res.status;
-                            console.log(" userStatus:", this.userStatus);
+                            //console.log(" userStatus:", this.userStatus);
                             this.filteredPosts = res.posts; // 전체 게시판 초기화
-                            console.log(" myPosts:", this.myPosts);
-                            console.log(" filteredPosts:", this.filteredPosts);
+                            //console.log(" myPosts:", this.myPosts);
+                            //console.log(" filteredPosts:", this.filteredPosts);
                             this.filterPostsByType();
                         },
                         error: (err) => {
@@ -811,11 +811,11 @@
                 },
                 deleteItem(item) {
                     if (this.modalType === 'post') {
-                        console.log("🧪 삭제할 게시글 번호:", item.BOARDNO);
+                        //console.log("🧪 삭제할 게시글 번호:", item.BOARDNO);
 
                         this.deletePost(item.BOARDNO);
                     } else if (this.modalType === 'comment') {
-                        console.log("🧪 삭제할 댓글 번호:", item.COMMENTNO);
+                        //console.log("🧪 삭제할 댓글 번호:", item.COMMENTNO);
                         this.deleteComment(item.COMMENTNO);
                     }
                 },
@@ -994,7 +994,7 @@
                     dataType: 'json',
                     success(res) {
 
-                        console.log(" 답글 데이터:", res.comments);
+                        //console.log(" 답글 데이터:", res.comments);
                         self.myComments = res.comments;
                     }
                 });
@@ -1005,7 +1005,7 @@
                     data: { userId: self.userId },
                     dataType: 'json',
                     success(res) {
-                        console.log(" 게시글 데이터:", res.posts);
+                        //console.log(" 게시글 데이터:", res.posts);
                         self.myPosts = res.posts;
                     },
                     error(err) {

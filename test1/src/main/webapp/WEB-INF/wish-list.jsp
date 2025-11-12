@@ -501,11 +501,11 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.list = data.list;
                         self.totalPages = Math.ceil(data.cnt / self.pageSize);
                         let group = Math.floor((self.page - 1) / self.pageGroupSize);
-                        console.log(data);
+                        //console.log(data);
                         
 
                         self.pageGroupStart = group * self.pageGroupSize + 1;
@@ -524,7 +524,7 @@
                     },
                     success: function (data) {
                         self.thumbnailMap = data.list;
-                        console.log();
+                        //console.log();
                     },
                 });
             },
@@ -545,7 +545,7 @@
                         self.fnList();
                     },
                 });
-                console.log(item);
+                //console.log(item);
             },
             fnDetail(item) {
                 // 상세 페이지 이동 (URL은 프로젝트에 맞게 수정)
@@ -557,7 +557,7 @@
             fnchange(num) {
                 let self = this;
                 self.page = num;
-                console.log(self.page);
+                //console.log(self.page);
 
                 self.fnList();
             },

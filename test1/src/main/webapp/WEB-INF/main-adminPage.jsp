@@ -1086,7 +1086,7 @@
                         dataType: "json",
                         data: { boardNo: boardNo },
                         success: (res) => {
-                            console.log("댓글 응답:", res.comments);
+                            //console.log("댓글 응답:", res.comments);
                             this.selectedBoard = res.board;
                             this.boardComments = res.comments || [];
                             this.selectedReport = null; // 신고 상세 닫기
@@ -1110,7 +1110,7 @@
                         url: '/user-list.dox',
                         method: 'GET',
                         success: (res) => {
-                            console.log("유저 응답:", res);
+                            //console.log("유저 응답:", res);
 
 
                             const list = res.userList || res.users || [];
@@ -1313,7 +1313,7 @@
                         type: "GET",
                         dataType: "json",
                         success: function (res) {
-                            console.log("불량 유저 응답:", res);
+                            //console.log("불량 유저 응답:", res);
                             self.badUsers = res.badUsers || [];
                         },
                         error: function () {
@@ -1377,7 +1377,7 @@
 
                             this.reportList = res.reportList;
                             this.reportList.forEach((r, i) => {
-                                console.log(`신고 ${i}번 → 신고자:`, r.report_user_id || r.REPORT_USER_ID);
+                                //console.log(`신고 ${i}번 → 신고자:`, r.report_user_id || r.REPORT_USER_ID);
                             });
                         },
                         error: () => {

@@ -134,7 +134,7 @@
 			   	      if (rsp.success) {
 			   	        // 결제 성공 시
 						// alert("성공");
-						console.log(rsp);
+						//console.log(rsp);
                         // self.imp_uid = rsp.imp_uid;
                         // self.paid_amount = rsp.paid_amount;
                         // self.fnPayHistory();
@@ -158,8 +158,8 @@
                     //같은 도메인이 아니면 실행 X
                 self.userId = event.data.userId;
                 self.status = event.data.status;
-                console.log("받은 세션:", self.userId);
-                console.log(self.status);
+                //console.log("받은 세션:", self.userId);
+                //console.log(self.status);
             },
 
             fnCancel : function () {
@@ -206,7 +206,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                     }
                 });
             }

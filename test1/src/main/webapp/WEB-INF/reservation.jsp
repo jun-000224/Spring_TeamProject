@@ -634,7 +634,7 @@
               };
 
               if (el) el.textContent = '===== POI 조회 중... =====';
-              console.log('POI 생성 요청 파라미터:', generateParam);
+              //console.log('POI 생성 요청 파라미터:', generateParam);
               self.fullPoiList = [];
               self.clearMarkers(); // self 사용
               self.activeRegion = 'all';
@@ -647,7 +647,7 @@
                   data: JSON.stringify(generateParam)
                 });
                 self.fullPoiList = response;
-                console.log('백엔드 응답 (POI 목록):', response);
+                //console.log('백엔드 응답 (POI 목록):', response);
                 if (el) el.textContent = 'POI 로드 완료. (총 ' + response.length + '개)';
 
                 if (response.length > 0) {

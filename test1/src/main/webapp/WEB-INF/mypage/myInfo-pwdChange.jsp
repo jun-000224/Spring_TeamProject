@@ -252,7 +252,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         if(data.result == "success"){
                             self.fnConfirm();
                             // alert("같다.!");
@@ -287,7 +287,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         if(data.result == "success"){
                             // self.fnConfirm();
                             alert(data.msg);

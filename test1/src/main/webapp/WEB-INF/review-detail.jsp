@@ -309,10 +309,10 @@
                             self.info = data[0];
                             self.reviewList = data[0].list;
                             self.reviewImgList = data[0].imgList;
-                            console.log(data);
+                            //console.log(data);
 
-                            console.log(self.reviewImgList);
-                            console.log(self.reviewList);
+                            //console.log(self.reviewImgList);
+                            //console.log(self.reviewList);
                         },
                     });
                 },

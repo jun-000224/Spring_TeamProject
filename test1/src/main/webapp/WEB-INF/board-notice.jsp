@@ -455,7 +455,7 @@
                 const group = Math.floor((self.page - 1) / self.pageGroupSize);
                 self.pageGroupStart = group * self.pageGroupSize + 1;
                 self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages || 1);
-                console.log(data);
+                //console.log(data);
               },
             });
           },

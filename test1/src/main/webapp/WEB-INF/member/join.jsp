@@ -711,7 +711,7 @@
           url:"/member/join.dox", type:"POST", dataType:"json", data:param,
           success:(data)=>{
             if(data.result=='success'){
-              console.log(data);
+              //console.log(data);
               let form = new FormData();
               form.append( "file1",  $("#file1")[0].files[0] );
               form.append( "userId",  this.id);
@@ -737,7 +737,7 @@
             contentType : false, 
             data : form, 
             success:function(data) { 
-                console.log(data);
+                //console.log(data);
             }	           
         });
       },

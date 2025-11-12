@@ -240,7 +240,7 @@
                         type: "POST",
                         data: param,
                         success: function (data){
-                            console.log(data.info);
+                            //console.log(data.info);
                             if(data.info.storUrl != null){
                                 self.profileImgPath = data.info.storUrl;
                                 // console.log("no");

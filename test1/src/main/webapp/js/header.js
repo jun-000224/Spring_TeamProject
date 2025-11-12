@@ -1,12 +1,12 @@
 function logout(){
-	console.log("logout");
+	//console.log("logout");
 	$.ajax({
       url: "/member/logout.dox",
       dataType: "json",
       type: "POST",
       success: (data) => {
         //alert(data.msg || "로그아웃되었습니다.");
-		console.log(data);
+		//console.log(data);
 		
 		const clientId = data.kakaoClientId;
         const redirectUri = data.kakaoRedirectUri;
