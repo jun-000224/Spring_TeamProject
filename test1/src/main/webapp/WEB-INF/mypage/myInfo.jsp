@@ -287,7 +287,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.info = data.info;
                         self.endSub = data.info.subsleft
                         self.fnSubTimeLeft();

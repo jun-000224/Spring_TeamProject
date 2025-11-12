@@ -407,11 +407,11 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.list = data.list;
                         self.totalPages = Math.ceil(data.cnt / self.pageSize);
                         let group = Math.floor((self.page - 1) / self.pageGroupSize);
-                        console.log(self.page, self.pageGroupSize);
+                        //console.log(self.page, self.pageGroupSize);
 
                         self.pageGroupStart = group * self.pageGroupSize + 1;
                         self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
@@ -470,7 +470,7 @@
             },
             openModal(item) {
                 this.modalFlg = true;
-                console.log(item);
+                //console.log(item);
 
                 setTimeout(() => this.initializeMap(item), 300);
             },
@@ -505,7 +505,7 @@
                     const marker = new kakao.maps.Marker({ position: pos });
                     marker.setMap(this.map);
                     this.markers.push(marker);
-                    console.log(p.title);
+                    //console.log(p.title);
 
                     const info = new kakao.maps.InfoWindow({
                         content: '<div style="padding:25px;">' + (p.title || p.contentId) + "</div>",

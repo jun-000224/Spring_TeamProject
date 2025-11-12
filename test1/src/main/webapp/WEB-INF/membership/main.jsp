@@ -273,9 +273,9 @@
                 self.sellItem = itemName;
                 self.sellPrice = itemPrice;
                 self.sellTag = itemTag;
-                console.log(self.sellItem);
-                console.log(self.sellPrice);
-                console.log(self.sellTag);
+                //console.log(self.sellItem);
+                //console.log(self.sellPrice);
+                //console.log(self.sellTag);
                 IMP.request_pay({
 				    pg: "html5_inicis",
 				    pay_method: "card",
@@ -288,7 +288,7 @@
 			   	      if (rsp.success) {
 			   	        // 결제 성공 시
 						// alert("성공");
-						console.log(rsp);
+						//console.log(rsp);
                         // self.imp_uid = rsp.imp_uid;
                         // self.paid_amount = rsp.paid_amount;
                         // self.fnPayHistory();
@@ -319,7 +319,7 @@
                     sellTag : self.sellTag,
                     subsDay : subsDay
                 };
-                console.log(param);
+                //console.log(param);
                 $.ajax({
                     url: "/mypage/statusUp.dox",
                     dataType: "json",

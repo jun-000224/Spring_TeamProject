@@ -286,11 +286,11 @@
                                 day: item.day,
                                 rating: item.rating,
                             }));
-                            console.log(data);
+                            //console.log(data);
                             
                         }
                         self.selectedDay = days[0];
-                        console.log(self.selectedDay);
+                        //console.log(self.selectedDay);
                     },
                 });
             },

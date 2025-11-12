@@ -81,7 +81,7 @@ public class MemberService {
 			
 			if(loginFlg) {
 				
-				if(member.getCnt() >= 5) {
+				if(member.getCnt() >= 5 && !member.getStatus().equals("A")) {
 					message = "로그인 불가(비밀번호를 5회 이상 잘못 입력하셨습니다.)";
 					result = "fail";
 				} else {
@@ -113,11 +113,11 @@ public class MemberService {
 				Member idCheck = memberMapper.memberIdCheck(map);
 				int cntUp = memberMapper.loginCntUp(map);
 				
-				if(idCheck.getCnt()>=5) {
+				if(idCheck.getCnt()>=5 && !member.getStatus().equals("A")) {
 					message = "비밀번호를 5회 이상 잘못 입력하셨습니다.";
 					result = "fail";
 				} else {
-					if(idCheck.getCnt()==4) {
+					if(idCheck.getCnt()==4 && !member.getStatus().equals("A")) {
 						message = "비밀번호를 5회 틀리셨습니다. \n로그인이 제한됩니다. \n관리자에게 문의해주세요.";
 						result = "fail";
 					} else {

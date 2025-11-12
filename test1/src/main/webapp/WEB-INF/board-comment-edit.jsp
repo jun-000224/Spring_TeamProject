@@ -213,7 +213,7 @@
                             if (data.result == "success") {
                                 alert("수정되었습니다.");
                                 // ✅ 수정 후 해당 게시글 상세 페이지로 이동
-                                console.log("이동할 게시글 번호:", self.boardNo);
+                                //console.log("이동할 게시글 번호:", self.boardNo);
                                 location.href = "/board-view.do?boardNo=" + self.boardNo;
                             } else {
                                 alert("오류가 발생했습니다.");

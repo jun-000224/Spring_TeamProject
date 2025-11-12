@@ -507,7 +507,7 @@
           dataType: "json",
           data: { boardNo: self.boardNo, userId: self.userId },
           success(data){
-            console.log(data);
+            //console.log(data);
             self.info = data.info;
             self.commentList = data.commentList.map(c => ({ ...c, reported: c.reported === true }));
             self.commentReportMap = {};

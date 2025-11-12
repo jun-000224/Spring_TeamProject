@@ -8,7 +8,7 @@ function fnKakao () {
     $.getJSON('/api/session/kakao')
       .done(function(res) {
         if (res.hasKakaoSession) {
-          console.log('이미 세션에 kakaoAccessToken 존재 — fnKakao 중단');
+          //console.log('이미 세션에 kakaoAccessToken 존재 — fnKakao 중단');
           cleanUrlCodeParam();
           return;
         }
@@ -25,7 +25,7 @@ function fnKakao () {
             type: "POST",
             data: param,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 self.fnKakaoDisc(data.id);
                 self.tempId = data.id;
                 self.tempProperties = data.properties;
@@ -110,7 +110,7 @@ function fnKakaoLogin (id) {
         type: "POST",
         data: param,
         success: function (data) {
-            console.log(data);
+            //console.log(data);
             if(data.result == 'success'){
                 //alert(data.msg);
                 location.href="/main-list.do"

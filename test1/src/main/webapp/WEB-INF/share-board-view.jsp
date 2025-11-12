@@ -176,7 +176,7 @@ const app = Vue.createApp({
             data:param,
             success: function(data) {
                 self.info = data;  // dayMap 전체
-                console.log(data);
+                //console.log(data);
                 
           
             const days = Object.keys(data).map(k => parseInt(k)).sort((a,b)=>a-b);
@@ -198,7 +198,7 @@ const app = Vue.createApp({
                         addr1:item.addr1
                     });
                 }
-                console.log(dayList);
+                //console.log(dayList);
                 
             }
 

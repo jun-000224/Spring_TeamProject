@@ -309,7 +309,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.info = data.info;
 
                         self.name = data.info.name;
@@ -351,7 +351,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         if(data.res.statusCode == "2000"){
                             alert("문자 전송 완료");
                             self.certifiStr = data.ranStr;
@@ -408,7 +408,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         if(data.result == "success"){
                             self.fnProfilePath();
                             alert(data.msg);
@@ -429,7 +429,7 @@
                     contentType : false, 
                     data : form, 
                     success:function(data) { 
-                        console.log(data);
+                        //console.log(data);
                     }	           
                 });
             },
@@ -445,7 +445,7 @@
                     type: "POST",
                     data: param,
                     success: function (data){
-                        console.log(data.info);
+                        //console.log(data.info);
                         if(data.info.storUrl == null){
                             let form = new FormData();
                             form.append( "file1",  $("#file1")[0].files[0] );
@@ -474,7 +474,7 @@
                     contentType : false, 
                     data : form, 
                     success:function(data) { 
-                        console.log(data);
+                        //console.log(data);
                     }	           
                 });
             },

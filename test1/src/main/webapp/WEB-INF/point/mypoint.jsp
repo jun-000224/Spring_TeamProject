@@ -331,7 +331,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.info = data.info;
                     }
                 });
@@ -348,7 +348,7 @@
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         self.list = data.list;
                     }
                 });
@@ -365,7 +365,7 @@
                         type: "POST",
                         data: param,
                         success: function (data){
-                            console.log(data.info);
+                            //console.log(data.info);
                             if(data.info.storUrl != null){
                                 self.profileImgPath = data.info.storUrl;
                                 // console.log("no");

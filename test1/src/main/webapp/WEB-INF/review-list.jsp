@@ -491,7 +491,7 @@
                             self.list = data.list;
                             self.totalPages = Math.ceil(data.cnt / self.pageSize);
                             let group = Math.floor((self.page - 1) / self.pageGroupSize);
-                            console.log(self.page, self.pageGroupSize);
+                            //console.log(self.page, self.pageGroupSize);
 
                             self.pageGroupStart = group * self.pageGroupSize + 1;
                             self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
@@ -506,7 +506,7 @@
                         type: "GET",
                         data: {},
                         success: function (data) {
-                            console.log(data);
+                            //console.log(data);
                             self.thumbnailMap = data.list;
                         },
                     });
@@ -532,7 +532,7 @@
                             self.fnList();
                         },
                     });
-                    console.log(item);
+                    //console.log(item);
                 },
                 fnchange(num) {
                     let self = this;
