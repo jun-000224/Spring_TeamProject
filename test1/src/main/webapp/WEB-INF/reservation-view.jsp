@@ -265,8 +265,8 @@
             pay_method:"card",
             merchant_uid:"merchant_"+new Date().getTime(),
             name:"여행 결제 (숙박+식비)", 
-            amount:payAmount - this.usingPoint, 
-            // amount:1,
+            // amount:payAmount - this.usingPoint, 
+            amount:1,
             buyer_tel:"010-0000-0000"
           }, async function(rsp){
             if(rsp.success){
