@@ -484,6 +484,8 @@
 
               self.pageGroupStart = group * self.pageGroupSize + 1;
               self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages);
+              console.log(data);
+              
             },
           });
         },

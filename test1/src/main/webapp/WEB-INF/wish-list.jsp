@@ -387,11 +387,7 @@
                     <div class="card-inner">
                         <!-- 앞면 -->
                         <div class="card-front">
-                            <img
-                                class="card-img"
-                                :src="thumbnailMap[item.resNum]?.firstimage || 'https://placehold.co/370x320'"
-                                :alt="item.packname"
-                            />
+                             <img class="card-img" :src="thumbnailMap[item.resNum]?.firstimage || getRandomImage()" :alt="item.packname" />
                         </div>
 
                         <!-- 뒷면 -->
@@ -483,6 +479,14 @@
                 pageGroupStart: 1,
                 pageGroupEnd: 10,
                 tag: "",
+                  randomImages: [
+            "/img/defaultImg01.jpg",
+            "/img/defaultImg02.jpg",
+            "/img/defaultImg03.jpg",
+            "/img/defaultImg04.jpg",
+            "/img/defaultImg05.jpg",
+            "/img/defaultImg06.jpg",
+          ],
             };
         },
         methods: {
@@ -505,7 +509,7 @@
                         self.list = data.list;
                         self.totalPages = Math.ceil(data.cnt / self.pageSize);
                         let group = Math.floor((self.page - 1) / self.pageGroupSize);
-                        //console.log(data);
+                        console.log(data);
                         
 
                         self.pageGroupStart = group * self.pageGroupSize + 1;
@@ -571,6 +575,18 @@
             fnbck() {
                 history.back();
             },
+             getRandomImage() {
+          if (!this.shuffled) {
+            this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+          }
+
+          // 하나 꺼내기 (없으면 다시 섞기)
+          if (this.shuffled.length === 0) {
+            this.shuffled = [...this.randomImages].sort(() => Math.random() - 0.5);
+          }
+
+          return this.shuffled.pop();
+        },
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분

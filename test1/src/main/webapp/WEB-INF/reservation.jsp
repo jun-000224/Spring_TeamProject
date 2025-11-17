@@ -945,30 +945,60 @@ String.valueOf(request.getAttribute("resNum")); %>
             this.mapInstance.setLevel(7);
           },
 
-          addPoiToItinerary() {
-            if (!this.activeDate || !this.selectedPoi) return;
-            // console.log("일정에 추가 시도:", this.selectedPoi);
+         addPoiToItinerary() {
+              if (!this.activeDate || !this.selectedPoi) return;
 
-            // 가격 체크 제거
-            const poiPrice = this.selectedPoi.price || 0;
-            const poiType = this.selectedPoi.typeId;
+              if (this.selectedPoi.price === undefined) {
+                alert("가격 정보를 로드 중입니다. 잠시 후 다시 시도해주세요.");
+                return;
+              }
+              const poiPrice = this.selectedPoi.price || 0;
+              console.log(poiPrice);
+              
+              const poiType = this.selectedPoi.typeId;
+              
+              // 각 카테고리별 현재 지출/한도/명칭 계산
+              let currentSpent = 0;
+              let categoryLimit = 0;
+              let categoryName = '';
 
-            // 예산 체크 제거 (임시)
-            if (!this.itinerary[this.activeDate]) {
-              this.itinerary[this.activeDate] = [];
-            }
-            this.itinerary[this.activeDate].push({ ...this.selectedPoi, price: poiPrice });
-            //console.log("일정에 추가됨:", this.itinerary[this.activeDate]);
-            // console.log("일정에 추가됨:", this.activeDate, this.itinerary);
-
-            this.selectedPoi = null;
-            if (this.infowindow) this.infowindow.close();
+              if (poiType === 32) {             // 숙박
+                currentSpent = this.spentAccom;
+                categoryLimit = this.accomBudgetLimit;
+                categoryName = '숙박';
+              } else if (poiType === 39) {      // 식당
+                currentSpent = this.spentFood;
+                categoryLimit = this.foodBudgetLimit;
+                categoryName = '식당';
+              } else if (poiType === 12) {      // 체험/관광
+                currentSpent = this.spentActivity;
+                categoryLimit = this.activityBudgetLimit;
+                categoryName = '체험 및 관광';
+              }
+               // 🔒 예산 초과 불가: 남은 예산보다 큰 항목은 추가 자체를 금지
+              // const remain = Math.max(categoryLimit - currentSpent, 0);
+              // if (categoryName && categoryLimit > 0 && poiPrice > remain) {
+              //   alert(`'${categoryName}' 남은 예산을 초과하여 추가할 수 없습니다.\n남은 예산: ${remain.toLocaleString()}원, 항목 금액: ${poiPrice.toLocaleString()}원`);
+              //   return;
+              // }
+              // 예산 범위 이내면 지출 누적 및 일정 추가
+              if (poiType === 32) this.spentAccom += poiPrice;
+              else if (poiType === 39) this.spentFood += poiPrice;
+              else if (poiType === 12) this.spentActivity += poiPrice;
+               if (!this.itinerary[this.activeDate]) {
+                this.itinerary[this.activeDate] = [];
+              }
+              this.itinerary[this.activeDate].push({ ...this.selectedPoi, price: poiPrice });
+               this.selectedPoi = null;
+              if (this.infowindow) this.infowindow.close();
           },
 
           removePoiFromItinerary(date, index) {
             if (this.itinerary[date] && this.itinerary[date].length > index) {
               const removedPoi = this.itinerary[date].splice(index, 1)[0];
               const poiPrice = removedPoi.price || 0;
+              console.log(removedPoi.typeId);
+              
               if (poiPrice > 0) {
                 if (removedPoi.typeId === 32) this.spentAccom -= poiPrice;
                 else if (removedPoi.typeId === 39) this.spentFood -= poiPrice;
@@ -1047,9 +1077,7 @@ String.valueOf(request.getAttribute("resNum")); %>
 
                 // itinerary 초기화
                 self.itinerary = {};
-                self.spentAccom = 0;
-                self.spentFood = 0;
-                self.spentActivity = 0;
+                
 
                 // 서버에서 불러온 POI를 일정에 추가
                 self.$nextTick(() => {
@@ -1068,9 +1096,10 @@ String.valueOf(request.getAttribute("resNum")); %>
                         overview: item.overview,
                         firstimage: item.firstimage || null,
                         price: item.price || 0,
-                        typeId: item.typeId || 12,
+                        typeId: parseInt( item.typeId),
                       };
-
+                      console.log(self.selectedPoi);
+                      
                       // activeDate를 POI의 day로 세팅
                       self.activeDate = item.day;
 

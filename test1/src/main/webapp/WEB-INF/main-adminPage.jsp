@@ -595,7 +595,7 @@
                     <table v-if="!selectedInquiry">
                         <tr>
                             <th style="text-align: center;">제목</th>
-                            <th style="text-align: center;">신고자</th>
+                            <th style="text-align: center;">사용자</th>
                             <th style="text-align: center;">등록일</th>
                             <th style="text-align: center;">답변</th>
                             <th style="text-align: center;">답변여부</th>
@@ -716,16 +716,16 @@
                         </div>
                         <table class="styled-table">
                             <tr>
-                                <th>신고번호</th>
-                                <th>게시글번호</th>
-                                <th>신고유형</th>
-                                <th>신고자</th>
-                                <th>댓글번호</th>
+                                <th>신고 번호</th>
+                                <th>게시글 번호</th>
+                                <th>신고 유형</th>
+                                <th>신고 대상</th>
+                                <th>댓글 번호</th>
                             </tr>
                             <tr v-for="report in getFilteredReports()" :key="report.REPORTNUM">
                                 <td>{{ report.REPORTNUM }}</td>
                                 <td>
-                                    <span class="clickable" @click="selectBoard(report.BOARDNO)">
+                                    <span class="" @click="selectBoard(report.BOARDNO)">
                                         {{ report.BOARDNO || '-' }}
                                     </span>
                                 </td>
@@ -782,7 +782,7 @@
                     <!-- 신고내용 상세 내용 표시 -->
                     <div v-if="selectedReport" class="report-detail">
                         <h5>📌 신고 상세 정보</h5>
-                        <p><strong>신고자 ID:</strong> {{ selectedReport.reported_user_id }}</p>
+                        <p><strong>ID:</strong> {{ selectedReport.reported_user_id }}</p>
                         <p><strong>닉네임:</strong> {{ selectedReport.reported_nickname }}</p>
                         <p><strong>상태:</strong> {{ selectedReport.reported_status }}</p>
                         <p><strong>신고내용:</strong> {{ selectedReport.CONTENT }}</p>

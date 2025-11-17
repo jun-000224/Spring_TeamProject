@@ -27,6 +27,7 @@
         R2.USER_ID,
         R2.PRICE,
         R2.DESCRIPT,
+        R2.PACKNAME,
         CASE 
             WHEN F.USER_ID IS NOT NULL THEN 1 
             ELSE 0 
