@@ -210,7 +210,7 @@
 	</insert>
 	
 	<select id="whishList" parameterType="hashmap" resultType="com.example.test1.model.Board">
-		SELECT f.*,R2.*,R2.USER_ID as Iduser FROM FAV F
+		SELECT f.*,R2.*,R2.USER_ID as Iduser , R.* FROM FAV F
 		INNER JOIN TBL_REVIEW R ON R.BOARDNO = R.BOARDNO
 		INNER JOIN RESERVATION R2 ON R.RES_NUM = R2.RES_NUM
 		WHERE R.BOARDNO = F.BOARDNO AND F.USER_ID = #{userId}

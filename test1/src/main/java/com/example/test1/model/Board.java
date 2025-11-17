@@ -30,4 +30,5 @@ public class Board {
 	private int resNum;
 	private int price;
 	private String Iduser;
+	private String packname;
 }
