@@ -402,7 +402,7 @@
                 }
             }
 
-            .idCell{
+            .idCell {
                 background-color: #0078ff;
                 color: white;
                 font-weight: bold;
@@ -422,7 +422,7 @@
 
                     <div class="form-row-inline">
                         <div class="form-item writer-box">
-                            <input class="idCell" type="text" v-model="userId" disabled>
+                            <input class="idCell" type="text" v-model="nickname" disabled>
                         </div>
 
                         <div class="form-item board-type-box">
@@ -470,7 +470,9 @@
                     contents: "",
                     type: "F",
                     sessionId: "${sessionId}",
-                    sessionStatus: "${sessionStatus}"
+                    sessionStatus: "${sessionStatus}",
+                    nickname:window.sessionData.nickname
+
 
                 };
             },

@@ -6,15 +6,19 @@
 	<select id="BoardList" parameterType="hashmap" resultType="com.example.test1.model.Board">
 		SELECT 
 		    B.*, 
-		    DECODE(TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul','YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul',
+		    DECODE(TO_CHAR(FROM_TZ(CAST(B.CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul','YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(FROM_TZ(CAST(B.CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul',
             'HH24:MI:SS'),TO_CHAR(FROM_TZ(CAST(CDATETIME AS TIMESTAMP), 'UTC') AT TIME ZONE 'Asia/Seoul','YYYY-MM-DD')) AS CDATE, 
-		    NVL(CCNT, 0) AS COMMENTCNT
+		    NVL(CCNT, 0) AS COMMENTCNT , U.NICKNAME
 		FROM TBL_BOARD B
 		LEFT JOIN (
 		    SELECT BOARDNO, COUNT(*) AS CCNT
 		    FROM TBL_COMMENT
 		    GROUP BY BOARDNO
 		) T ON T.BOARDNO = B.BOARDNO
+		INNER JOIN (
+			SELECT U1.NICKNAME , U1.USER_ID
+			FROM USERS U1
+		) U ON B.USER_ID = U.USER_ID
 		WHERE 1=1
 		
 		<if test="type != '' and type != null">
@@ -23,13 +27,13 @@
 		</if>
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
-			USER_ID LIKE '%' || #{keyword} || '%'
+			B.USER_ID LIKE '%' || #{keyword} || '%'
 			)
 		 
 		</if>
 		
 		<if test="searchOption == 'id'">
-		AND USER_ID LIKE '%' || #{keyword} || '%' 
+		AND B.USER_ID LIKE '%' || #{keyword} || '%' 
 		</if>
 		<if test="searchOption == 'title'">
 		AND TITLE LIKE '%' || #{keyword} || '%' 
@@ -46,7 +50,7 @@
 			ORDER BY TITLE ASC
 		</if>
 		<if test="order == 'cnt'">
-			ORDER BY CNT DESC
+			ORDER BY B.CNT DESC
 		</if>
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 	</select>
@@ -285,43 +289,38 @@
 	SELECT 
 		    B.*, 
 		    DECODE(TO_CHAR(CDATETIME, 'YYYY-MM-DD'), TO_CHAR(SYSDATE, 'YYYY-MM-DD'),TO_CHAR(CDATETIME,'HH24:MI:SS'),TO_CHAR(CDATETIME, 'YYYY-MM-DD')) AS CDATE, 
-		    NVL(CCNT, 0) AS COMMENTCNT
+		    NVL(CCNT, 0) AS COMMENTCNT , NICKNAME
 		FROM TBL_BOARD B
 		LEFT JOIN (
 		    SELECT BOARDNO, COUNT(*) AS CCNT
 		    FROM TBL_COMMENT
 		    GROUP BY BOARDNO
 		) T ON T.BOARDNO = B.BOARDNO
+		INNER JOIN (
+			SELECT U1.NICKNAME , U1.USER_ID
+			FROM USERS U1
+		) U ON B.USER_ID = U.USER_ID
 		WHERE TYPE = 'N'
 		
 		
 		<if test="searchOption == 'all'">
 		AND (TITLE LIKE '%' || #{keyword} || '%' OR
-			USER_ID LIKE '%' || #{keyword} || '%'
+			B.USER_ID LIKE '%' || #{keyword} || '%'
 			)
 		 
 		</if>
 		
 		<if test="searchOption == 'id'">
-		AND USER_ID LIKE '%' || #{keyword} || '%' 
+		AND B.USER_ID LIKE '%' || #{keyword} || '%' 
 		</if>
 		<if test="searchOption == 'title'">
 		AND TITLE LIKE '%' || #{keyword} || '%' 
 		</if>
 		
 		
-		<if test="order == 'time'">
-			ORDER BY B.CDATETIME DESC
-		</if>
-		<if test="order == 'num'">
-			ORDER BY B.BOARDNO ASC
-		</if>
-		<if test="order == 'title'">
-			ORDER BY TITLE ASC
-		</if>
-		<if test="order == 'cnt'">
-			ORDER BY CNT DESC
-		</if>
+		
+		ORDER BY B.CDATETIME DESC
+		
 		OFFSET #{page} ROWS FETCH NEXT #{pageSize} ROWS ONLY
 </select>
 	

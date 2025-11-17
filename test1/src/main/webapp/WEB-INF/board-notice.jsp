@@ -355,7 +355,7 @@
         <tbody>
           <tr v-for="item in list" :key="item.boardNo" @click="fnView(item.boardNo)">
             <td class="col-num">{{ item.boardNo }}</td>
-            <td class="col-author">{{ item.userId }}</td>
+            <td class="col-author">{{ item.nickname }}</td>
             <td>
               <span class="type-badge" :class="badgeClass(item.type)">{{ typeLabel(item.type) }}</span>
               <a href="javascript:;">{{ item.title }}</a>
@@ -444,7 +444,7 @@
               page: (self.page - 1) * self.pageSize,
             };
             $.ajax({
-              url: "board-list.dox",
+              url: "/main-Notice.dox",
               dataType: "json",
               type: "POST",
               data: param,
@@ -455,7 +455,7 @@
                 const group = Math.floor((self.page - 1) / self.pageGroupSize);
                 self.pageGroupStart = group * self.pageGroupSize + 1;
                 self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages || 1);
-                //console.log(data);
+                console.log(data);
               },
             });
           },

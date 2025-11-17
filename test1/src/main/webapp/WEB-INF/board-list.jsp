@@ -356,7 +356,7 @@
         <tbody>
           <tr v-for="item in list" :key="item.boardNo" @click="fnView(item.boardNo)">
             <td class="col-num">{{ item.boardNo }}</td>
-            <td class="col-author">{{ item.userId }}</td>
+            <td class="col-author">{{ item.nickname }}</td>
             <td>
               <span class="type-badge" :class="badgeClass(item.type)">{{ typeLabel(item.type) }}</span>
               <a href="javascript:;">{{ item.title }}</a>
@@ -415,6 +415,7 @@
             pageGroupStart: 1,
             pageGroupEnd: 10,
             num: "",
+            nickName: "${nickName}"
           };
         },
         methods: {
@@ -435,13 +436,15 @@
           fnList() {
             const self = this;
             const param = {
-              userId: self.userId,
+              userId : self.userId,
               type: self.type,
               order: self.order,
               keyword: self.keyword,
               searchOption: self.searchOption,
               pageSize: self.pageSize,
               page: (self.page - 1) * self.pageSize,
+              nickname: self.nickname
+              
             };
             //console.log(self.keyword);
             
@@ -457,7 +460,7 @@
                 const group = Math.floor((self.page - 1) / self.pageGroupSize);
                 self.pageGroupStart = group * self.pageGroupSize + 1;
                 self.pageGroupEnd = Math.min(self.pageGroupStart + self.pageGroupSize - 1, self.totalPages || 1);
-                //console.log(data);
+                console.log(data);
               },
             });
           },
