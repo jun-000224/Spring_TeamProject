@@ -271,6 +271,7 @@
               <label class="label">닉네임</label>
               <input type="text" class="input" v-model="nickname" placeholder="미입력 시 이름으로 설정됩니다"
               @input="nickname = nickname.replace(/\s+/g, '')">
+              <div class="pwd-note">최대 6글자</div>
             </div>
           </div>
 
