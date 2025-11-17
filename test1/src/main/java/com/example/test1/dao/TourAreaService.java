@@ -236,7 +236,7 @@ public class TourAreaService {
     }
 
 
-    // ===== 가격 조회 메소드 (더미 데이터 최종 적용) =====
+    // ===== 가격 조회 메소드 (더미 데이터 최종 적용) =====//
     public int getPoiPrice(String contentId, Integer contentTypeId, boolean isWeekend) {
         if (contentTypeId == null || contentId == null) return 0;
 

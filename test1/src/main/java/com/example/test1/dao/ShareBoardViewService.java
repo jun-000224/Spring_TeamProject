@@ -35,6 +35,9 @@ public class ShareBoardViewService {
 	ShareBoardMapper ShareBoardMapper;
 	
 	@Autowired
+	TourAreaService TourAreaService ;
+	
+	@Autowired
 	ReviewMapper reviewMapper;
 	
     //디테일 정보
@@ -74,6 +77,8 @@ public class ShareBoardViewService {
                 map.put("homepage",getTag(item, "homepage"));
                 map.put("day", day);
                 map.put("dayNum", dayNum);
+                map.put("typeId", getTag(item,"contenttypeid"));
+                map.put("price", TourAreaService.getPoiPrice(getTag(item, "contentid"), Integer.parseInt(getTag(item,"contenttypeid")), false));
                 resultMap.add(map);
             }
        
@@ -178,7 +183,8 @@ public class ShareBoardViewService {
                 map.put("contentid", getTag(item, "contentid"));
                 map.put("tel", getTag(item, "tel"));
                 map.put("overview",getTag(item, "overview"));
-                map.put("homepage",getTag(item, "homepage"));           
+                map.put("homepage",getTag(item, "homepage"));  
+                
             }
             HashMap<String, Object> paramMap = new HashMap<>();
             paramMap.put("contentId", contentId);
