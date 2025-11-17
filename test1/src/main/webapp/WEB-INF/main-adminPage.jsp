@@ -725,7 +725,7 @@
                             <tr v-for="report in getFilteredReports()" :key="report.REPORTNUM">
                                 <td>{{ report.REPORTNUM }}</td>
                                 <td>
-                                    <span class="clickable" @click="selectBoard(report.BOARDNO)">
+                                    <span class="" @click="selectBoard(report.BOARDNO)">
                                         {{ report.BOARDNO || '-' }}
                                     </span>
                                 </td>
